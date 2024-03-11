@@ -1,0 +1,24 @@
+[package]
+name = "resume-tui"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+crossterm = "0.27"
+color-eyre = "0.6"
+phf = { version = "0.11", features = ["macros"] }
+resume-tui-data = { path = "./resume-tui-data" }
+ratatui = "0.26"
+
+[build-dependencies]
+proc-macro2 = { version = "1", features = []}
+quote = { version = "1.0", features = [] }
+resume-tui-data = { path = "./resume-tui-data", features = ["codegen"]}
+serde = { version = "1", features = ["derive"] }
+syn = { version = "2.0", features = [] }
+toml = "0.8"
+
+[workspace]
+members = ["resume-tui-data"]

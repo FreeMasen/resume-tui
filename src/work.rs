@@ -7,7 +7,7 @@ use ratatui::{
 };
 
 use crate::{
-    data::{Detail, Workplace, WORK},
+    data::{Detail, Workplace, source::DATABASE},
     list_state::ListStateWrapper as ListState,
     Navigable,
 };
@@ -21,7 +21,7 @@ pub struct WorkPage {
 impl Default for WorkPage {
     fn default() -> Self {
         Self {
-            menu: ListState::new(WORK.len().saturating_sub(1)),
+            menu: ListState::new(DATABASE.jobs.len().saturating_sub(1)),
             work: None,
         }
     }
@@ -36,7 +36,7 @@ impl Widget for WorkPage {
             sub_page.render(area, buf);
             return;
         }
-        let list_items: Vec<ListItem> = WORK
+        let list_items: Vec<ListItem> = DATABASE.jobs
             .iter()
             .map(|w| {
                 let dts = if let Some(end) = w.end.as_ref() {
@@ -80,7 +80,7 @@ impl Navigable for WorkPage {
         let Some(idx) = self.menu.selected() else {
             return;
         };
-        self.work = WORK.get(idx).cloned().map(Into::into);
+        self.work = DATABASE.jobs.get(idx).cloned().map(Into::into);
     }
 
     fn handle_left(&mut self) -> bool {

@@ -1,7 +1,5 @@
 use ratatui::widgets::ListState;
 
-use crate::data::WORK;
-
 #[derive(Debug, Clone)]
 pub struct ListStateWrapper {
     max: usize,

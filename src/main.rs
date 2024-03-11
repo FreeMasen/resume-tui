@@ -4,7 +4,6 @@ use crossterm::{
     terminal::{EnterAlternateScreen, LeaveAlternateScreen},
     ExecutableCommand,
 };
-use data::WORK;
 use list_state::ListStateWrapper as ListState;
 use ratatui::{
     prelude::*,

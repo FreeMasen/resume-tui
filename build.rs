@@ -5,23 +5,25 @@ use std::{
 
 use proc_macro2::{Span, TokenStream};
 use serde::Deserialize;
-use syn::{punctuated::Punctuated, Data, Lit, LitStr, Token};
+use syn::{punctuated::Punctuated, LitStr, Token};
 
 fn main() {
     let out_dir = env::var_os("OUT_DIR").unwrap();
     let dest_path = Path::new(&out_dir).join("source_data.rs");
-    fs::write(&dest_path, generate_from_configuration()).unwrap();
-    println!("cargo:rerun-if-changed=build.rs");
-    println!("cargo:rerun-if-changed=resume-tui-data/src/codegen.rs");
-    std::process::Command::new("rustfmt").arg(&dest_path).spawn().unwrap().wait_with_output().unwrap();
-}
-
-fn generate_from_configuration() -> String {
+    
     let path = if let Ok(cfg) = env::var("RESUME_DATA_PATH") {
         PathBuf::from(cfg)
     } else {
         PathBuf::from("data")
     };
+    println!("cargo:rerun-if-changed=build.rs");
+    println!("cargo:rerun-if-changed={}", path.display());
+    fs::write(&dest_path, generate_from_toml_files(path)).unwrap();
+    std::process::Command::new("rustfmt").arg(&dest_path).spawn().unwrap().wait_with_output().unwrap();
+}
+
+fn generate_from_toml_files(path: PathBuf) -> String {
+    
     let info_text = std::fs::read_to_string(path.join("info.toml")).unwrap();
     let info: Info = toml::from_str(&info_text).unwrap();
     let name = LitStr::new(&info.name, Span::call_site());
@@ -29,13 +31,14 @@ fn generate_from_configuration() -> String {
 
     let mut jobs = Punctuated::<TokenStream, Token![,]>::new();
     let jobs_text = std::fs::read_to_string(path.join("jobs.toml")).unwrap();
-    let jobs_value: Jobs = toml::from_str(&jobs_text).unwrap();
+    let mut jobs_value: Jobs = toml::from_str(&jobs_text).unwrap();
+    collect_jobs(&path, &mut jobs_value);
     for job in jobs_value.jobs {
         jobs.push(TokenStream::from(job));
     }
     quote::quote! {
         use resume_tui_data::*;
-        static DATABASE: Database = Database {
+        pub static DATABASE: Database = Database {
             name: #name,
             tag_line: #tag_line,
             jobs: &[#jobs],
@@ -44,6 +47,28 @@ fn generate_from_configuration() -> String {
         };
     }
     .to_string()
+}
+
+fn collect_jobs(base_path: impl AsRef<Path>, jobs: &mut Jobs) {
+    for job in jobs.jobs.iter_mut() {
+        let job_dir = job.id.as_ref().unwrap_or(&job.company);
+        let maybe_job_path = base_path.as_ref().join("job_details").join(job_dir);
+        if !maybe_job_path.exists() {
+            continue;
+        }
+        for file in std::fs::read_dir(&maybe_job_path).unwrap() {
+            let Ok(file) = file else {
+                continue;
+            };
+            if !file.file_type().map(|t| t.is_file()).unwrap_or(false) {
+                continue;
+            }
+            let details_text = std::fs::read_to_string(file.path()).unwrap();
+            let detail: Detail = toml::from_str(&details_text).unwrap();
+            job.detail.push(detail);
+        }
+        
+    }
 }
 
 #[derive(Deserialize)]
@@ -59,10 +84,14 @@ pub struct Jobs {
 
 #[derive(Debug, Deserialize)]
 pub struct Job {
+    #[serde(default)]
+    id: Option<String>,
     company: String,
     title: String,
     start: String,
+    #[serde(default)]
     end: Option<String>,
+    #[serde(default)]
     detail: Vec<Detail>,
 }
 #[derive(Debug, Deserialize)]
@@ -75,6 +104,7 @@ pub struct Detail {
 impl From<Job> for TokenStream {
     fn from(value: Job) -> Self {
         let Job {
+            id: _,
             company,
             title,
             start,

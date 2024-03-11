@@ -12,7 +12,10 @@ use ratatui::{
 
 mod data;
 mod list_state;
+mod oss;
 mod work;
+
+use data::source::DATABASE;
 
 #[derive(Debug, Clone)]
 struct App {
@@ -30,29 +33,34 @@ pub trait Navigable {
 #[derive(Debug, Clone)]
 enum Page {
     Work(work::WorkPage),
+    Oss(oss::OssView),
 }
 
 impl Navigable for Page {
     fn increment_selection(&mut self) {
         match self {
             Page::Work(inner) => inner.increment_selection(),
+            Page::Oss(inner) => inner.increment_selection(),
         }
     }
     fn decrement_selection(&mut self) {
         match self {
             Page::Work(inner) => inner.decrement_selection(),
+            Page::Oss(inner) => inner.decrement_selection(),
         }
     }
 
     fn handle_enter(&mut self) {
         match self {
             Page::Work(inner) => inner.handle_enter(),
+            Page::Oss(inner) => inner.handle_enter(),
         }
     }
 
     fn handle_left(&mut self) -> bool {
         match self {
             Page::Work(inner) => inner.handle_left(),
+            Page::Oss(inner) => inner.handle_left(),
         }
     }
 }
@@ -88,6 +96,7 @@ impl App {
                             self.sub_page = match selected {
                                 0 => None,
                                 1 => Some(Page::Work(Default::default())),
+                                2 => Some(Page::Oss(Default::default())),
                                 _ => continue,
                             }
                         }
@@ -112,6 +121,7 @@ impl App {
             0 => "Home",
             1 => "Work",
             2 => "Open Source",
+            3 => "Education",
             _ => "???",
         }
     }
@@ -136,7 +146,7 @@ impl App {
         let title = if self.sub_page.is_none() {
             "Home".to_string()
         } else {
-            format!("Robert F. Masen - {}", self.get_selected_menu_name())
+            format!("{} - {}", DATABASE.name, self.get_selected_menu_name())
         };
         let total_area = Block::bordered()
             .title(Title::from(title))
@@ -149,6 +159,7 @@ impl App {
         };
         match sub_page {
             Page::Work(work_state) => work_state.render(inner_rect, buf),
+            Page::Oss(inner) => inner.render(inner_rect, buf),
         }
     }
 
@@ -156,12 +167,9 @@ impl App {
         let layout =
             Layout::vertical(Constraint::from_percentages([45, 10, 45])).flex(layout::Flex::Center);
         let [_, content_area, _] = layout.areas(area);
-        Paragraph::new(vec![
-            "Robert F. Masen".bold().into(),
-            "I love parsers and dev tools and silly experiments ".into(),
-        ])
-        .alignment(Alignment::Center)
-        .render(content_area, buf);
+        Paragraph::new(vec![DATABASE.name.bold().into(), DATABASE.tag_line.into()])
+            .alignment(Alignment::Center)
+            .render(content_area, buf);
     }
 
     fn increment_selection(&mut self) {

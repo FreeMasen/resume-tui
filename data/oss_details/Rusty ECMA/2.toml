@@ -1,0 +1,3 @@
+name = "RESS"
+short_desc = "JavaScript Tokenizer in Rust"
+long_desc = ""

@@ -1,4 +1,3 @@
-
 pub use resume_tui_data::*;
 
 pub mod source {

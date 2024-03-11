@@ -7,7 +7,7 @@ use ratatui::{
 };
 
 use crate::{
-    data::{Detail, Workplace, source::DATABASE},
+    data::{source::DATABASE, Detail, Workplace},
     list_state::ListStateWrapper as ListState,
     Navigable,
 };
@@ -36,7 +36,8 @@ impl Widget for WorkPage {
             sub_page.render(area, buf);
             return;
         }
-        let list_items: Vec<ListItem> = DATABASE.jobs
+        let list_items: Vec<ListItem> = DATABASE
+            .jobs
             .iter()
             .map(|w| {
                 let dts = if let Some(end) = w.end.as_ref() {
@@ -131,7 +132,13 @@ impl Navigable for JobPage {
         };
         let (pre_idx, should_set) = idx.overflowing_sub(1);
         if should_set {
-            self.detail = self.workplace.details.iter().skip(pre_idx).next().map(Into::into);
+            self.detail = self
+                .workplace
+                .details
+                .iter()
+                .skip(pre_idx)
+                .next()
+                .map(Into::into);
         } else {
             self.detail = None;
         }

@@ -1,11 +1,9 @@
-
-
 #[derive(Debug, Clone)]
 pub struct Database {
     pub name: &'static str,
     pub tag_line: &'static str,
     pub jobs: &'static [Workplace],
-    pub open_source: &'static [()],
+    pub open_source: &'static [Project],
     pub education: &'static [()],
 }
 
@@ -23,4 +21,12 @@ pub struct Detail {
     pub short: &'static str,
     pub long: &'static str,
     pub detail: &'static str,
+}
+
+#[derive(Debug, Clone)]
+pub struct Project {
+    pub name: &'static str,
+    pub short_desc: &'static str,
+    pub long_desc: &'static str,
+    pub sub_projects: &'static [Project],
 }

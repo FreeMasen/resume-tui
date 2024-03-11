@@ -1,0 +1,3 @@
+name = "RESSA"
+short_desc = "JavaScript Parser in Rust"
+long_desc = ""

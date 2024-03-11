@@ -1,0 +1,10 @@
+[[project]]
+name = "Rusty ECMA"
+short_desc = "JavaScript Parsing/Generating libraries"
+long_desc = """As an excuse to learn more about how parsers work in software, I started this project with the 
+primary goal of providing a flexible, general purpose suite of libraries for interacting with JavaScript source code.
+
+The project consists of a handful of crates that I've tried to seperate logically to allow user to opt-in to the code
+they want to use.
+"""
+

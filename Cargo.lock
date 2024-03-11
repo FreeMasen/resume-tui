@@ -484,12 +484,6 @@ dependencies = [
 [[package]]
 name = "resume-tui-data"
 version = "0.1.0"
-dependencies = [
- "proc-macro2",
- "quote",
- "serde",
- "syn 2.0.52",
-]
 
 [[package]]
 name = "rustc-demangle"

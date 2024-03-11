@@ -6,11 +6,8 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-serde = { version = "1", features = ["derive"] }
-proc-macro2 = { version = "1", features = [], optional = true }
-quote = { version = "1.0", features = [], optional = true }
-syn = { version = "2.0", features = [], optional = true }
+
+
 
 [features]
 default = []
-codegen = ["dep:proc-macro2", "dep:quote", "dep:syn" ]

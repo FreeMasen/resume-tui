@@ -1,31 +1,26 @@
-use std::collections::LinkedList;
 
-use serde::{Deserialize, Serialize};
 
-#[cfg(feature = "codegen")]
-pub mod codegen;
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct Database<T> {
-    pub name: T,
-    pub tag_line: T,
-    pub jobs: LinkedList<Workplace<T>>,
-    pub open_source: LinkedList<()>,
-    pub education: LinkedList<()>,
+#[derive(Debug, Clone)]
+pub struct Database {
+    pub name: &'static str,
+    pub tag_line: &'static str,
+    pub jobs: &'static [Workplace],
+    pub open_source: &'static [()],
+    pub education: &'static [()],
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct Workplace<T> {
-    pub name: T,
-    pub title: T,
-    pub start: T,
-    pub end: Option<T>,
-    pub details: LinkedList<Detail<T>>,
+#[derive(Debug, Clone)]
+pub struct Workplace {
+    pub name: &'static str,
+    pub title: &'static str,
+    pub start: &'static str,
+    pub end: Option<&'static str>,
+    pub details: &'static [Detail],
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct Detail<T> {
-    pub short: T,
-    pub long: T,
-    pub detail: T,
+#[derive(Debug, Clone)]
+pub struct Detail {
+    pub short: &'static str,
+    pub long: &'static str,
+    pub detail: &'static str,
 }

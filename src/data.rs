@@ -1,4 +1,4 @@
-pub static WORK: &[Workplace<&'static str>] = &[
+pub static WORK: &[Workplace] = &[
     // Workplace {
     //     name: "SmartThings",
     //     title: "Staff Software Engineer",

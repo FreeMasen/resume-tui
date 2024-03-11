@@ -96,13 +96,13 @@ impl Navigable for WorkPage {
 
 #[derive(Debug, Clone)]
 pub struct JobPage {
-    workplace: Workplace<&'static str>,
+    workplace: Workplace,
     menu: ListState,
     detail: Option<DetailView<'static>>,
 }
 
-impl From<Workplace<&'static str>> for JobPage {
-    fn from(value: Workplace<&'static str>) -> Self {
+impl From<Workplace> for JobPage {
+    fn from(value: Workplace) -> Self {
         let menu = ListState::new(value.details.len().saturating_sub(1));
         Self {
             workplace: value,
@@ -186,8 +186,8 @@ impl Widget for JobPage {
 #[derive(Debug, Clone)]
 struct DetailView<'a>(Text<'a>);
 
-impl<'a> From<&'a Detail<&'a str>> for DetailView<'a> {
-    fn from(detail: &'a Detail<&'a str>) -> Self {
+impl<'a> From<&'a Detail> for DetailView<'a> {
+    fn from(detail: &'a Detail) -> Self {
         Self(Text::from(vec![
             Line::from(detail.short.bold()),
             Line::from(detail.long),
@@ -223,7 +223,7 @@ fn render_block<'a>(area: Rect, buf: &mut Buffer, title: &'a str, content: &'a s
 
 fn render_job_details<'a>(
     state: &mut ListState,
-    details: impl Iterator<Item = &'a Detail<&'a str>>,
+    details: impl Iterator<Item = &'a Detail>,
     area: Rect,
     buf: &mut Buffer,
 ) {
@@ -239,7 +239,7 @@ fn render_job_details<'a>(
     );
 }
 
-fn map_detail_to_list_item<'a>(detail: &'a Detail<&'a str>) -> ListItem<'a> {
+fn map_detail_to_list_item<'a>(detail: &'a Detail) -> ListItem<'a> {
     let title = Line::from(detail.short.bold());
     let details = Line::from(detail.long);
     let text = Text::from(vec![title, details]);

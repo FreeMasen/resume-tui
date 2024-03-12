@@ -194,8 +194,6 @@ impl App {
         if let Some(mut page) = self.sub_page.take() {
             if page.handle_left() {
                 self.sub_page = Some(page);
-            } else {
-                self.main_menu_state.select(0);
             }
         }
     }
@@ -212,6 +210,8 @@ impl Widget for &mut App {
 }
 
 fn main() -> color_eyre::Result<()> {
+    #[cfg(feature = "logging")]
+    env_logger::init();
     // setup terminal
     init_error_hooks()?;
     let terminal = init_terminal()?;

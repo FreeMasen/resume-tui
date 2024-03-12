@@ -1,0 +1,10 @@
+---
+source: src/markdown.rs
+expression: term.backend()
+---
+"one soft                                     "
+"                                             "
+"hard                                         "
+"                                             "
+"double hard                                  "
+"                                             "

@@ -28,7 +28,6 @@ fn main() {
         .unwrap()
         .wait_with_output()
         .unwrap();
-    eprintln!("{}", dest_path.display());
 }
 
 fn generate_from_toml_files(path: PathBuf) -> String {

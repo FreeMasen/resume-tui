@@ -8,10 +8,16 @@ edition = "2021"
 [dependencies]
 crossterm = "0.27"
 color-eyre = "0.6"
+log = "0.4"
 phf = { version = "0.11", features = ["macros"] }
 pulldown-cmark = "0.10"
 resume-tui-data = { path = "./resume-tui-data" }
 ratatui = "0.26"
+env_logger = { version = "0.11", optional = true }
+
+[dev-dependencies]
+insta = "1.36"
+env_logger = "0.11"
 
 [build-dependencies]
 proc-macro2 = { version = "1", features = []}
@@ -23,3 +29,7 @@ toml = "0.8"
 
 [workspace]
 members = ["resume-tui-data"]
+
+[features]
+default = []
+logging = ["dep:env_logger"]

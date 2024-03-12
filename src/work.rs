@@ -7,7 +7,10 @@ use ratatui::{
 };
 
 use crate::{
-    data::{source::DATABASE, Detail, Workplace}, list_state::ListStateWrapper as ListState, markdown::convert_md, Navigable
+    data::{source::DATABASE, Detail, Workplace},
+    list_state::ListStateWrapper as ListState,
+    markdown::convert_md,
+    Navigable,
 };
 
 #[derive(Debug, Clone)]
@@ -235,7 +238,9 @@ fn render_job_details<'a>(
     area: Rect,
     buf: &mut Buffer,
 ) {
-    let block = Block::bordered().title("Details").style(Style::new().fg(Color::Green).bg(Color::Black));
+    let block = Block::bordered()
+        .title("Details")
+        .style(Style::new().fg(Color::Green).bg(Color::Black));
     let block_inner = block.inner(area);
     block.render(area, buf);
     let list: Vec<_> = details.into_iter().map(map_detail_to_list_item).collect();

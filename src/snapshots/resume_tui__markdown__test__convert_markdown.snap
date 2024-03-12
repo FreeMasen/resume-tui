@@ -1,0 +1,23 @@
+---
+source: src/markdown.rs
+expression: term.backend()
+---
+"this is a heading and should be bold         "
+"this is a line after a hard break and a      "
+"soft break                                   "
+"                                             "
+"this line should be split around here        "
+"but the text will continue on                "
+"                                             "
+"-this is a list item                         "
+"-this is another list item                   "
+"                                             "
+"[link!](https://example.com)                 "
+"                                             "
+"----------------------------------------     "
+"                                             "
+"```rust                                      "
+"fn main() {}```                              "
+"| This is an important block quote don't     "
+"| forget that these also auto-wrap           "
+"                                             "

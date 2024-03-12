@@ -7,7 +7,10 @@ use ratatui::{
 };
 use resume_tui_data::Project;
 
-use crate::{data::source::DATABASE, list_state::ListStateWrapper as ListState, markdown::convert_md, Navigable};
+use crate::{
+    data::source::DATABASE, list_state::ListStateWrapper as ListState, markdown::convert_md,
+    Navigable,
+};
 
 #[derive(Debug, Clone)]
 pub struct OssView {
@@ -130,7 +133,7 @@ impl Widget for ProjectView {
             ]
             .into_iter(),
         );
-        
+
         if self.project.sub_projects.is_empty() {
             render_block(details, buf, "Detailed Description", self.project.long_desc);
             return;
@@ -145,9 +148,15 @@ impl Widget for ProjectView {
                 .into_iter()
                 .map(|p| ListItem::new(format!("  {}", p.name))),
         );
-        StatefulWidget::render(List::new(items).highlight_style(Style::new().bg(Color::White).fg(Color::Green))
-            .fg(Color::Green)
-            .bg(Color::Black), details, buf, self.menu.as_mut());
+        StatefulWidget::render(
+            List::new(items)
+                .highlight_style(Style::new().bg(Color::White).fg(Color::Green))
+                .fg(Color::Green)
+                .bg(Color::Black),
+            details,
+            buf,
+            self.menu.as_mut(),
+        );
     }
 }
 
@@ -157,12 +166,7 @@ impl Widget for SubProjectView {
         Self: Sized,
     {
         match self {
-            Self::LongDescription(text) => {
-                convert_md(text, area.width as usize).render(
-                    area,
-                    buf,
-                )
-            },
+            Self::LongDescription(text) => convert_md(text, area.width as usize).render(area, buf),
             Self::SubProject(proj) => (*proj).render(area, buf),
         }
     }
@@ -170,7 +174,7 @@ impl Widget for SubProjectView {
 
 impl Navigable for ProjectView {
     fn increment_selection(&mut self) {
-        eprintln!("ProjectView::increment_selection");
+        log::trace!("ProjectView::increment_selection");
         let Some(sub_page) = self.sub_page.as_mut() else {
             if self.project.sub_projects.is_empty() {
                 return;
@@ -216,14 +220,12 @@ impl Navigable for ProjectView {
         };
         if idx == 0 {
             self.sub_page = Some(SubProjectView::LongDescription(self.project.long_desc));
-        } else if let Some(sub_project) = self.project.sub_projects.get(idx-2).cloned() {
-            self.sub_page = Some(SubProjectView::SubProject(Box::new(
-                ProjectView {
-                    menu: ListState::new(sub_project.sub_projects.len()),
-                    project: sub_project,
-                    sub_page: None,
-                }
-            )))
+        } else if let Some(sub_project) = self.project.sub_projects.get(idx - 2).cloned() {
+            self.sub_page = Some(SubProjectView::SubProject(Box::new(ProjectView {
+                menu: ListState::new(sub_project.sub_projects.len()),
+                project: sub_project,
+                sub_page: None,
+            })))
         }
     }
 

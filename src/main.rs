@@ -11,6 +11,7 @@ use ratatui::{
 };
 
 mod data;
+mod edu;
 mod list_state;
 mod markdown;
 mod oss;
@@ -35,6 +36,7 @@ pub trait Navigable {
 enum Page {
     Work(work::WorkPage),
     Oss(oss::OssView),
+    Edu(edu::EduView),
 }
 
 impl Navigable for Page {
@@ -42,12 +44,14 @@ impl Navigable for Page {
         match self {
             Page::Work(inner) => inner.increment_selection(),
             Page::Oss(inner) => inner.increment_selection(),
+            Page::Edu(inner) => inner.increment_selection(),
         }
     }
     fn decrement_selection(&mut self) {
         match self {
             Page::Work(inner) => inner.decrement_selection(),
             Page::Oss(inner) => inner.decrement_selection(),
+            Page::Edu(inner) => inner.decrement_selection(),
         }
     }
 
@@ -55,6 +59,7 @@ impl Navigable for Page {
         match self {
             Page::Work(inner) => inner.handle_enter(),
             Page::Oss(inner) => inner.handle_enter(),
+            Page::Edu(inner) => inner.handle_enter(),
         }
     }
 
@@ -62,6 +67,7 @@ impl Navigable for Page {
         match self {
             Page::Work(inner) => inner.handle_left(),
             Page::Oss(inner) => inner.handle_left(),
+            Page::Edu(inner) => inner.handle_left(),
         }
     }
 }
@@ -162,6 +168,7 @@ impl App {
         match sub_page {
             Page::Work(work_state) => work_state.render(inner_rect, buf),
             Page::Oss(inner) => inner.render(inner_rect, buf),
+            Page::Edu(inner) => inner.render(inner_rect, buf),
         }
     }
 

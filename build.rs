@@ -43,6 +43,9 @@ fn generate_from_toml_files(path: PathBuf) -> String {
     let mut oss: Projects = toml::from_str(&oss_text).unwrap();
     collect_oss(&path, &mut oss);
     let oss = TokenStream::from(oss);
+    let edu_text = std::fs::read_to_string(path.join("edu.toml")).unwrap();
+    let edu: Education = toml::from_str(&edu_text).unwrap();
+    let edu = TokenStream::from(edu);
     quote::quote! {
         use resume_tui_data::*;
         pub static DATABASE: Database = Database {
@@ -50,7 +53,7 @@ fn generate_from_toml_files(path: PathBuf) -> String {
             tag_line: #tag_line,
             jobs: #jobs,
             open_source: #oss,
-            education: &[]
+            education: #edu,
         };
     }
     .to_string()
@@ -242,4 +245,53 @@ pub struct Project {
     pub long_desc: String,
     #[serde(default, rename = "sub_project")]
     pub sub_projects: Vec<Project>,
+}
+
+impl From<School> for TokenStream {
+    fn from(value: School) -> Self {
+        let School {
+            name,
+            graduated,
+            desc,
+        } = value;
+        let name = LitStr::new(&name, Span::call_site());
+        let graduated = graduated
+            .map(|graduated| {
+                let graduated = LitStr::new(&graduated, Span::call_site());
+                quote::quote! {
+                    Some(#graduated)
+                }
+            })
+            .unwrap_or_else(|| quote::quote!(None));
+        let desc = LitStr::new(&desc, Span::call_site());
+
+        quote! {
+            School {
+                name: #name,
+                graduated: #graduated,
+                desc: #desc,
+            }
+        }
+    }
+}
+
+impl From<Education> for TokenStream {
+    fn from(value: Education) -> Self {
+        let schools: Punctuated<TokenStream, Token![,]> =
+            value.schools.into_iter().map(TokenStream::from).collect();
+        quote::quote!(&[#schools])
+        
+    }
+}
+#[derive(Debug, Clone, Deserialize)]
+pub struct Education {
+    #[serde(rename = "school")]
+    schools: Vec<School>
+}
+
+#[derive(Debug, Clone, Deserialize)]
+pub struct School {
+    pub name: String,
+    pub graduated: Option<String>,
+    pub desc: String,
 }

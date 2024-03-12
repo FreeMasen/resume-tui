@@ -7,9 +7,7 @@ use ratatui::{
 };
 
 use crate::{
-    data::{source::DATABASE, Detail, Workplace},
-    list_state::ListStateWrapper as ListState,
-    Navigable,
+    data::{source::DATABASE, Detail, Workplace}, list_state::ListStateWrapper as ListState, markdown::convert_md, Navigable
 };
 
 #[derive(Debug, Clone)]
@@ -211,7 +209,7 @@ impl<'a> Widget for DetailView<'a> {
 fn render_two_blocks<'a>(
     area: Rect,
     buf: &mut Buffer,
-    details: impl Iterator<Item = (&'a str, &'a str)>,
+    details: impl Iterator<Item = (&'static str, &'static str)>,
 ) {
     let cells: [Rect; 2] = Layout::horizontal(Constraint::from_percentages([50; 2])).areas(area);
     for (cell, (title, content)) in cells.into_iter().zip(details.into_iter()) {
@@ -219,13 +217,16 @@ fn render_two_blocks<'a>(
     }
 }
 
-fn render_block<'a>(area: Rect, buf: &mut Buffer, title: &'a str, content: &'a str) {
+fn render_block<'a>(area: Rect, buf: &mut Buffer, title: &'static str, content: &'static str) {
     let block = Block::bordered()
         .title(title)
-        .title_alignment(Alignment::Left);
+        .title_alignment(Alignment::Left)
+        .style(Style::new().fg(Color::Green).bg(Color::Black))
+        .border_style(Style::new().fg(Color::Green).bg(Color::Black));
     let rect = block.inner(area);
-    Paragraph::new(content).render(rect, buf);
     block.render(area, buf);
+    let content = convert_md(content, rect.width as usize);
+    Paragraph::new(content).render(rect, buf);
 }
 
 fn render_job_details<'a>(
@@ -234,7 +235,7 @@ fn render_job_details<'a>(
     area: Rect,
     buf: &mut Buffer,
 ) {
-    let block = Block::bordered().title("Details");
+    let block = Block::bordered().title("Details").style(Style::new().fg(Color::Green).bg(Color::Black));
     let block_inner = block.inner(area);
     block.render(area, buf);
     let list: Vec<_> = details.into_iter().map(map_detail_to_list_item).collect();

@@ -22,6 +22,7 @@ impl ListStateWrapper {
         let next = (existing + 1).min(self.max);
         self.state.select(Some(next));
     }
+    
     pub fn decrement(&mut self) {
         let Some(existing) = self.state.selected() else {
             self.state.select(Some(self.max));

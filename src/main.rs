@@ -12,6 +12,7 @@ use ratatui::{
 
 mod data;
 mod list_state;
+mod markdown;
 mod oss;
 mod work;
 
@@ -130,7 +131,7 @@ impl App {
         let block = Block::bordered()
             .title("Menu")
             .title_alignment(Alignment::Center)
-            .fg(Color::Green);
+            .style(Style::new().fg(Color::Green).bg(Color::Black));
         let content_area = block.inner(area);
         block.render(area, buf);
         let list = List::new([ListItem::from("Home"), "Work".into(), "Open Source".into()]);
@@ -150,7 +151,8 @@ impl App {
         };
         let total_area = Block::bordered()
             .title(Title::from(title))
-            .title_alignment(Alignment::Center);
+            .title_alignment(Alignment::Center)
+            .style(Style::new().fg(Color::Green).bg(Color::Black));
         let inner_rect = total_area.inner(area);
         total_area.render(area, buf);
         let Some(sub_page) = self.sub_page.clone() else {

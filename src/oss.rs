@@ -3,11 +3,11 @@ use ratatui::{
     layout::{Alignment, Constraint, Layout, Rect},
     style::{Color, Style, Stylize},
     text::Text,
-    widgets::{Block, Clear, List, ListItem, Paragraph, StatefulWidget, Widget},
+    widgets::{Block, List, ListItem, Paragraph, StatefulWidget, Widget},
 };
 use resume_tui_data::Project;
 
-use crate::{data::source::DATABASE, list_state::ListStateWrapper as ListState, Navigable};
+use crate::{data::source::DATABASE, list_state::ListStateWrapper as ListState, markdown::convert_md, Navigable};
 
 #[derive(Debug, Clone)]
 pub struct OssView {
@@ -95,7 +95,7 @@ pub struct ProjectView {
 #[derive(Debug, Clone)]
 pub enum SubProjectView {
     SubProject(Box<ProjectView>),
-    LongDescription(Text<'static>),
+    LongDescription(&'static str),
 }
 
 impl From<&Project> for ProjectView {
@@ -114,16 +114,9 @@ impl Widget for ProjectView {
         Self: Sized,
     {
         if let Some(sub_page) = self.sub_page.take() {
-            let sub_name = if let SubProjectView::SubProject(inner) = &sub_page {
-                inner.project.name
-            } else {
-                "details"
-            };
-            eprintln!("rendering sub-page for {}->{}", self.project.name, sub_name);
             sub_page.render(area, buf);
             return;
         }
-        eprintln!("rendering project-view for {}", self.project.name);
         let [header, details] = Layout::default()
             .constraints([Constraint::Length(3), Constraint::Min(1)])
             .areas(area);
@@ -140,7 +133,6 @@ impl Widget for ProjectView {
         
         if self.project.sub_projects.is_empty() {
             render_block(details, buf, "Detailed Description", self.project.long_desc);
-            eprintln!("Rendered project as block");
             return;
         }
         let mut items = vec![
@@ -165,7 +157,12 @@ impl Widget for SubProjectView {
         Self: Sized,
     {
         match self {
-            Self::LongDescription(text) => text.render(area, buf),
+            Self::LongDescription(text) => {
+                convert_md(text, area.width as usize).render(
+                    area,
+                    buf,
+                )
+            },
             Self::SubProject(proj) => (*proj).render(area, buf),
         }
     }
@@ -218,7 +215,7 @@ impl Navigable for ProjectView {
             return;
         };
         if idx == 0 {
-            self.sub_page = Some(SubProjectView::LongDescription(Text::from(self.project.long_desc)));
+            self.sub_page = Some(SubProjectView::LongDescription(self.project.long_desc));
         } else if let Some(sub_project) = self.project.sub_projects.get(idx-2).cloned() {
             self.sub_page = Some(SubProjectView::SubProject(Box::new(
                 ProjectView {
@@ -274,7 +271,7 @@ impl Navigable for SubProjectView {
 fn render_two_blocks<'a>(
     area: Rect,
     buf: &mut Buffer,
-    details: impl Iterator<Item = (&'a str, &'a str)>,
+    details: impl Iterator<Item = (&'static str, &'static str)>,
 ) {
     let cells: [Rect; 2] = Layout::horizontal(Constraint::from_percentages([50; 2])).areas(area);
     for (cell, (title, content)) in cells.into_iter().zip(details.into_iter()) {
@@ -282,11 +279,13 @@ fn render_two_blocks<'a>(
     }
 }
 
-fn render_block<'a>(area: Rect, buf: &mut Buffer, title: &'a str, content: &'a str) {
+fn render_block(area: Rect, buf: &mut Buffer, title: &'static str, content: &'static str) {
     let block = Block::bordered()
         .title(title)
-        .title_alignment(Alignment::Left);
+        .title_alignment(Alignment::Left)
+        .style(Style::new().fg(Color::Green).bg(Color::Black));
     let rect = block.inner(area);
-    Paragraph::new(content).render(rect, buf);
     block.render(area, buf);
+    let content = crate::markdown::convert_md(content, rect.width as usize);
+    Paragraph::new(content).render(rect, buf);
 }

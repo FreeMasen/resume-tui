@@ -1,7 +1,16 @@
 [package]
 name = "resume-tui"
-version = "0.1.0"
+version = "0.1.0-pre1"
 edition = "2021"
+repository = "https://github.com/FreeMasen/resume-tui"
+authors = ["Robert Masen <r.f.masen@gmail.com>"]
+description = "My resume as a TUI application"
+
+[package.metadata.wix]
+upgrade-guid = "B050A522-06FC-432E-B378-BFCF6C47F3B7"
+path-guid = "1ED758D5-D16C-44F3-B9C5-CB42E045CB08"
+license = false
+eula = false
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
@@ -28,3 +37,25 @@ toml = "0.8"
 [features]
 default = []
 logging = ["dep:env_logger"]
+
+# The profile that 'cargo dist' will build with
+[profile.dist]
+inherits = "release"
+lto = "thin"
+
+# Config for 'cargo dist'
+[workspace.metadata.dist]
+# The preferred cargo-dist version to use in CI (Cargo.toml SemVer syntax)
+cargo-dist-version = "0.11.1"
+# The installers to generate for each app
+installers = ["shell", "powershell", "homebrew", "msi"]
+# Target platforms to build apps for (Rust target-triple syntax)
+targets = ["aarch64-apple-darwin", "x86_64-apple-darwin", "x86_64-unknown-linux-gnu", "x86_64-unknown-linux-musl", "x86_64-pc-windows-msvc"]
+# CI backends to support
+ci = ["github"]
+# Publish jobs to run in CI
+pr-run-mode = "upload"
+# A GitHub repo to push Homebrew formulas to
+tap = "y"
+# Publish jobs to run in CI
+publish-jobs = ["homebrew"]

@@ -50,7 +50,7 @@ impl Widget for WorkView {
             })
             .collect();
         let list = List::new(list_items)
-            .highlight_style(Style::new().bg(Color::White).fg(Color::Green))
+            .highlight_style(Style::new().bg(Color::LightGreen).fg(Color::Black))
             .fg(Color::Green)
             .bg(Color::Black);
         StatefulWidget::render(list, area, buf, self.menu.as_mut());
@@ -250,7 +250,7 @@ fn render_job_details<'a>(
     block.render(area, buf);
     let list: Vec<_> = details.into_iter().map(map_detail_to_list_item).collect();
     StatefulWidget::render(
-        List::new(list).highlight_style(Style::default().fg(Color::Green).bg(Color::White)),
+        List::new(list).highlight_style(Style::new().bg(Color::LightGreen).fg(Color::Black)),
         block_inner,
         buf,
         state.as_mut(),

@@ -43,7 +43,7 @@ impl Widget for OssView {
             .map(|w| ListItem::new(Text::from(format!("{}\n    {}", w.name, w.short_desc,))))
             .collect();
         let list = List::new(list_items)
-            .highlight_style(Style::new().bg(Color::White).fg(Color::Green))
+            .highlight_style(Style::new().bg(Color::LightGreen).fg(Color::Black))
             .fg(Color::Green)
             .bg(Color::Black);
         StatefulWidget::render(list, area, buf, self.menu.as_mut());
@@ -151,7 +151,7 @@ impl Widget for ProjectView {
         );
         StatefulWidget::render(
             List::new(items)
-                .highlight_style(Style::new().bg(Color::White).fg(Color::Green))
+                .highlight_style(Style::new().bg(Color::LightGreen).fg(Color::Black))
                 .fg(Color::Green)
                 .bg(Color::Black),
             details,

@@ -148,7 +148,7 @@ impl App {
             "Education".into(),
         ]);
         StatefulWidget::render(
-            list.highlight_style(Style::new().bg(Color::White).fg(Color::Green)),
+            list.highlight_style(Style::new().bg(Color::LightGreen).fg(Color::Black)),
             content_area,
             buf,
             self.main_menu_state.as_mut(),

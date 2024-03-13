@@ -17,9 +17,7 @@ fn main() {
     } else {
         PathBuf::from("data")
     };
-    println!("cargo:rerun-if-changed=build.rs");
-    println!("cargo:rerun-if-changed={}", path.display());
-    println!("cargo:rerun-if-changed=resume-tui-data/src/lib.rs");
+    emit_rebuild_directives(&path);
     
     let rust = generate_from_toml_files(path);
     fs::write(&dest_path, &rust).unwrap();
@@ -30,6 +28,11 @@ fn main() {
         .unwrap()
         .wait_with_output()
         .unwrap();
+}
+
+fn emit_rebuild_directives(path: impl AsRef<Path>) {
+    println!("cargo:rerun-if-changed=build.rs");
+    println!("cargo:rerun-if-changed={}", path.as_ref().display());
 }
 
 fn generate_from_toml_files(path: PathBuf) -> String {

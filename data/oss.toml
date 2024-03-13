@@ -13,7 +13,8 @@ they want to use.
 name = "Cosock"
 short_desc = "Lua couroutine I/O libraries"
 
-long_desc = """
+long_desc = """Cosock is both a coroutine executor based on LuaSocket and a collection of libraries
+for I/O operations on-top of those coroutines.
 
 """
 
@@ -21,6 +22,7 @@ long_desc = """
 name = "Luminary"
 short_desc = "A compiler for Lua"
 
-long_desc = """
+long_desc = """As an exercise in learning more about compilers, this project is a Lua front-end for
+LLVM.
 
 """

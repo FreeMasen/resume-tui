@@ -67,7 +67,7 @@ stored; it includes a name and a "tag line".
 #### `jobs.toml`
 
 This file is the entry point for the professional experience portion of the resume. The top level is
-an array of `Job` objects under the key `job` or `jobs` [^1]. 
+an array of `Job` objects under the key `job` or `jobs` [^1].
 
 <details>
 
@@ -111,8 +111,7 @@ from `read_dir`.
     "type": "object",
     "patternProperties": {
         "id": {
-            "description": "An optional unique ID for a job used for file based details when \
-            representing multiple jobs at the same company.",
+            "description": "An optional unique ID for a job used for file based details when representing multiple jobs at the same company.",
             "type": "string"
         },
         "company": {
@@ -168,8 +167,7 @@ long form description.
             "type": "string"
         },
         "detail": {
-            "description": "The long form description, Commonmark markdown can be used to \
-            style this content",
+            "description": "The long form description, Commonmark markdown can be used to style this content",
             "type": "string"
         }
     }
@@ -181,8 +179,7 @@ long form description.
 #### `oss.toml`
 
 This file is the entry point for the open source work portion of the resume. The top level is
-an array of `Project` objects under the key `projects` or `project` [^1]. 
-
+an array of `Project` objects under the key `projects` or `project` [^1].
 
 <details>
 
@@ -230,13 +227,11 @@ that have workspace crates that deserve additional details.
             "type": "string"
         },
         "long_desc": {
-            "description": "A long form overview of this project, Commonmark markdown can be used \
-            to style this content",
+            "description": "A long form overview of this project, Commonmark markdown can be used to style this content",
             "type": "string"
         },
         "sub_projects": {
-            "description": "A list of sub-projects related to this project, this is recursive \
-            in nature so these sub projects can also have sub-projects",
+            "description": "A list of sub-projects related to this project, this is recursive in nature so these sub projects can also have sub-projects",
             "type": "array",
             "items": {
                 "type": "Project"
@@ -252,7 +247,7 @@ that have workspace crates that deserve additional details.
 #### `edu.toml`
 
 This file is the entry point for the open source work portion of the resume. The top level is
-an array of `School` objects under the key `schools` or `school` [^1]. 
+an array of `School` objects under the key `schools` or `school` [^1].
 
 <details>
 
@@ -307,8 +302,6 @@ a description of the course of study and an optional graduation date.
 ```
 
 </details>
-
-
 
 [^1]: Because toml allows for 2 array syntaxes, array properties have a serde `alias` to allow
   them to be formatted as either an inline array (`<list-name> = []`) or with the `[[<list-name>]]` syntax. I personally

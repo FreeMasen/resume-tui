@@ -3,9 +3,11 @@
 This project is an attempt to make an interactive resume as a TUI application similar to efforts
 like [This 2d animation portfolio](https://github.com/JSLegendDev/2d-portfolio-kaboom).
 
+![demo gif](./assets/tui.gif)
+
 ## Installation
 
-TODO
+### Github Releases
 
 ## How it works
 

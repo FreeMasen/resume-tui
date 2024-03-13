@@ -23,9 +23,7 @@ fn convert(s: &'static str, width: usize) -> Option<Text<'static>> {
         log::trace!("Event: {event:#?}");
         match event {
             Event::Start(tag) => match tag {
-                Tag::Paragraph => {
-                    
-                }
+                Tag::Paragraph => {}
                 Tag::Heading { .. } => {
                     wrapper.clear_style();
                     wrapper.modify_style(Modifier::BOLD)
@@ -58,9 +56,7 @@ fn convert(s: &'static str, width: usize) -> Option<Text<'static>> {
                 | Tag::Table(_)
                 | Tag::TableHead
                 | Tag::TableRow
-                | Tag::TableCell => {
-
-                }
+                | Tag::TableCell => {}
                 Tag::Emphasis => wrapper.modify_style(Modifier::ITALIC),
                 Tag::Strong => wrapper.modify_style(Modifier::BOLD),
                 Tag::Strikethrough => {
@@ -141,7 +137,6 @@ fn convert(s: &'static str, width: usize) -> Option<Text<'static>> {
     }
     Some(wrapper.finish())
 }
-
 
 #[derive(Debug, Default)]
 struct Wrapper {
@@ -229,13 +224,12 @@ impl Wrapper {
         if !self.line.is_empty() {
             self.new_line()
         }
-        
+
         Text::from(self.lines).left_aligned()
     }
 
     /// Clear the line prefix and any potentially empty lines with that prefix
-    fn clear_prefix(&mut self) {  
-              
+    fn clear_prefix(&mut self) {
         let Some(prefix) = self.line_prefix.take() else {
             log::warn!("Taking prefix w/o a prefix!");
             return;
@@ -247,7 +241,12 @@ impl Wrapper {
         }
         while let Some(last_line) = self.lines.pop() {
             if last_line.spans.len() == 1 {
-                if !last_line.spans.last().map(|s| s == &prefix).unwrap_or(false) {
+                if !last_line
+                    .spans
+                    .last()
+                    .map(|s| s == &prefix)
+                    .unwrap_or(false)
+                {
                     self.lines.push(last_line);
                     break;
                 }
@@ -258,7 +257,6 @@ impl Wrapper {
         }
     }
 }
-
 
 fn split_span(span: Span<'static>, idx: usize) -> (Span<'static>, Span<'static>) {
     let start: String = span.content.chars().take(idx).collect();
@@ -273,7 +271,10 @@ fn split_span(span: Span<'static>, idx: usize) -> (Span<'static>, Span<'static>)
 
 #[cfg(test)]
 mod test {
-    use ratatui::{backend::{TestBackend, Backend}, Terminal};
+    use ratatui::{
+        backend::{Backend, TestBackend},
+        Terminal,
+    };
 
     use super::*;
 
@@ -317,7 +318,7 @@ fn main() {
         "#;
         assert_rendered!(convert_md(md, 40));
     }
-    
+
     #[test]
     fn convert_markdown_one_line() {
         env_logger::builder().is_test(true).try_init().ok();
@@ -347,7 +348,4 @@ double hard"#;
 > block quote"#;
         assert_rendered!(convert_md(md, 40));
     }
-
-    
-
 }

@@ -1,3 +1,4 @@
 /target
-debug.rs
-out.log
+/*.rs
+/*.log
+.vscode

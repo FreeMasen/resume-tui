@@ -280,13 +280,12 @@ impl From<Education> for TokenStream {
         let schools: Punctuated<TokenStream, Token![,]> =
             value.schools.into_iter().map(TokenStream::from).collect();
         quote::quote!(&[#schools])
-        
     }
 }
 #[derive(Debug, Clone, Deserialize)]
 pub struct Education {
     #[serde(rename = "school")]
-    schools: Vec<School>
+    schools: Vec<School>,
 }
 
 #[derive(Debug, Clone, Deserialize)]

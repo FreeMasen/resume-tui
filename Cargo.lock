@@ -665,15 +665,10 @@ dependencies = [
  "pulldown-cmark",
  "quote",
  "ratatui",
- "resume-tui-data",
  "serde",
  "syn 2.0.52",
  "toml",
 ]
-
-[[package]]
-name = "resume-tui-data"
-version = "0.1.0"
 
 [[package]]
 name = "rustc-demangle"

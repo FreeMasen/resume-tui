@@ -11,7 +11,6 @@ color-eyre = "0.6"
 log = "0.4"
 phf = { version = "0.11", features = ["macros"] }
 pulldown-cmark = "0.10"
-resume-tui-data = { path = "./resume-tui-data" }
 ratatui = "0.26"
 env_logger = { version = "0.11", optional = true }
 
@@ -22,13 +21,9 @@ env_logger = "0.11"
 [build-dependencies]
 proc-macro2 = { version = "1", features = []}
 quote = { version = "1.0", features = [] }
-resume-tui-data = { path = "./resume-tui-data" }
 serde = { version = "1", features = ["derive"] }
 syn = { version = "2.0", features = [] }
 toml = "0.8"
-
-[workspace]
-members = ["resume-tui-data"]
 
 [features]
 default = []

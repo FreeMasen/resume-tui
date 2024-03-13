@@ -5,10 +5,9 @@ use ratatui::{
     text::Text,
     widgets::{Block, List, ListItem, Paragraph, StatefulWidget, Widget},
 };
-use resume_tui_data::Project;
 
 use crate::{
-    data::source::DATABASE, list_state::ListStateWrapper as ListState, markdown::convert_md,
+    data::{source::DATABASE, Project}, list_state::ListStateWrapper as ListState, markdown::convert_md,
     Navigable,
 };
 

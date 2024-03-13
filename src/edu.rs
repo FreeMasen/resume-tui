@@ -1,8 +1,8 @@
-use ratatui::widgets::{List, ListItem, Widget};
+use ratatui::{widgets::{List, ListItem, Widget, }, text::{Text, Line, Span}};
 
 use crate::{data::source::DATABASE, Navigable};
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Default)]
 pub struct EduView;
 
 impl Widget for EduView {
@@ -14,7 +14,23 @@ impl Widget for EduView {
             DATABASE
                 .education
                 .iter()
-                .map(|e| ListItem::new(""))
+                .map(|e| {
+                    
+                    let mut items = vec![
+                        Line::from(e.name),
+                        Line::from(vec![
+                            Span::from("  "),
+                            e.desc.into()
+                        ]),
+                    ];
+                    if let Some(grad) = e.graduated {
+                        items.push(Line::from(vec![
+                            Span::from("  Graduated: "),
+                            grad.into(),
+                        ]));
+                    }
+                    items.push(Line::from("----------"));
+                    ListItem::new(Text::from(items))})
                 .collect::<Vec<_>>(),
         )
         .render(area, buf);

@@ -16,11 +16,11 @@ impl ListStateWrapper {
 
     pub fn increment(&mut self) {
         let Some(existing) = self.state.selected() else {
-            self.state.select(Some(0));
+            self.select(0);
             return;
         };
         let next = (existing + 1).min(self.max);
-        self.state.select(Some(next));
+        self.select(next);
     }
 
     pub fn decrement(&mut self) {
@@ -29,7 +29,7 @@ impl ListStateWrapper {
             return;
         };
         let next = existing.saturating_sub(1);
-        self.state.select(Some(next));
+        self.select(next);
     }
 
     pub fn selected(&self) -> Option<usize> {

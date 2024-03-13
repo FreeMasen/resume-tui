@@ -49,7 +49,6 @@ fn generate_from_toml_files(path: PathBuf) -> String {
     let edu: Education = toml::from_str(&edu_text).unwrap();
     let edu = TokenStream::from(edu);
     quote::quote! {
-        use resume_tui_data::*;
         pub static DATABASE: Database = Database {
             name: #name,
             tag_line: #tag_line,

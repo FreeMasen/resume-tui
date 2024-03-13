@@ -1,4 +1,3 @@
-use color_eyre::owo_colors::OwoColorize;
 use pulldown_cmark::{CodeBlockKind, Event, Parser, Tag, TagEnd};
 use ratatui::{
     style::{Color, Modifier, Style},

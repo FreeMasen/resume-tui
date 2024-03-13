@@ -75,7 +75,7 @@ impl Navigable for Page {
 impl App {
     fn new() -> Self {
         Self {
-            main_menu_state: ListState::new(3),
+            main_menu_state: ListState::new(4),
             sub_page: None,
         }
     }
@@ -104,6 +104,7 @@ impl App {
                                 0 => None,
                                 1 => Some(Page::Work(Default::default())),
                                 2 => Some(Page::Oss(Default::default())),
+                                3 => Some(Page::Edu(Default::default())),
                                 _ => continue,
                             }
                         }
@@ -140,7 +141,12 @@ impl App {
             .style(Style::new().fg(Color::Green).bg(Color::Black));
         let content_area = block.inner(area);
         block.render(area, buf);
-        let list = List::new([ListItem::from("Home"), "Work".into(), "Open Source".into()]);
+        let list = List::new([
+            ListItem::from("Home"),
+            "Work".into(),
+            "Open Source".into(),
+            "Education".into(),
+        ]);
         StatefulWidget::render(
             list.highlight_style(Style::new().bg(Color::White).fg(Color::Green)),
             content_area,

@@ -1,6 +1,6 @@
 [package]
 name = "resume-tui"
-version = "0.1.0-pre.5"
+version = "0.1.0-pre.6"
 edition = "2021"
 repository = "https://github.com/FreeMasen/resume-tui"
 authors = ["Robert Masen <r.f.masen@gmail.com>"]
@@ -35,6 +35,11 @@ toml = "0.8"
 default = []
 logging = ["dep:env_logger"]
 
+[[bin]]
+name = "freemasen"
+path = "src/main.rs"
+
+
 # The profile that 'cargo dist' will build with
 [profile.dist]
 inherits = "release"
@@ -45,12 +50,13 @@ lto = "thin"
 # The preferred cargo-dist version to use in CI (Cargo.toml SemVer syntax)
 cargo-dist-version = "0.11.1"
 # The installers to generate for each app
-installers = ["shell", "powershell", "msi"]
+installers = ["shell", "powershell", "msi", "homebrew"]
 # Target platforms to build apps for (Rust target-triple syntax)
 targets = ["aarch64-apple-darwin", "x86_64-apple-darwin", "x86_64-unknown-linux-gnu", "x86_64-unknown-linux-musl", "x86_64-pc-windows-msvc"]
 # CI backends to support
 ci = ["github"]
 # Publish jobs to run in CI
 pr-run-mode = "upload"
+tap = "FreeMasen/freemasen-resume"
 # Publish jobs to run in CI
 publish-jobs = ["homebrew"]

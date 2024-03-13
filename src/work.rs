@@ -205,12 +205,11 @@ impl<'a> From<&'a Detail> for DetailView {
 
 impl Widget for DetailView {
     fn render(self, area: Rect, buf: &mut Buffer) {
-        let mut view = Text::from(
-            vec![
-                Line::from(self.headline).style(Style::new().fg(Color::Green).bg(Color::Black).bold())
-            ]
-        );
-        view.lines.extend(convert_md(self.description, area.width as _));
+        let mut view =
+            Text::from(vec![Line::from(self.headline)
+                .style(Style::new().fg(Color::Green).bg(Color::Black).bold())]);
+        view.lines
+            .extend(convert_md(self.description, area.width as _));
         view.render(area, buf);
     }
 }

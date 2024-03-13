@@ -7,7 +7,9 @@ use ratatui::{
 };
 
 use crate::{
-    data::{source::DATABASE, Project}, list_state::ListStateWrapper as ListState, markdown::convert_md,
+    data::{source::DATABASE, Project},
+    list_state::ListStateWrapper as ListState,
+    markdown::convert_md,
     Navigable,
 };
 

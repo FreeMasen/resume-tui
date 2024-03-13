@@ -2,4 +2,15 @@
 company = "SmartThings"
 title = "Staff Software Engineer"
 start = "March 2020"
-detail = []
+
+[[job]]
+company = "Solution Design Group"
+title = "Software Engineer"
+start = "February 2019"
+end = "Margh 2020"
+
+[[job]]
+company = "United Subcontractors"
+title = "Software Developer"
+start = "August 2017"
+end = "December 2018"

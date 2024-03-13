@@ -1,6 +1,7 @@
 [[project]]
 name = "Rusty ECMA"
 short_desc = "JavaScript Parsing/Generating libraries"
+
 long_desc = """As an excuse to learn more about how parsers work in software, I started this project with the 
 primary goal of providing a _flexible_, _general purpose_ __suite__ of libraries for interacting with JavaScript source code.
 

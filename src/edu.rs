@@ -1,4 +1,7 @@
-use ratatui::{widgets::{List, ListItem, Widget, }, text::{Text, Line, Span}};
+use ratatui::{
+    text::{Line, Span, Text},
+    widgets::{List, ListItem, Widget},
+};
 
 use crate::{data::source::DATABASE, Navigable};
 
@@ -15,22 +18,16 @@ impl Widget for EduView {
                 .education
                 .iter()
                 .map(|e| {
-                    
                     let mut items = vec![
                         Line::from(e.name),
-                        Line::from(vec![
-                            Span::from("  "),
-                            e.desc.into()
-                        ]),
+                        Line::from(vec![Span::from("  "), e.desc.into()]),
                     ];
                     if let Some(grad) = e.graduated {
-                        items.push(Line::from(vec![
-                            Span::from("  Graduated: "),
-                            grad.into(),
-                        ]));
+                        items.push(Line::from(vec![Span::from("  Graduated: "), grad.into()]));
                     }
                     items.push(Line::from("----------"));
-                    ListItem::new(Text::from(items))})
+                    ListItem::new(Text::from(items))
+                })
                 .collect::<Vec<_>>(),
         )
         .render(area, buf);

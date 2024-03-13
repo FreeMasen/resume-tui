@@ -38,7 +38,6 @@ pub struct School {
     pub desc: &'static str,
 }
 
-
 pub mod source {
     use super::*;
     include!(concat!(env!("OUT_DIR"), "/source_data.rs"));

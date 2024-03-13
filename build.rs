@@ -18,7 +18,7 @@ fn main() {
         PathBuf::from("data")
     };
     emit_rebuild_directives(&path);
-    
+
     let rust = generate_from_toml_files(path);
     fs::write(&dest_path, &rust).unwrap();
     fs::write("debug.rs", &rust).unwrap();

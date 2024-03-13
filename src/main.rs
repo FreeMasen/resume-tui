@@ -164,7 +164,8 @@ impl App {
         let total_area = Block::bordered()
             .title(Title::from(title))
             .title_alignment(Alignment::Center)
-            .style(Style::new().fg(Color::Green).bg(Color::Black));
+            .style(Style::new().fg(Color::Green).bg(Color::Black))
+            .padding(Padding::zero());
         let inner_rect = total_area.inner(area);
         total_area.render(area, buf);
         let Some(sub_page) = self.sub_page.clone() else {

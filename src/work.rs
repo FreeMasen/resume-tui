@@ -128,21 +128,18 @@ impl Navigable for JobPage {
     }
 
     fn handle_enter(&mut self) {
+        log::trace!("JobPage::handle_enter");
         let Some(idx) = self.menu.selected() else {
+            log::warn!("menu selected returned None");
             return;
         };
-        let (pre_idx, should_set) = idx.overflowing_sub(1);
-        if should_set {
-            self.detail = self
-                .workplace
-                .details
-                .iter()
-                .skip(pre_idx)
-                .next()
-                .map(Into::into);
-        } else {
-            self.detail = None;
-        }
+        self.detail = self
+            .workplace
+            .details
+            .iter()
+            .skip(idx)
+            .next()
+            .map(Into::into);
     }
 
     fn handle_left(&mut self) -> bool {
@@ -197,8 +194,8 @@ struct DetailView<'a>(Text<'a>);
 impl<'a> From<&'a Detail> for DetailView<'a> {
     fn from(detail: &'a Detail) -> Self {
         Self(Text::from(vec![
-            Line::from(detail.short.bold()),
-            Line::from(detail.long),
+            Line::from(detail.headline.bold()),
+            Line::from(detail.snippet),
         ]))
     }
 }
@@ -253,8 +250,8 @@ fn render_job_details<'a>(
 }
 
 fn map_detail_to_list_item<'a>(detail: &'a Detail) -> ListItem<'a> {
-    let title = Line::from(detail.short.bold());
-    let details = Line::from(detail.long);
+    let title = Line::from(detail.headline.bold());
+    let details = Line::from(detail.snippet);
     let text = Text::from(vec![title, details]);
     ListItem::new(text)
 }

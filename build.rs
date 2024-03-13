@@ -19,6 +19,8 @@ fn main() {
     };
     println!("cargo:rerun-if-changed=build.rs");
     println!("cargo:rerun-if-changed={}", path.display());
+    println!("cargo:rerun-if-changed=resume-tui-data/src/lib.rs");
+    
     let rust = generate_from_toml_files(path);
     fs::write(&dest_path, &rust).unwrap();
     fs::write("debug.rs", &rust).unwrap();
@@ -75,7 +77,7 @@ fn collect_jobs(base_path: impl AsRef<Path>, jobs: &mut Jobs) {
             }
             let details_text = std::fs::read_to_string(file.path()).unwrap();
             let detail: Detail = toml::from_str(&details_text).unwrap();
-            job.detail.push(detail);
+            job.details.push(detail);
         }
     }
 }
@@ -131,13 +133,13 @@ pub struct Job {
     start: String,
     #[serde(default)]
     end: Option<String>,
-    #[serde(default)]
-    detail: Vec<Detail>,
+    #[serde(default, alias = "detail")]
+    details: Vec<Detail>,
 }
 #[derive(Debug, Deserialize)]
 pub struct Detail {
-    short: String,
-    long: String,
+    headline: String,
+    snippet: String,
     detail: String,
 }
 
@@ -149,7 +151,7 @@ impl From<Job> for TokenStream {
             title,
             start,
             end,
-            detail,
+            details: detail,
         } = value;
         let company = LitStr::new(&company, Span::call_site());
         let title = LitStr::new(&title, Span::call_site());
@@ -179,17 +181,17 @@ impl From<Job> for TokenStream {
 impl From<Detail> for TokenStream {
     fn from(value: Detail) -> Self {
         let Detail {
-            short,
-            long,
+            headline,
+            snippet,
             detail,
         } = value;
-        let short = LitStr::new(&short, Span::call_site());
-        let long = LitStr::new(&long, Span::call_site());
+        let headline = LitStr::new(&headline, Span::call_site());
+        let snippet = LitStr::new(&snippet, Span::call_site());
         let detail = LitStr::new(&detail, Span::call_site());
         quote::quote! {
             Detail {
-                short: #short,
-                long: #long,
+                headline: #headline,
+                snippet: #snippet,
                 detail: #detail,
             }
         }
@@ -243,7 +245,7 @@ pub struct Project {
     pub name: String,
     pub short_desc: String,
     pub long_desc: String,
-    #[serde(default, rename = "sub_project")]
+    #[serde(default, alias = "sub_project")]
     pub sub_projects: Vec<Project>,
 }
 
@@ -284,7 +286,7 @@ impl From<Education> for TokenStream {
 }
 #[derive(Debug, Clone, Deserialize)]
 pub struct Education {
-    #[serde(rename = "school")]
+    #[serde(alias = "school")]
     schools: Vec<School>,
 }
 

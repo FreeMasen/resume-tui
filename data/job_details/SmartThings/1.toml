@@ -1,3 +1,3 @@
-short = "Hub Local Metrics"
-long = "Implementing a memory efficient, metrics collector for an embedded linux target"
+headline = "Hub Local Metrics"
+snippet = "Implementing a memory efficient, metrics collector for an embedded linux target"
 detail = ""

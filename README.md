@@ -15,6 +15,8 @@ below.
 
 ### Directory Layout
 
+The default location for this is a `data` directory in the current working directory when building,
+this can be overridden by using the `RESUME_DATA_PATH` environment variable.
 
 ```text
 ./data
@@ -35,9 +37,8 @@ below.
 
 #### `info.toml`
 
-The default location for this is a `data` directory in the current working directory when building,
-this can be overridden by using the `RESUME_DATA_PATH` environment variable. The primary entrypoint
-is the `info.toml` file where the base information is store.
+The primary entrypoint for the Home page is the `info.toml` file where the base information is
+stored; it includes a name and a "tag line".
 
 <details>
 
@@ -65,6 +66,40 @@ is the `info.toml` file where the base information is store.
 
 #### `jobs.toml`
 
+This file is the entry point for the professional experience portion of the resume. The top level is
+an array of `Job` objects under the key `job` or `jobs` [^1]. 
+
+<details>
+
+<summary>JSON Schema</summary>
+
+```json
+{
+    "title": "Jobs",
+    "description": "List of job details",
+    "type": "object",
+    "properties": {
+        "jobs": {
+            "description": "list of jobs",
+            "type": "array",
+            "items": {
+                "type": "Job"
+            },
+        }
+    }
+}
+```
+
+</details>
+
+Each `Job` object contains some basic information about the position including company name, title,
+start date, optional end date, a list of details and an optional id. The list of details can either
+be included directly in the toml file or can be stored in the `job_details` directory. `job_details`
+is layed as directories, each directory will be named have either the `company` or `id`. The job
+details when in the TOML file should be rendered in the order they are defined and any additional
+details in teh `job_details` directory will be appended to this list in the order they are returned
+from `read_dir`.
+
 <details>
 
 <summary>JSON Schema</summary>
@@ -72,26 +107,17 @@ is the `info.toml` file where the base information is store.
 ```json
 {
     "title": "Job",
-    "description": "List of job details",
+    "description": "Overview of each job",
     "type": "object",
-    "properties": {
-        "jobs": {
-            "company": "",
-            "type": "string",
-        }
-    }
-}
-```
-
-```json
-{
-    "title": "Job",
-    "description": "List of job details",
-    "type": "object",
-    "properties": {
+    "patternProperties": {
+        "id": {
+            "description": "An optional unique ID for a job used for file based details when \
+            representing multiple jobs at the same company.",
+            "type": "string"
+        },
         "company": {
             "description": "The name of the company",
-            "type": "string",
+            "type": "string"
         },
         "title": {
             "description": "Job title at this company",
@@ -103,36 +129,47 @@ is the `info.toml` file where the base information is store.
         }
         ,
         "end": {
-            "description": "The optional date this position ended",
+            "description": "The date this position ended, if not provided it will display 'current'",
             "type": "string"
         },
-        "details": {
-            "description": "",
+        "details?": {
+            "description": "A list of job details",
             "type": "array",
             "items": {
                 "type": "JobDetail"
             },
         }
-    }
+    },
+    "required": [ "company", "title", "start" ]
 }
 ```
+
+</details>
+
+Each `Detail` is essentially a bullet point for this job, it will contain a headline, snippet and
+long form description.
+
+<details>
+
+<summary>JSON Schema</summary>
 
 ```json
 {
     "title": "JobDetail",
-    "description": "List of job details",
+    "description": "A highlight from a job",
     "type": "object",
     "properties": {
-        "short": {
-            "description": "",
+        "headline": {
+            "description": "The headline",
             "type": "string"
         },
-        "long": {
-            "description": "",
+        "snippet": {
+            "description": "A snippet describing this detail",
             "type": "string"
         },
         "detail": {
-            "description": "",
+            "description": "The long form description, Commonmark markdown can be used to \
+            style this content",
             "type": "string"
         }
     }
@@ -143,6 +180,10 @@ is the `info.toml` file where the base information is store.
 
 #### `oss.toml`
 
+This file is the entry point for the open source work portion of the resume. The top level is
+an array of `Project` objects under the key `projects` or `project` [^1]. 
+
+
 <details>
 
 <summary>JSON Schema</summary>
@@ -152,9 +193,8 @@ is the `info.toml` file where the base information is store.
     "title": "Projects",
     "description": "List of oss projects",
     "type": "object",
-    "properties": {
-        "projects": {
-            "description": "The name of the project",
+    "patternProperties": {
+        "projects?": {
             "type": "array",
             "items": {
                 "type": "Project"
@@ -164,10 +204,21 @@ is the `info.toml` file where the base information is store.
 }
 ```
 
+</detail>
+
+A `Project` is a recursive data structure for describing open source contribution it contains a
+project name, short description, long description and a list of sub projects. This structure
+makes it easier to represent GitHub Organizations and their repositories and/or crates
+that have workspace crates that deserve additional details.
+
+<details>
+
+<summary>JSON Schema</summary>
+
 ```json
 {
     "title": "Project",
-    "description": "List of oss projects",
+    "description": "A Project outline",
     "type": "object",
     "properties": {
         "name": {
@@ -175,46 +226,33 @@ is the `info.toml` file where the base information is store.
             "type": "string",
         },
         "short_desc": {
-            "description": "",
+            "description": "A snippet about this project",
             "type": "string"
         },
         "long_desc": {
-            "description": "",
+            "description": "A long form overview of this project, Commonmark markdown can be used \
+            to style this content",
             "type": "string"
         },
         "sub_projects": {
-            "description": "",
-            "type": "array"
+            "description": "A list of sub-projects related to this project, this is recursive \
+            in nature so these sub projects can also have sub-projects",
+            "type": "array",
+            "items": {
+                "type": "Project"
+            }
         }
-    }
-}
-```
-
-```json
-{
-    "title": "JobDetail",
-    "description": "List of job details",
-    "type": "object",
-    "properties": {
-        "short": {
-            "description": "",
-            "type": "string"
-        },
-        "long": {
-            "description": "",
-            "type": "string"
-        },
-        "detail": {
-            "description": "",
-            "type": "string"
-        }
-    }
+    },
+    "required": ["name", "short_desc", "long_desc"]
 }
 ```
 
 </details>
 
 #### `edu.toml`
+
+This file is the entry point for the open source work portion of the resume. The top level is
+an array of `School` objects under the key `schools` or `school` [^1]. 
 
 <details>
 
@@ -225,9 +263,8 @@ is the `info.toml` file where the base information is store.
     "title": "Education",
     "description": "List of school details",
     "type": "object",
-    "properties": {
-        "school": {
-            "description": "",
+    "patternProperties": {
+        "schools?": {
             "type": "array"
             "items": {
                 "type": "School"
@@ -237,26 +274,42 @@ is the `info.toml` file where the base information is store.
 }
 ```
 
+</detail>
+
+A `School` is a breif description of an educational experience including the name of the institution
+a description of the course of study and an optional graduation date.
+
+<details>
+
+<summary>JSON Schema</summary>
+
 ```json
 {
     "title": "School",
-    "description": "Description schooling",
+    "description": "Description of schooling",
     "type": "object",
     "properties": {
         "name": {
-            "description": "",
+            "description": "The name of the institution",
             "type": "string"
         },
         "desc": {
-            "description": "",
+            "description": "A description of this course of study",
             "type": "string"
         },
         "graduation_date": {
-            "description": "",
+            "description": "If completed, when that happened",
             "type": "string",
         }
-    }
+    },
+    "required": ["name", "desc"]
 }
 ```
 
 </details>
+
+
+
+[^1]: Because toml allows for 2 array syntaxes, array properties have a serde `alias` to allow
+  them to be formatted as either an inline array (`<list-name> = []`) or with the `[[<list-name>]]` syntax. I personally
+  find it to be more plesent to use the plural name for the former and non-plural for the latter.

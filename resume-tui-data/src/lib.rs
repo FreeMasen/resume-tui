@@ -18,8 +18,8 @@ pub struct Workplace {
 
 #[derive(Debug, Clone)]
 pub struct Detail {
-    pub short: &'static str,
-    pub long: &'static str,
+    pub headline: &'static str,
+    pub snippet: &'static str,
     pub detail: &'static str,
 }
 

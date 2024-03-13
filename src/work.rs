@@ -14,12 +14,12 @@ use crate::{
 };
 
 #[derive(Debug, Clone)]
-pub struct WorkPage {
+pub struct WorkView {
     menu: ListState,
-    work: Option<JobPage>,
+    work: Option<JobView>,
 }
 
-impl Default for WorkPage {
+impl Default for WorkView {
     fn default() -> Self {
         Self {
             menu: ListState::new(DATABASE.jobs.len().saturating_sub(1)),
@@ -28,7 +28,7 @@ impl Default for WorkPage {
     }
 }
 
-impl Widget for WorkPage {
+impl Widget for WorkView {
     fn render(mut self, area: Rect, buf: &mut Buffer)
     where
         Self: Sized,
@@ -57,7 +57,7 @@ impl Widget for WorkPage {
     }
 }
 
-impl Navigable for WorkPage {
+impl Navigable for WorkView {
     fn increment_selection(&mut self) {
         if let Some(sub_page) = &mut self.work {
             sub_page.increment_selection();
@@ -97,13 +97,13 @@ impl Navigable for WorkPage {
 }
 
 #[derive(Debug, Clone)]
-pub struct JobPage {
+pub struct JobView {
     workplace: Workplace,
     menu: ListState,
-    detail: Option<DetailView<'static>>,
+    detail: Option<DetailView>,
 }
 
-impl From<Workplace> for JobPage {
+impl From<Workplace> for JobView {
     fn from(value: Workplace) -> Self {
         let menu = ListState::new(value.details.len().saturating_sub(1));
         Self {
@@ -114,7 +114,7 @@ impl From<Workplace> for JobPage {
     }
 }
 
-impl Navigable for JobPage {
+impl Navigable for JobView {
     fn increment_selection(&mut self) {
         if self.detail.is_none() {
             self.menu.increment();
@@ -150,7 +150,7 @@ impl Navigable for JobPage {
     }
 }
 
-impl Widget for JobPage {
+impl Widget for JobView {
     fn render(mut self, area: Rect, buf: &mut Buffer)
     where
         Self: Sized,
@@ -189,20 +189,29 @@ impl Widget for JobPage {
 }
 
 #[derive(Debug, Clone)]
-struct DetailView<'a>(Text<'a>);
+struct DetailView {
+    headline: &'static str,
+    description: &'static str,
+}
 
-impl<'a> From<&'a Detail> for DetailView<'a> {
+impl<'a> From<&'a Detail> for DetailView {
     fn from(detail: &'a Detail) -> Self {
-        Self(Text::from(vec![
-            Line::from(detail.headline.bold()),
-            Line::from(detail.snippet),
-        ]))
+        Self {
+            headline: detail.headline,
+            description: detail.detail,
+        }
     }
 }
 
-impl<'a> Widget for DetailView<'a> {
+impl Widget for DetailView {
     fn render(self, area: Rect, buf: &mut Buffer) {
-        self.0.render(area, buf);
+        let mut view = Text::from(
+            vec![
+                Line::from(self.headline).style(Style::new().fg(Color::Green).bg(Color::Black).bold())
+            ]
+        );
+        view.lines.extend(convert_md(self.description, area.width as _));
+        view.render(area, buf);
     }
 }
 

@@ -34,7 +34,7 @@ pub trait Navigable {
 
 #[derive(Debug, Clone)]
 enum Page {
-    Work(work::WorkPage),
+    Work(work::WorkView),
     Oss(oss::OssView),
     Edu(edu::EduView),
 }

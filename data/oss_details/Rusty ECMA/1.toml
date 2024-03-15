@@ -1,8 +1,0 @@
-name = "RESSA"
-short_desc = "JavaScript Parser in Rust"
-
-long_desc = """This is probably the most obvious entrpypoint for end users in the project, it
-consists of a Parser that can produce an Abstract Syntax Tree of JavaScript code. It uses
-a recursive decent pattern to achieve the parsing and performs some level of code validation, for
-example it will error when encountering duplicate function argument identifiers.
-"""

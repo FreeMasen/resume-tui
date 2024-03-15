@@ -1,8 +1,8 @@
 [[school]]
-name = "Eastern Michigan University"
-graduated = "2008"
-desc = "Bachelor of Science in Communications"
+name = "Some School"
+graduated = "Some Year"
+desc = "Some Credential"
 
 [[school]]
-name = "Minneapols Community Education"
-desc = "Software Development Associates"
+name = "Second School"
+desc = "Some Other Credential"

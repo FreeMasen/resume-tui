@@ -1,7 +1,0 @@
-name = "RES-Regex"
-short_desc = "A parser of JavaScript Regular Expression Literals"
-
-long_desc = """This project validates the correctness of JavaScript flavored Regular Expression
-literals.
-
-"""

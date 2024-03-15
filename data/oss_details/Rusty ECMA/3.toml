@@ -1,6 +1,0 @@
-name = "RESAST"
-short_desc = "JavaScript AST in Rust"
-
-long_desc = """This project represents the Abstract Syntax Tree of JavaScript code.
-
-"""

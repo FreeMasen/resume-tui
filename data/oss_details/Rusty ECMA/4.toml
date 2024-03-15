@@ -1,7 +1,0 @@
-name = "RESW"
-short_desc = "JavaScript Writer over RESAST data structures"
-
-long_desc = """This project is capabile of consuming the AST provided by RESAST and outputting
-JavaScript text, with a bit of configuability.
-
-"""

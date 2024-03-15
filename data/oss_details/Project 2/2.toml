@@ -1,0 +1,4 @@
+name = "Sub-Project 3"
+short_desc = "Short description of project"
+
+long_desc = """long description of project"""

@@ -175,22 +175,31 @@ impl App {
     }
 
     fn render_home(&self, area: Rect, buf: &mut Buffer) {
-        let layout =
-            Layout::vertical(Constraint::from_percentages([45, 15, 40, 5])).flex(layout::Flex::Center);
+        let layout = Layout::vertical(Constraint::from_percentages([45, 15, 40, 5]))
+            .flex(layout::Flex::Center);
         let [_, content_area, _, footer] = layout.areas(area);
-        
+
         Paragraph::new(vec![DATABASE.name.bold().into(), DATABASE.tag_line.into()])
             .alignment(Alignment::Center)
             .render(content_area, buf);
         let foot_layout = Layout::horizontal([50, 50]);
         let [lhs, rhs] = foot_layout.areas(footer);
-        Paragraph::new(DATABASE.github.map(|gh| format!("https://github.com/{gh}")).unwrap_or_default())
-            .alignment(Alignment::Left)
-            .render(lhs, buf);
-        Paragraph::new(DATABASE.github.map(|li| format!("https://www.linkedin.com/in/{li}")).unwrap_or_default())
-            .alignment(Alignment::Right)
-            .render(rhs, buf);
-
+        Paragraph::new(
+            DATABASE
+                .github
+                .map(|gh| format!("https://github.com/{gh}"))
+                .unwrap_or_default(),
+        )
+        .alignment(Alignment::Left)
+        .render(lhs, buf);
+        Paragraph::new(
+            DATABASE
+                .github
+                .map(|li| format!("https://www.linkedin.com/in/{li}"))
+                .unwrap_or_default(),
+        )
+        .alignment(Alignment::Right)
+        .render(rhs, buf);
     }
 
     fn increment_selection(&mut self) {

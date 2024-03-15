@@ -3,7 +3,10 @@ use ratatui::{
     layout::{Alignment, Constraint, Flex, Layout, Rect},
     style::{Color, Style, Stylize},
     text::{Line, Text},
-    widgets::{Block, List, ListItem, Paragraph, StatefulWidget, Widget},
+    widgets::{
+        Block, List, ListItem, Paragraph, Scrollbar, ScrollbarOrientation, ScrollbarState,
+        StatefulWidget, Widget,
+    },
 };
 
 use crate::{
@@ -116,15 +119,19 @@ impl From<Workplace> for JobView {
 
 impl Navigable for JobView {
     fn increment_selection(&mut self) {
-        if self.detail.is_none() {
-            self.menu.increment();
+        if let Some(detail) = self.detail.as_mut() {
+            detail.increment_selection();
+            return;
         }
+        self.menu.increment();
     }
 
     fn decrement_selection(&mut self) {
-        if self.detail.is_none() {
-            self.menu.decrement();
+        if let Some(detail) = self.detail.as_mut() {
+            detail.decrement_selection();
+            return;
         }
+        self.menu.decrement();
     }
 
     fn handle_enter(&mut self) {
@@ -192,6 +199,9 @@ impl Widget for JobView {
 struct DetailView {
     headline: &'static str,
     description: &'static str,
+    scroll_state: ScrollbarState,
+    scroll: u16,
+    scroll_max: u16,
 }
 
 impl<'a> From<&'a Detail> for DetailView {
@@ -199,18 +209,54 @@ impl<'a> From<&'a Detail> for DetailView {
         Self {
             headline: detail.headline,
             description: detail.detail,
+            scroll_state: Default::default(),
+            scroll: 0,
+            scroll_max: 0,
         }
     }
 }
 
 impl Widget for DetailView {
-    fn render(self, area: Rect, buf: &mut Buffer) {
+    fn render(mut self, area: Rect, buf: &mut Buffer) {
         let mut view =
             Text::from(vec![Line::from(self.headline)
                 .style(Style::new().fg(Color::Green).bg(Color::Black).bold())]);
+        // let [text, scroll] =
+        //     Layout::horizontal([Constraint::Min(1), Constraint::Max(1)]).areas(area);
+
+        let sb = Scrollbar::new(ScrollbarOrientation::VerticalRight);
         view.lines
-            .extend(convert_md(self.description, area.width as _));
-        view.render(area, buf);
+            .extend(convert_md(self.description, (area.width - 1) as _));
+        let ct = dbg!(&view.lines)
+            .iter()
+            .rev()
+            .take_while(|l| l.spans.iter().map(|s| s.content.len()).sum::<usize>() == 0usize)
+            .count();
+        let height = view.lines.len();
+        log::debug!("cleaned new lines: before: {height}, after: {ct}",);
+        let paragraph = Paragraph::new(view).scroll((self.scroll, 0));
+        self.scroll_max = height as u16;
+        self.scroll_state = self.scroll_state.content_length(height);
+        paragraph.render(area, buf);
+        StatefulWidget::render(sb, area, buf, &mut self.scroll_state);
+    }
+}
+
+impl Navigable for DetailView {
+    fn increment_selection(&mut self) {
+        self.scroll = self.scroll.saturating_add(1).min(self.scroll_max);
+        self.scroll_state = self.scroll_state.position(self.scroll as _);
+    }
+
+    fn decrement_selection(&mut self) {
+        self.scroll = self.scroll.saturating_sub(1);
+        self.scroll_state = self.scroll_state.position(self.scroll as _);
+    }
+
+    fn handle_enter(&mut self) {}
+
+    fn handle_left(&mut self) -> bool {
+        false
     }
 }
 

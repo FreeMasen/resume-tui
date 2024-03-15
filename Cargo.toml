@@ -35,11 +35,6 @@ toml = "0.8"
 default = []
 logging = ["dep:env_logger"]
 
-[[bin]]
-name = "freemasen"
-path = "src/main.rs"
-
-
 # The profile that 'cargo dist' will build with
 [profile.dist]
 inherits = "release"

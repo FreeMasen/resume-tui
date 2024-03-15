@@ -40,6 +40,8 @@ fn generate_from_toml_files(path: PathBuf) -> String {
     let info: Info = toml::from_str(&info_text).unwrap();
     let name = LitStr::new(&info.name, Span::call_site());
     let tag_line = LitStr::new(&info.tag_line, Span::call_site());
+    let github = optional_str(info.github);
+    let linkedin = optional_str(info.linkedin);
     let jobs_text = std::fs::read_to_string(path.join("jobs.toml")).unwrap();
     let mut jobs_value: Jobs = toml::from_str(&jobs_text).unwrap();
     collect_jobs(&path, &mut jobs_value);
@@ -55,6 +57,8 @@ fn generate_from_toml_files(path: PathBuf) -> String {
         pub static DATABASE: Database = Database {
             name: #name,
             tag_line: #tag_line,
+            github: #github,
+            linkedin: #linkedin,
             jobs: #jobs,
             open_source: #oss,
             education: #edu,
@@ -108,6 +112,8 @@ fn collect_oss(base_path: impl AsRef<Path>, projects: &mut Projects) {
 pub struct Info {
     name: String,
     tag_line: String,
+    github: Option<String>,
+    linkedin: Option<String>,
 }
 #[derive(Debug, Deserialize)]
 pub struct Jobs {
@@ -158,14 +164,7 @@ impl From<Job> for TokenStream {
         let company = LitStr::new(&company, Span::call_site());
         let title = LitStr::new(&title, Span::call_site());
         let start = LitStr::new(&start, Span::call_site());
-        let end = end
-            .map(|end| {
-                let end = LitStr::new(&end, Span::call_site());
-                quote::quote! {
-                    Some(#end)
-                }
-            })
-            .unwrap_or_else(|| quote::quote!(None));
+        let end = optional_str(end);
         let details: Punctuated<TokenStream, Token![,]> =
             detail.into_iter().map(TokenStream::from).collect();
         quote::quote! {
@@ -259,14 +258,7 @@ impl From<School> for TokenStream {
             desc,
         } = value;
         let name = LitStr::new(&name, Span::call_site());
-        let graduated = graduated
-            .map(|graduated| {
-                let graduated = LitStr::new(&graduated, Span::call_site());
-                quote::quote! {
-                    Some(#graduated)
-                }
-            })
-            .unwrap_or_else(|| quote::quote!(None));
+        let graduated = optional_str(graduated);
         let desc = LitStr::new(&desc, Span::call_site());
 
         quote! {
@@ -297,4 +289,15 @@ pub struct School {
     pub name: String,
     pub graduated: Option<String>,
     pub desc: String,
+}
+
+fn optional_str(value: Option<String>) -> TokenStream {
+    value
+        .map(|s| {
+            let end = LitStr::new(&s, Span::call_site());
+            quote::quote! {
+                Some(#end)
+            }
+        })
+        .unwrap_or_else(|| quote::quote!(None))
 }

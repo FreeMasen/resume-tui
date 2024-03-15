@@ -3,9 +3,11 @@ use crossterm::{
     terminal::{EnterAlternateScreen, LeaveAlternateScreen},
     ExecutableCommand,
 };
-use ratatui::{backend::{Backend, CrosstermBackend}, Terminal};
+use ratatui::{
+    backend::{Backend, CrosstermBackend},
+    Terminal,
+};
 use resume_tui::App;
-
 
 fn main() -> color_eyre::Result<()> {
     #[cfg(feature = "logging")]

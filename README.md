@@ -204,7 +204,7 @@ an array of `Project` objects under the key `projects` or `project` [^1].
 }
 ```
 
-</detail>
+</details>
 
 A `Project` is a recursive data structure for describing open source contribution it contains a
 project name, short description, long description and a list of sub projects. This structure

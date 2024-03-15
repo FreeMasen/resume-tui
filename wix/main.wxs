@@ -123,9 +123,9 @@
                         <Component Id='binary0' Guid='*'>
                             <File
                                 Id='exe0'
-                                Name='freemasen.exe'
+                                Name='resume-tui.exe'
                                 DiskId='1'
-                                Source='$(var.CargoTargetBinDir)\freemasen.exe'
+                                Source='$(var.CargoTargetBinDir)\resume-tui.exe'
                                 KeyPath='yes'/>
                         </Component>
                     </Directory>

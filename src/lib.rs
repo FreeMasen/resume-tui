@@ -1,4 +1,3 @@
-use crossterm::event::{self, Event, KeyCode, KeyEventKind};
 use list_state::ListStateWrapper as ListState;
 use ratatui::{
     prelude::*,
@@ -74,40 +73,20 @@ impl App {
             sub_page: None,
         }
     }
-    pub fn run(&mut self, mut terminal: Terminal<impl Backend>) -> std::io::Result<()> {
-        loop {
-            self.draw(&mut terminal)?;
+    pub fn tick(&mut self, terminal: &mut Terminal<impl Backend>) -> Result<(), Error> {
+        self.draw(terminal)?;
+        Ok(())
+    }
 
-            if let Event::Key(key) = event::read()? {
-                if key.kind == KeyEventKind::Press {
-                    match key.code {
-                        KeyCode::Char('q') | KeyCode::Esc => return Ok(()),
-                        KeyCode::Char('h') | KeyCode::Left => self.handle_left(),
-                        KeyCode::Char('j') | KeyCode::Down => self.increment_selection(),
-                        KeyCode::Char('k') | KeyCode::Up => {
-                            self.decrement_selection();
-                        }
-                        KeyCode::Char('l') | KeyCode::Right | KeyCode::Enter => {
-                            if let Some(sub_page) = self.sub_page.as_mut() {
-                                sub_page.handle_enter();
-                                continue;
-                            };
-                            let Some(selected) = self.main_menu_state.selected() else {
-                                continue;
-                            };
-                            self.sub_page = match selected {
-                                0 => None,
-                                1 => Some(Page::Work(Default::default())),
-                                2 => Some(Page::Oss(Default::default())),
-                                3 => Some(Page::Edu(Default::default())),
-                                _ => continue,
-                            }
-                        }
-                        _ => {}
-                    }
-                }
-            }
+    pub fn event(&mut self, event: Event) -> Result<(), Error> {
+        match event {
+            Event::Up => self.decrement_selection(),
+            Event::Down => self.increment_selection(),
+            Event::Left => self.handle_left(),
+            Event::Right => self.handle_right(),
+            Event::Quit => return Err(Error::Exit),
         }
+        Ok(())
     }
 
     fn draw(&mut self, terminal: &mut Terminal<impl Backend>) -> std::io::Result<()> {
@@ -225,6 +204,23 @@ impl App {
             }
         }
     }
+
+    fn handle_right(&mut self) {
+        if let Some(sub_page) = self.sub_page.as_mut() {
+            sub_page.handle_enter();
+            return;
+        };
+        let Some(selected) = self.main_menu_state.selected() else {
+            return;
+        };
+        self.sub_page = match selected {
+            0 => None,
+            1 => Some(Page::Work(Default::default())),
+            2 => Some(Page::Oss(Default::default())),
+            3 => Some(Page::Edu(Default::default())),
+            _ => return,
+        }
+    }
 }
 
 impl Widget for &mut App {
@@ -235,4 +231,20 @@ impl Widget for &mut App {
         self.render_menu(menu_area, buf);
         self.render_page(display_area, buf);
     }
+}
+
+pub enum Event {
+    Up,
+    Down,
+    Left,
+    Right,
+    Quit,
+}
+
+#[derive(Debug, thiserror::Error)]
+pub enum Error {
+    #[error("{0}")]
+    Io(#[from] std::io::Error),
+    #[error("Exit")]
+    Exit,
 }

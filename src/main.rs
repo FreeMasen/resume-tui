@@ -1,5 +1,6 @@
 use color_eyre::config::HookBuilder;
 use crossterm::{
+    event::{self, Event as TermEvent, KeyCode, KeyEventKind},
     terminal::{EnterAlternateScreen, LeaveAlternateScreen},
     ExecutableCommand,
 };
@@ -7,18 +8,35 @@ use ratatui::{
     backend::{Backend, CrosstermBackend},
     Terminal,
 };
-use resume_tui::App;
+use resume_tui::{App, Error, Event};
 
 fn main() -> color_eyre::Result<()> {
     #[cfg(feature = "logging")]
     env_logger::init();
     // setup terminal
     init_error_hooks()?;
-    let terminal = init_terminal()?;
-
-    // create app and run it
-    App::new().run(terminal)?;
-
+    let mut terminal = init_terminal()?;
+    let mut app = App::new();
+    loop {
+        app.tick(&mut terminal)?;
+        if let TermEvent::Key(key) = event::read()? {
+            if key.kind == KeyEventKind::Press {
+                let ev = match key.code {
+                    KeyCode::Char('q') | KeyCode::Esc => Event::Quit,
+                    KeyCode::Char('h') | KeyCode::Left => Event::Left,
+                    KeyCode::Char('j') | KeyCode::Down => Event::Down,
+                    KeyCode::Char('k') | KeyCode::Up => Event::Up,
+                    KeyCode::Char('l') | KeyCode::Right | KeyCode::Enter => Event::Right,
+                    _ => continue,
+                };
+                let res = app.event(ev);
+                if matches!(res, Err(Error::Exit)) {
+                    break;
+                }
+                res?;
+            }
+        }
+    }
     restore_terminal()?;
 
     Ok(())

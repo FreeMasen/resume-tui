@@ -32,8 +32,9 @@
             }
             #controls {
                 display: grid;
-                width: 100px;
-                height: 100px;
+                position: absolute;
+                left: 0;
+                bottom: 0;
                 grid-template-rows: repeat(3, 1fr);
                 grid-template-columns: repeat(3, 1fr);
                 grid-template-areas:
@@ -53,11 +54,28 @@
             #down {
                 grid-area: d;
             }
-            button {
+            #controls button {
                 border-radius: 50%;
                 border-color: #8ae234;
                 background-color: #2e3436;
                 color: #8ae234;
+                display: none;
+                
+            }
+            @media (pointer:none), (pointer:coarse) {
+                body {
+                    overflow: scroll;
+                }
+                #controls {
+                    width: 100px;
+                    height: 100px;
+                }
+                #controls #up,
+                #controls #down,
+                #controls #left,
+                #controls #right {
+                    display: unset;
+                }
             }
         </style>
     </head>
@@ -82,7 +100,6 @@
                 left: 3,
                 right: 4,
             })
-            // let app;
             let eventHandler = eventId => {
                 console.log("eventHandler")
                 if (!app) {
@@ -109,7 +126,7 @@
                 rows: canvasSizeH()+2,
                 cursorInactiveStyle: "none",
                 disableStdin: true,
-                fontFamily: '"Share Tech Mono" monospace',
+                fontFamily: 'monospace',
                 fontSize: 16,
                 scrollback: 0,
                 theme: {

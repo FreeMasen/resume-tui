@@ -1,17 +1,18 @@
 headline = "Hub Local Metrics"
 snippet = "Implementing a memory efficient, metrics collector for an embedded linux target"
 
-detail = """To gain additional visibility into the performance of our embedded linux devices
+detail = """
+To gain additional visibility into the performance of our embedded Linux devices
 deployed across the world, I developed a system for collecting and reporting metrics for our fleet.
 
 This system was constrained by the needs of the device's relatively low memory and long expected
 lifetime, meaning keeping a time series either on disk or in memory was unavailable. To achieve some
-level of visibilty, I developed a solution that would allow queries to be sent to devices using
+level of visibility, I developed a solution that would allow queries to be sent to devices using
 Launch Darkly, once recieved the query would start collecting any metrics events in a low overhead
 _report_. This report would then be emitted to our platform's cloud for post-processing.
 
 For counters and gauges, I developed a solution that would calculate the min, max, and average
 values on the fly. For histogram events, the _HdrHistogram_ crate provided the calculations with a
-wrapper for handling float values in a integer only implementation.
+wrapper for handling float values in an integer-only implementation.
 
 """

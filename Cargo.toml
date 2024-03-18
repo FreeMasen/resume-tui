@@ -6,11 +6,8 @@ repository = "https://github.com/FreeMasen/resume-tui"
 authors = ["Robert Masen <r.f.masen@gmail.com>"]
 description = "My resume as a TUI application"
 
-[package.metadata.wix]
-upgrade-guid = "B050A522-06FC-432E-B378-BFCF6C47F3B7"
-path-guid = "1ED758D5-D16C-44F3-B9C5-CB42E045CB08"
-license = false
-eula = false
+[lib]
+crate-type = ["cdylib", "rlib"]
 
 [dependencies]
 crossterm = { version = "0.27", optional = true }
@@ -36,6 +33,16 @@ toml = "0.8"
 default = ["crossterm"]
 logging = ["dep:env_logger"]
 crossterm = ["dep:crossterm", "ratatui/crossterm"]
+
+
+[workspace]
+members = ["browser"]
+
+[package.metadata.wix]
+upgrade-guid = "B050A522-06FC-432E-B378-BFCF6C47F3B7"
+path-guid = "1ED758D5-D16C-44F3-B9C5-CB42E045CB08"
+license = false
+eula = false
 
 # The profile that 'cargo dist' will build with
 [profile.dist]

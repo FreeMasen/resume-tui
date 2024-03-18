@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/xterm/5.4.0/xterm.js"
+            integrity="sha512-a1TxekVOakgPoY7Z2SbpYAMhA6ZnhRGsczeVJLZPrleMzRcK84GnVo0JOPg/BVCNerWlZLPt4cEMKP8GDyfyxA=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <style>
+            
+
+            body {
+                margin: 0;
+                overflow: hidden;
+                background: #2e3436;
+                width: 100%;
+                height: 100%;
+                display: flex;
+                flex-flow: column;
+                align-items: center;
+            } 
+            #term-container {
+                margin: 5px auto;
+                margin-top: 5px;
+                margin-left: auto;
+                margin-right: auto;
+                overflow: hidden;
+            }
+            .xterm-helpers {
+                color: transparent;
+            }
+            .xterm-char-measure-element {
+                display: hidden;
+            }
+            #controls {
+                display: grid;
+                width: 100px;
+                height: 100px;
+                grid-template-rows: repeat(3, 1fr);
+                grid-template-columns: repeat(3, 1fr);
+                grid-template-areas:
+                    ". u ."
+                    "l . r"
+                    ". d .";
+            }
+            #up {
+                grid-area: u;
+            }
+            #left {
+                grid-area: l;
+            }
+            #right {
+                grid-area: r;
+            }
+            #down {
+                grid-area: d;
+            }
+            button {
+                border-radius: 50%;
+                border-color: #8ae234;
+                background-color: #2e3436;
+                color: #8ae234;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="term-container">
+            <div id = "terminal"></div>
+        </div>
+        <div id="controls">
+            <button type="button" id="up">^</button>
+            <button type="button" id="down">v</button>
+            <button type="button" id="left"><</button>
+            <button type="button" id="right">></button>
+        </div>
+        <script type="module">
+            import init, * as app from "./browser.js";
+            Promise.sleep = (ms) => {
+                return new Promise(r => setTimeout(r, ms || 100));
+            }
+            const Event = Object.freeze({
+                up: 1,
+                down: 2,
+                left: 3,
+                right: 4,
+            })
+            // let app;
+            let eventHandler = eventId => {
+                console.log("eventHandler")
+                if (!app) {
+                    return console.warn("App not yet initialized");
+                }
+                console.log("calling app.event with arg", eventId);
+                app.event(eventId);
+            }
+            document.getElementById("up").addEventListener("click", () => eventHandler(Event.up));
+            document.getElementById("left").addEventListener("click", () => eventHandler(Event.left));
+            document.getElementById("right").addEventListener("click", () => eventHandler(Event.right));
+            document.getElementById("down").addEventListener("click", () => eventHandler(Event.down));
+            
+            let canvas = document.getElementById("terminal");
+            window.canvasSizeW = function () {
+                return 100;
+            }
+            window.canvasSizeH = function () {
+                return 30;
+            }
+            let term = new window.Terminal({
+                cursorBlink: false,
+                cols: canvasSizeW()+2,
+                rows: canvasSizeH()+2,
+                cursorInactiveStyle: "none",
+                disableStdin: true,
+                fontFamily: '"Share Tech Mono" monospace',
+                fontSize: 16,
+                scrollback: 0,
+                theme: {
+                    // "black": "#000000",
+                },
+            });
+
+            term.open(canvas);
+            if (!!term.textarea) {
+                term.textarea.hidden = true;
+            }
+            window.term = term;
+            term.attachCustomKeyEventHandler((ev) => {
+                console.log("attachCustomKeyEventHandler", ev);
+            });
+            /**
+             * @param text {string}
+             * @param x {integer}
+             * @param y {integer}
+             * @param bold {bool}
+             * @param italic {bool}
+             * */
+            window.writeToCanvas = function (text, x, y, bold, italic) {
+                console.log("writeToCanvas", text)
+                term.write(`\x1B[${y+1};${x+1}H`);
+                if (bold) {
+                    term.write("\x1B[1m");
+                }
+                if (italic) {
+                    term.write("\x1b[3m");
+                }
+                term.write(text);
+                term.refresh(x, Math.min(x+1, term.rows - 1));
+            }
+            window.writeToTerminal = (text) => {
+                console.log("writeToTerminal", text)
+                term.write(text);
+            }
+            
+            window.addEventListener("keydown", ev => {
+                ev.stopPropagation();
+                ev.stopImmediatePropagation();
+                let arg = 0;
+                switch (ev.key) {
+                    case "ArrowUp":
+                        arg = Event.up;
+                        break;
+                    case "ArrowDown":
+                        arg = Event.down;
+                        break;
+                    case "ArrowLeft":
+                        arg = Event.left;
+                        break;
+                    case "Enter":
+                    case "ArrowRight":
+                        arg = Event.right;
+                        break;
+                    default:
+                        console.warn("Unknown key:", ev.code);
+                        break;
+                }
+                eventHandler(arg);
+                return false;
+            });
+            
+            init("./browser_bg.wasm").then(async () => {
+                console.log("running app");
+                app.run();
+                app.event(1);
+            }).catch(console.error);
+            
+        </script>
+    </body>
+</html>

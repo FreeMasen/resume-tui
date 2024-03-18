@@ -112,6 +112,8 @@ impl App {
         let block = Block::bordered()
             .title("Menu")
             .title_alignment(Alignment::Center)
+            .border_set(ratatui::symbols::border::PLAIN)
+            .borders(Borders::TOP | Borders::LEFT | Borders::BOTTOM)
             .style(Style::new().fg(Color::Green).bg(Color::Black));
         let content_area = block.inner(area);
         block.render(area, buf);
@@ -121,12 +123,19 @@ impl App {
             "Open Source".into(),
             "Education".into(),
         ]);
-        StatefulWidget::render(
-            list.highlight_style(Style::new().bg(Color::LightGreen).fg(Color::Black)),
-            content_area,
-            buf,
-            self.main_menu_state.as_mut(),
-        );
+        let list = if self.sub_page.is_some() {
+            list.style(Style::new().add_modifier(Modifier::DIM))
+                .highlight_style(
+                    Style::new()
+                        .bg(Color::Black)
+                        .fg(Color::LightGreen)
+                        .bold()
+                        .remove_modifier(Modifier::DIM),
+                )
+        } else {
+            list.highlight_style(Style::new().bg(Color::LightGreen).fg(Color::Black))
+        };
+        StatefulWidget::render(list, content_area, buf, self.main_menu_state.as_mut());
     }
 
     fn render_page(&mut self, area: Rect, buf: &mut Buffer) {
@@ -139,6 +148,12 @@ impl App {
             .title(Title::from(title))
             .title_alignment(Alignment::Center)
             .style(Style::new().fg(Color::Green).bg(Color::Black))
+            .border_set(
+            ratatui::symbols::border::Set {
+                top_left: symbols::line::NORMAL.horizontal_down,
+                bottom_left: symbols::line::NORMAL.horizontal_up,
+                ..symbols::border::PLAIN
+            })
             .padding(Padding::zero());
         let inner_rect = total_area.inner(area);
         total_area.render(area, buf);
@@ -161,12 +176,12 @@ impl App {
         Paragraph::new(vec![DATABASE.name.bold().into(), DATABASE.tag_line.into()])
             .alignment(Alignment::Center)
             .render(content_area, buf);
-        let foot_layout = Layout::horizontal([50, 50]);
+        let foot_layout = Layout::horizontal(Constraint::from_percentages([50, 50]));
         let [lhs, rhs] = foot_layout.areas(footer);
         Paragraph::new(
             DATABASE
                 .github
-                .map(|gh| format!("https://github.com/{gh}"))
+                .map(|gh| format!(" https://github.com/{gh}"))
                 .unwrap_or_default(),
         )
         .alignment(Alignment::Left)
@@ -174,7 +189,7 @@ impl App {
         Paragraph::new(
             DATABASE
                 .github
-                .map(|li| format!("https://www.linkedin.com/in/{li}"))
+                .map(|li| format!("https://www.linkedin.com/in/{li} "))
                 .unwrap_or_default(),
         )
         .alignment(Alignment::Right)
@@ -225,7 +240,10 @@ impl App {
 
 impl Widget for &mut App {
     fn render(self, area: Rect, buf: &mut Buffer) {
-        let full = Layout::horizontal(Constraint::from_percentages([15, 85]));
+        let full = Layout::horizontal([
+            Constraint::Length(12),
+            Constraint::Min(1)
+        ]);
         let [menu_area, display_area] = full.areas(area);
 
         self.render_menu(menu_area, buf);

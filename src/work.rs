@@ -225,7 +225,8 @@ impl Widget for DetailView {
         let sb = Scrollbar::new(ScrollbarOrientation::VerticalRight);
         view.lines
             .extend(convert_md(self.description, (area.width - 1) as _));
-        let ct = &view.lines
+        let ct = &view
+            .lines
             .iter()
             .rev()
             .take_while(|l| l.spans.iter().map(|s| s.content.len()).sum::<usize>() == 0usize)

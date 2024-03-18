@@ -221,13 +221,11 @@ impl Widget for DetailView {
         let mut view =
             Text::from(vec![Line::from(self.headline)
                 .style(Style::new().fg(Color::Green).bg(Color::Black).bold())]);
-        // let [text, scroll] =
-        //     Layout::horizontal([Constraint::Min(1), Constraint::Max(1)]).areas(area);
 
         let sb = Scrollbar::new(ScrollbarOrientation::VerticalRight);
         view.lines
             .extend(convert_md(self.description, (area.width - 1) as _));
-        let ct = dbg!(&view.lines)
+        let ct = &view.lines
             .iter()
             .rev()
             .take_while(|l| l.spans.iter().map(|s| s.content.len()).sum::<usize>() == 0usize)

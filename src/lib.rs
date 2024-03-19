@@ -13,6 +13,8 @@ mod work;
 
 use data::source::DATABASE;
 
+const DEFAULT_STYLE: Style = Style::new().fg(Color::Green).bg(Color::Black);
+
 #[derive(Debug, Clone)]
 pub struct App {
     main_menu_state: ListState,
@@ -114,7 +116,7 @@ impl App {
             .title_alignment(Alignment::Center)
             .border_set(ratatui::symbols::border::PLAIN)
             .borders(Borders::TOP | Borders::LEFT | Borders::BOTTOM)
-            .style(Style::new().fg(Color::Green).bg(Color::Black));
+            .style(DEFAULT_STYLE);
         let content_area = block.inner(area);
         block.render(area, buf);
         let list = List::new([
@@ -126,14 +128,12 @@ impl App {
         let list = if self.sub_page.is_some() {
             list.style(Style::new().add_modifier(Modifier::DIM))
                 .highlight_style(
-                    Style::new()
-                        .bg(Color::Black)
-                        .fg(Color::LightGreen)
+                    DEFAULT_STYLE
                         .bold()
                         .remove_modifier(Modifier::DIM),
                 )
         } else {
-            list.highlight_style(Style::new().bg(Color::LightGreen).fg(Color::Black))
+            list.highlight_style(Style::new().bg(Color::Green).fg(Color::Black))
         };
         StatefulWidget::render(list, content_area, buf, self.main_menu_state.as_mut());
     }
@@ -147,7 +147,7 @@ impl App {
         let total_area = Block::bordered()
             .title(Title::from(title))
             .title_alignment(Alignment::Center)
-            .style(Style::new().fg(Color::Green).bg(Color::Black))
+            .style(DEFAULT_STYLE)
             .border_set(
             ratatui::symbols::border::Set {
                 top_left: symbols::line::NORMAL.horizontal_down,

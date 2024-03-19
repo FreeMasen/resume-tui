@@ -1,12 +1,12 @@
 use ratatui::{
-    buffer::Buffer, layout::{Alignment, Constraint, Layout, Rect}, style::{Color, Style, Stylize}, symbols::{self, border::Set}, text::Text, widgets::{Block, Borders, List, ListItem, Paragraph, StatefulWidget, Widget}
+    buffer::Buffer, layout::{Alignment, Constraint, Layout, Rect}, style::{Color, Style}, symbols::{self, border::Set}, text::Text, widgets::{Block, Borders, List, ListItem, Paragraph, StatefulWidget, Widget}
 };
 
 use crate::{
     data::{source::DATABASE, Project},
     list_state::ListStateWrapper as ListState,
     markdown::convert_md,
-    Navigable,
+    Navigable, DEFAULT_STYLE,
 };
 
 #[derive(Debug, Clone)]
@@ -39,9 +39,8 @@ impl Widget for OssView {
             .map(|w| ListItem::new(Text::from(format!("{}\n    {}", w.name, w.short_desc,))))
             .collect();
         let list = List::new(list_items)
-            .highlight_style(Style::new().bg(Color::LightGreen).fg(Color::Black))
-            .fg(Color::Green)
-            .bg(Color::Black);
+            .highlight_style(Style::new().bg(Color::Green).fg(Color::Black))
+            .style(DEFAULT_STYLE);
         StatefulWidget::render(list, area, buf, self.menu.as_mut());
     }
 }
@@ -154,9 +153,8 @@ impl Widget for ProjectView {
         );
         StatefulWidget::render(
             List::new(items)
-                .highlight_style(Style::new().bg(Color::LightGreen).fg(Color::Black))
-                .fg(Color::Green)
-                .bg(Color::Black),
+                .highlight_style(Style::new().bg(Color::Green).fg(Color::Black))
+                .style(DEFAULT_STYLE),
             details,
             buf,
             self.menu.as_mut(),
@@ -303,7 +301,7 @@ fn render_block(area: Rect, buf: &mut Buffer, title: &'static str, content: &'st
         .title_alignment(Alignment::Left)
         .border_set(set)
         .borders(border)
-        .style(Style::new().fg(Color::Green).bg(Color::Black));
+        .style(DEFAULT_STYLE);
     let rect = block.inner(area);
     block.render(area, buf);
     let content = crate::markdown::convert_md(content, rect.width as usize);

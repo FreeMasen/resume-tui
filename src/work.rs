@@ -8,7 +8,7 @@ use crate::{
     data::{source::DATABASE, Detail, Workplace},
     list_state::ListStateWrapper as ListState,
     markdown::convert_md,
-    Navigable,
+    Navigable, DEFAULT_STYLE,
 };
 
 #[derive(Debug, Clone)]
@@ -48,9 +48,8 @@ impl Widget for WorkView {
             })
             .collect();
         let list = List::new(list_items)
-            .highlight_style(Style::new().bg(Color::LightGreen).fg(Color::Black))
-            .fg(Color::Green)
-            .bg(Color::Black);
+            .highlight_style(Style::new().bg(Color::Green).fg(Color::Black))
+            .style(DEFAULT_STYLE);
         StatefulWidget::render(list, area, buf, self.menu.as_mut());
     }
 }
@@ -202,7 +201,7 @@ impl Widget for DetailView {
     fn render(mut self, area: Rect, buf: &mut Buffer) {
         let mut view =
             Text::from(vec![Line::from(self.headline)
-                .style(Style::new().fg(Color::Green).bg(Color::Black).bold())]);
+                .style(DEFAULT_STYLE.bg(Color::Black).bold())]);
 
         let sb = Scrollbar::new(ScrollbarOrientation::VerticalRight);
         view.lines
@@ -279,10 +278,10 @@ fn render_header_block<'a>(
     let block = Block::bordered()
         .title(title)
         .title_alignment(Alignment::Left)
-        .style(Style::new().fg(Color::Green).bg(Color::Black))
+        .style(DEFAULT_STYLE)
         .borders(border)
         .border_set(corners)
-        .border_style(Style::new().fg(Color::Green).bg(Color::Black));
+        .border_style(DEFAULT_STYLE);
     let rect = block.inner(area);
     block.render(area, buf);
     let content = convert_md(content, rect.width as usize);
@@ -295,14 +294,9 @@ fn render_job_details<'a>(
     area: Rect,
     buf: &mut Buffer,
 ) {
-    // let block = Block::bordered()
-    //     .title("Details")
-    //     .style(Style::new().fg(Color::Green).bg(Color::Black));
-    // let block_inner = block.inner(area);
-    // block.render(area, buf);
     let list: Vec<_> = details.into_iter().map(map_detail_to_list_item).collect();
     StatefulWidget::render(
-        List::new(list).highlight_style(Style::new().bg(Color::LightGreen).fg(Color::Black)),
+        List::new(list).highlight_style(Style::new().bg(Color::Green).fg(Color::Black)),
         area,
         buf,
         state.as_mut(),

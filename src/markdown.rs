@@ -1,6 +1,6 @@
 use pulldown_cmark::{CodeBlockKind, Event, Parser, Tag, TagEnd};
 use ratatui::{
-    style::{Color, Modifier, Style},
+    style::{Modifier, Style},
     text::{Line, Span, Text},
 };
 
@@ -11,8 +11,8 @@ pub fn convert_md(s: &'static str, width: usize) -> Text<'static> {
     })
 }
 
-fn default_style() -> Style {
-    Style::new().fg(Color::Green).bg(Color::Black)
+const fn default_style() -> Style {
+    crate::DEFAULT_STYLE
 }
 
 fn convert(s: &'static str, width: usize) -> Option<Text<'static>> {

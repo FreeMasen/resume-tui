@@ -1,9 +1,5 @@
 use ratatui::{
-    buffer::Buffer,
-    layout::{Alignment, Constraint, Layout, Rect},
-    style::{Color, Style, Stylize},
-    text::Text,
-    widgets::{Block, List, ListItem, Paragraph, StatefulWidget, Widget},
+    buffer::Buffer, layout::{Alignment, Constraint, Layout, Rect}, style::{Color, Style, Stylize}, symbols::{self, border::Set}, text::Text, widgets::{Block, Borders, List, ListItem, Paragraph, StatefulWidget, Widget}
 };
 
 use crate::{
@@ -136,7 +132,14 @@ impl Widget for ProjectView {
         );
 
         if self.project.sub_projects.is_empty() {
-            render_block(details, buf, "Detailed Description", self.project.long_desc);
+            render_block(
+                details,
+                buf,
+                "Detailed Description",
+                self.project.long_desc,
+                Borders::ALL,
+                Default::default(),
+            );
             return;
         }
         let mut items = vec![
@@ -276,16 +279,30 @@ fn render_two_blocks<'a>(
     buf: &mut Buffer,
     details: impl Iterator<Item = (&'static str, &'static str)>,
 ) {
+    let borders = [
+            (Borders::ALL, Set {
+                top_right: symbols::line::NORMAL.horizontal_down,
+                bottom_right: symbols::line::NORMAL.horizontal_up,
+                ..Default::default()
+            }),
+            (Borders::ALL ^ Borders::LEFT, Set {
+                top_right: symbols::line::NORMAL.horizontal_down,
+                bottom_right: symbols::line::NORMAL.horizontal_up,
+                ..Default::default()
+            }),
+        ];
     let cells: [Rect; 2] = Layout::horizontal(Constraint::from_percentages([50; 2])).areas(area);
-    for (cell, (title, content)) in cells.into_iter().zip(details.into_iter()) {
-        render_block(cell, buf, title, content);
+    for ((cell, (title, content)), (borders, set)) in cells.into_iter().zip(details.into_iter()).zip(borders.into_iter()) {
+        render_block(cell, buf, title, content, borders, set);
     }
 }
 
-fn render_block(area: Rect, buf: &mut Buffer, title: &'static str, content: &'static str) {
+fn render_block(area: Rect, buf: &mut Buffer, title: &'static str, content: &'static str, border: Borders, set: Set) {
     let block = Block::bordered()
         .title(title)
         .title_alignment(Alignment::Left)
+        .border_set(set)
+        .borders(border)
         .style(Style::new().fg(Color::Green).bg(Color::Black));
     let rect = block.inner(area);
     block.render(area, buf);

@@ -1,12 +1,7 @@
 use ratatui::{
-    buffer::Buffer,
-    layout::{Alignment, Constraint, Flex, Layout, Rect},
-    style::{Color, Style, Stylize},
-    text::{Line, Text},
-    widgets::{
-        Block, List, ListItem, Paragraph, Scrollbar, ScrollbarOrientation, ScrollbarState,
-        StatefulWidget, Widget,
-    },
+    buffer::Buffer, layout::{Alignment, Constraint, Flex, Layout, Rect}, style::{Color, Modifier, Style, Stylize}, symbols::{self, border::Set}, text::{Line, Text}, widgets::{
+        Block, Borders, List, ListItem, Paragraph, Scrollbar, ScrollbarOrientation, ScrollbarState, StatefulWidget, Widget
+    }
 };
 
 use crate::{
@@ -166,31 +161,18 @@ impl Widget for JobView {
             sub_page.render(area, buf);
             return;
         }
-        let [header, dates, details] = Layout::vertical([
-            Constraint::Length(3),
+        let [header, details] = Layout::vertical([
             Constraint::Length(3),
             Constraint::Min(1),
         ])
         .flex(Flex::Start)
         .areas(area);
-        render_two_blocks(
-            header,
-            buf,
-            [
-                ("Company", self.workplace.name),
-                ("Title", self.workplace.title),
-            ]
-            .into_iter(),
-        );
-        render_two_blocks(
-            dates,
-            buf,
-            [
-                ("Start", self.workplace.start),
-                ("End", self.workplace.end.unwrap_or("Current")),
-            ]
-            .into_iter(),
-        );
+        render_header(header, buf, [
+            ("Company", self.workplace.name),
+            ("Title", self.workplace.title),
+            ("Start", self.workplace.start),
+            ("End", self.workplace.end.unwrap_or("Current")),
+        ].into_iter());
         render_job_details(&mut self.menu, self.workplace.details.iter(), details, buf);
     }
 }
@@ -225,14 +207,8 @@ impl Widget for DetailView {
         let sb = Scrollbar::new(ScrollbarOrientation::VerticalRight);
         view.lines
             .extend(convert_md(self.description, (area.width - 1) as _));
-        let ct = &view
-            .lines
-            .iter()
-            .rev()
-            .take_while(|l| l.spans.iter().map(|s| s.content.len()).sum::<usize>() == 0usize)
-            .count();
+        
         let height = view.lines.len();
-        log::debug!("cleaned new lines: before: {height}, after: {ct}",);
         let paragraph = Paragraph::new(view).scroll((self.scroll, 0));
         self.scroll_max = height as u16;
         self.scroll_state = self.scroll_state.content_length(height);
@@ -259,22 +235,53 @@ impl Navigable for DetailView {
     }
 }
 
-fn render_two_blocks<'a>(
+fn render_header<'a>(
     area: Rect,
     buf: &mut Buffer,
     details: impl Iterator<Item = (&'static str, &'static str)>,
 ) {
-    let cells: [Rect; 2] = Layout::horizontal(Constraint::from_percentages([50; 2])).areas(area);
-    for (cell, (title, content)) in cells.into_iter().zip(details.into_iter()) {
-        render_block(cell, buf, title, content);
+    let borders = [
+        (Borders::ALL ^ Borders::RIGHT, Set {
+            top_right: symbols::line::NORMAL.horizontal_down,
+            bottom_right: symbols::line::NORMAL.horizontal_up,
+            ..Set::default()
+        }),
+        (Borders::ALL ^ Borders::RIGHT, Set {
+            top_left: symbols::line::NORMAL.horizontal_down,
+            bottom_left: symbols::line::NORMAL.horizontal_up,
+            ..Set::default()
+        }),
+        (Borders::ALL ^ Borders::RIGHT, Set {
+            top_left: symbols::line::NORMAL.horizontal_down,
+            bottom_left: symbols::line::NORMAL.horizontal_up,
+            ..Set::default()
+        }),
+        (Borders::ALL, Set {
+            top_left: symbols::line::NORMAL.horizontal_down,
+            bottom_left: symbols::line::NORMAL.horizontal_up,
+            ..Set::default()
+        }),
+    ];
+    let cells: [Rect; 4] = Layout::horizontal(Constraint::from_percentages([25; 4])).areas(area);
+    for ((cell, (title, content)), (borders, set)) in cells.into_iter().zip(details.into_iter()).zip(borders.into_iter()) {
+        render_header_block(cell, buf, title, content, borders, set);
     }
 }
 
-fn render_block<'a>(area: Rect, buf: &mut Buffer, title: &'static str, content: &'static str) {
+fn render_header_block<'a>(
+    area: Rect,
+    buf: &mut Buffer,
+    title: &'static str,
+    content: &'static str,
+    border: Borders,
+    corners: Set,
+) {
     let block = Block::bordered()
         .title(title)
         .title_alignment(Alignment::Left)
         .style(Style::new().fg(Color::Green).bg(Color::Black))
+        .borders(border)
+        .border_set(corners)
         .border_style(Style::new().fg(Color::Green).bg(Color::Black));
     let rect = block.inner(area);
     block.render(area, buf);
@@ -288,23 +295,23 @@ fn render_job_details<'a>(
     area: Rect,
     buf: &mut Buffer,
 ) {
-    let block = Block::bordered()
-        .title("Details")
-        .style(Style::new().fg(Color::Green).bg(Color::Black));
-    let block_inner = block.inner(area);
-    block.render(area, buf);
+    // let block = Block::bordered()
+    //     .title("Details")
+    //     .style(Style::new().fg(Color::Green).bg(Color::Black));
+    // let block_inner = block.inner(area);
+    // block.render(area, buf);
     let list: Vec<_> = details.into_iter().map(map_detail_to_list_item).collect();
     StatefulWidget::render(
         List::new(list).highlight_style(Style::new().bg(Color::LightGreen).fg(Color::Black)),
-        block_inner,
+        area,
         buf,
         state.as_mut(),
     );
 }
 
 fn map_detail_to_list_item<'a>(detail: &'a Detail) -> ListItem<'a> {
-    let title = Line::from(detail.headline.bold());
-    let details = Line::from(detail.snippet);
+    let title = Line::from(detail.headline.add_modifier(Modifier::BOLD));
+    let details = Line::from(format!("  {}", detail.snippet));
     let text = Text::from(vec![title, details]);
     ListItem::new(text)
 }

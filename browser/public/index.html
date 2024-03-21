@@ -23,6 +23,7 @@
                 margin-left: auto;
                 margin-right: auto;
                 overflow: hidden;
+                position: relative;
             }
             .xterm-helpers {
                 color: transparent;
@@ -33,8 +34,8 @@
             #controls {
                 display: grid;
                 position: absolute;
-                left: 0;
-                bottom: 0;
+                left: 13px;
+                bottom: 35px;
                 grid-template-rows: repeat(3, 1fr);
                 grid-template-columns: repeat(3, 1fr);
                 grid-template-areas:
@@ -56,11 +57,10 @@
             }
             #controls button {
                 border-radius: 50%;
-                border-color: #8ae234;
+                border-color: #4e9a06;
                 background-color: #2e3436;
-                color: #8ae234;
+                color: #4e9a06;
                 display: none;
-                
             }
             @media (pointer:none), (pointer:coarse) {
                 body {
@@ -82,6 +82,12 @@
     <body>
         <div id="term-container">
             <div id = "terminal"></div>
+            <div id="controls">
+                <button type="button" id="up">^</button>
+                <button type="button" id="down">v</button>
+                <button type="button" id="left"><</button>
+                <button type="button" id="right">></button>
+            </div>
         </div>
         <div id="controls">
             <button type="button" id="up">^</button>
@@ -130,7 +136,9 @@
                 fontSize: 16,
                 scrollback: 0,
                 theme: {
-                    // "black": "#000000",
+                    selectionBackground: "transparent",
+                    selectionForeground: "transparent",
+                    selectionInactiveBackground: "transparent",
                 },
             });
 

@@ -23,29 +23,6 @@ impl ratatui::backend::Backend for Terminal {
         I: Iterator<Item = (u16, u16, &'a ratatui::prelude::buffer::Cell)>,
     {
         writeToTerminal(content.into_iter().map(|(x, y, c)| ansiify_cell(x, y, c)).collect());
-        // for (x, y, cell) in content {
-        //     let fg = match cell.fg {
-        //         ratatui::style::Color::Green => ansi_rgb::green(),
-        //         ratatui::style::Color::White => ansi_rgb::white(),
-        //         ratatui::style::Color::LightGreen => ansi_rgb::yellow_green(),
-        //         _ => ansi_rgb::black(),
-        //     };
-
-        //     let bg = match cell.bg {
-        //         ratatui::style::Color::Green => ansi_rgb::green(),
-        //         ratatui::style::Color::White => ansi_rgb::white(),
-        //         ratatui::style::Color::LightGreen => ansi_rgb::yellow_green(),
-        //         _ => ansi_rgb::black(),
-        //     };
-        //     use ansi_rgb::{Background, Foreground};
-        //     writeToCanvas(
-        //         format!("{}", cell.symbol().fg(fg).bg(bg)),
-        //         x,
-        //         y,
-        //         cell.modifier.contains(Modifier::BOLD),
-        //         cell.modifier.contains(Modifier::ITALIC),
-        //     );
-        // }
         Ok(())
     }
 

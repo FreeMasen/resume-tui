@@ -5,12 +5,16 @@
             integrity="sha512-a1TxekVOakgPoY7Z2SbpYAMhA6ZnhRGsczeVJLZPrleMzRcK84GnVo0JOPg/BVCNerWlZLPt4cEMKP8GDyfyxA=="
             crossorigin="anonymous" referrerpolicy="no-referrer"></script>
         <style>
-            
+            :root {
+                --green: #4e9a06;
+                --black: #2e3436;
+            }
+
 
             body {
                 margin: 0;
                 overflow: hidden;
-                background: #2e3436;
+                background: var(--black);
                 width: 100%;
                 height: 100%;
                 display: flex;
@@ -57,11 +61,12 @@
             }
             #controls button {
                 border-radius: 50%;
-                border-color: #4e9a06;
+                border-color: var(--green);
                 background-color: #2e3436;
-                color: #4e9a06;
+                color: var(--green);
                 display: none;
             }
+            /* Detecting mobile browsers... */
             @media (pointer:none), (pointer:coarse) {
                 body {
                     overflow: scroll;
@@ -128,6 +133,8 @@
             }
             let term = new window.Terminal({
                 cursorBlink: false,
+                // +2 here to add 1 character of padding
+                // around the rendered symbols
                 cols: canvasSizeW()+2,
                 rows: canvasSizeH()+2,
                 cursorInactiveStyle: "none",
@@ -159,6 +166,9 @@
              * */
             window.writeToCanvas = function (text, x, y, bold, italic) {
                 console.log("writeToCanvas", text)
+                // +1 here because we have an extra character
+                // of padding around the edge of the terminal
+                // element
                 term.write(`\x1B[${y+1};${x+1}H`);
                 if (bold) {
                     term.write("\x1B[1m");

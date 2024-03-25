@@ -3,6 +3,7 @@ use ratatui::{
         Block, Borders, List, ListItem, Paragraph, Scrollbar, ScrollbarOrientation, ScrollbarState, StatefulWidget, Widget
     }
 };
+use tui_scrollview::{ScrollView, ScrollViewState};
 
 use crate::{
     data::{source::DATABASE, Detail, Workplace},
@@ -113,6 +114,7 @@ impl From<Workplace> for JobView {
 
 impl Navigable for JobView {
     fn increment_selection(&mut self) {
+        log::trace!("JobView::increment_selection");
         if let Some(detail) = self.detail.as_mut() {
             detail.increment_selection();
             return;
@@ -121,6 +123,7 @@ impl Navigable for JobView {
     }
 
     fn decrement_selection(&mut self) {
+        log::trace!("JobView::decrement_selection");
         if let Some(detail) = self.detail.as_mut() {
             detail.decrement_selection();
             return;
@@ -180,9 +183,7 @@ impl Widget for JobView {
 struct DetailView {
     headline: &'static str,
     description: &'static str,
-    scroll_state: ScrollbarState,
-    scroll: u16,
-    scroll_max: u16,
+    scroll_state: ScrollViewState,
 }
 
 impl<'a> From<&'a Detail> for DetailView {
@@ -191,8 +192,6 @@ impl<'a> From<&'a Detail> for DetailView {
             headline: detail.headline,
             description: detail.detail,
             scroll_state: Default::default(),
-            scroll: 0,
-            scroll_max: 0,
         }
     }
 }
@@ -200,31 +199,31 @@ impl<'a> From<&'a Detail> for DetailView {
 impl Widget for DetailView {
     fn render(mut self, area: Rect, buf: &mut Buffer) {
         let mut view =
-            Text::from(vec![Line::from(self.headline)
-                .style(DEFAULT_STYLE.bg(Color::Black).bold())]);
-
-        let sb = Scrollbar::new(ScrollbarOrientation::VerticalRight);
-        view.lines
-            .extend(convert_md(self.description, (area.width - 1) as _));
+            Text::from(vec![
+                Line::from(self.headline)
+                .style(DEFAULT_STYLE.bold()),
+                ]);
+        let mut size = area.as_size();
+        size.height += 1;
         
-        let height = view.lines.len();
-        let paragraph = Paragraph::new(view).scroll((self.scroll, 0));
-        self.scroll_max = height as u16;
-        self.scroll_state = self.scroll_state.content_length(height);
-        paragraph.render(area, buf);
-        StatefulWidget::render(sb, area, buf, &mut self.scroll_state);
+        let mut sv = ScrollView::new(size);
+        view.lines
+            .extend(convert_md(self.description, (size.width) as _));
+        log::debug!("{:#?}", self.scroll_state);
+        sv.render_widget(view, area);
+        StatefulWidget::render(sv, area, buf, &mut self.scroll_state);
     }
 }
 
 impl Navigable for DetailView {
     fn increment_selection(&mut self) {
-        self.scroll = self.scroll.saturating_add(1).min(self.scroll_max);
-        self.scroll_state = self.scroll_state.position(self.scroll as _);
+        log::trace!("DetailView::increment_selection");
+        self.scroll_state.scroll_down();
     }
-
+    
     fn decrement_selection(&mut self) {
-        self.scroll = self.scroll.saturating_sub(1);
-        self.scroll_state = self.scroll_state.position(self.scroll as _);
+        log::trace!("DetailView::decrement_selection");
+        self.scroll_state.scroll_up();
     }
 
     fn handle_enter(&mut self) {}

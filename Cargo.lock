@@ -665,6 +665,7 @@ dependencies = [
  "syn 2.0.52",
  "thiserror",
  "toml",
+ "tui-scrollview",
 ]
 
 [[package]]
@@ -943,6 +944,16 @@ dependencies = [
  "sharded-slab",
  "thread_local",
  "tracing-core",
+]
+
+[[package]]
+name = "tui-scrollview"
+version = "0.3.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ab6018c2fed0387ef031350342548eeca6a41ab5bcc511b2f3f2b11381f455d8"
+dependencies = [
+ "indoc",
+ "ratatui",
 ]
 
 [[package]]

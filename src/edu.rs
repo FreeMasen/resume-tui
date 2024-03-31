@@ -1,5 +1,7 @@
 use ratatui::{
-    symbols, text::{Line, Span, Text}, widgets::{List, ListItem, Widget}
+    symbols,
+    text::{Line, Span, Text},
+    widgets::{List, ListItem, Widget},
 };
 
 use crate::{data::source::DATABASE, Navigable};
@@ -24,7 +26,9 @@ impl Widget for EduView {
                     if let Some(grad) = e.graduated {
                         items.push(Line::from(vec![Span::from("  Graduated: "), grad.into()]));
                     }
-                    items.push(Line::from(symbols::line::HORIZONTAL.repeat(area.width as _)));
+                    items.push(Line::from(
+                        symbols::line::HORIZONTAL.repeat(area.width as _),
+                    ));
                     ListItem::new(Text::from(items))
                 })
                 .collect::<Vec<_>>(),

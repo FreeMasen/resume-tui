@@ -66,7 +66,12 @@ impl log::Log for Log {
     }
 
     fn log(&self, record: &log::Record<'_>) {
-        let message = format!("{:?} {}: {}", record.level(), record.target(), record.args());
+        let message = format!(
+            "{:?} {}: {}",
+            record.level(),
+            record.target(),
+            record.args()
+        );
         web_sys::console::log_1(&JsValue::from(&message));
     }
 

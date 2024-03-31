@@ -1,21 +1,26 @@
 use ratatui::{
-    buffer::Buffer, layout::{Alignment, Constraint, Layout, Rect}, style::{Color, Style}, symbols::{self, border::Set}, text::Text, widgets::{Block, Borders, List, ListItem, Paragraph, StatefulWidget, Widget}
+    buffer::Buffer,
+    layout::{Alignment, Constraint, Layout, Rect},
+    style::{Color, Style},
+    symbols::{self, border::Set},
+    text::Text,
+    widgets::{Block, Borders, List, ListItem, Paragraph, StatefulWidget, Widget},
 };
 
 use crate::{
     data::{source::DATABASE, Project},
     list_state::ListStateWrapper as ListState,
-    markdown::convert_md,
+    detail_view::DetailView,
     Navigable, DEFAULT_STYLE,
 };
 
 #[derive(Debug, Clone)]
-pub struct OssView {
+pub struct OssView<'a> {
     menu: ListState,
-    sub_page: Option<ProjectView>,
+    sub_page: Option<ProjectView<'a>>,
 }
 
-impl Default for OssView {
+impl<'a> Default for OssView<'a> {
     fn default() -> Self {
         Self {
             menu: ListState::new(DATABASE.open_source.len().saturating_sub(1)),
@@ -24,7 +29,7 @@ impl Default for OssView {
     }
 }
 
-impl Widget for OssView {
+impl<'a> Widget for OssView<'a> {
     fn render(mut self, area: ratatui::prelude::Rect, buf: &mut ratatui::prelude::Buffer)
     where
         Self: Sized,
@@ -45,7 +50,7 @@ impl Widget for OssView {
     }
 }
 
-impl Navigable for OssView {
+impl<'a> Navigable for OssView<'a> {
     fn increment_selection(&mut self) {
         if let Some(sub_page) = self.sub_page.as_mut() {
             sub_page.increment_selection();
@@ -85,19 +90,19 @@ impl Navigable for OssView {
 }
 
 #[derive(Debug, Clone)]
-pub struct ProjectView {
+pub struct ProjectView<'a> {
     project: Project,
     menu: ListState,
-    sub_page: Option<SubProjectView>,
+    sub_page: Option<SubProjectView<'a>>,
 }
 
 #[derive(Debug, Clone)]
-pub enum SubProjectView {
-    SubProject(Box<ProjectView>),
-    LongDescription(&'static str),
+pub enum SubProjectView<'a> {
+    SubProject(Box<ProjectView<'a>>),
+    LongDescription(DetailView<'a>),
 }
 
-impl From<&Project> for ProjectView {
+impl<'a> From<&Project> for ProjectView<'a> {
     fn from(value: &Project) -> Self {
         Self {
             project: value.clone(),
@@ -107,7 +112,7 @@ impl From<&Project> for ProjectView {
     }
 }
 
-impl Widget for ProjectView {
+impl<'a> Widget for ProjectView<'a> {
     fn render(mut self, area: ratatui::prelude::Rect, buf: &mut ratatui::prelude::Buffer)
     where
         Self: Sized,
@@ -148,7 +153,7 @@ impl Widget for ProjectView {
         items.extend(
             self.project
                 .sub_projects
-                .into_iter()
+                .iter()
                 .map(|p| ListItem::new(format!("  {}", p.name))),
         );
         StatefulWidget::render(
@@ -162,19 +167,19 @@ impl Widget for ProjectView {
     }
 }
 
-impl Widget for SubProjectView {
+impl<'a> Widget for SubProjectView<'a> {
     fn render(self, area: ratatui::prelude::Rect, buf: &mut ratatui::prelude::Buffer)
     where
         Self: Sized,
     {
         match self {
-            Self::LongDescription(text) => convert_md(text, area.width as usize).render(area, buf),
+            Self::LongDescription(text) => text.render(area, buf),
             Self::SubProject(proj) => (*proj).render(area, buf),
         }
     }
 }
 
-impl Navigable for ProjectView {
+impl<'a> Navigable for ProjectView<'a> {
     fn increment_selection(&mut self) {
         log::trace!("ProjectView::increment_selection");
         let Some(sub_page) = self.sub_page.as_mut() else {
@@ -187,10 +192,10 @@ impl Navigable for ProjectView {
             }
             return;
         };
-        let SubProjectView::SubProject(inner) = sub_page else {
-            return;
-        };
-        inner.increment_selection();
+        match sub_page {
+            SubProjectView::SubProject(inner) => inner.increment_selection(),
+            SubProjectView::LongDescription(inner) => inner.increment_selection(),
+        }
     }
 
     fn decrement_selection(&mut self) {
@@ -204,10 +209,10 @@ impl Navigable for ProjectView {
             }
             return;
         };
-        let SubProjectView::SubProject(inner) = sub_page else {
-            return;
-        };
-        inner.decrement_selection();
+        match sub_page {
+            SubProjectView::SubProject(inner) => inner.decrement_selection(),
+            SubProjectView::LongDescription(inner) => inner.decrement_selection(),
+        }
     }
 
     fn handle_enter(&mut self) {
@@ -221,7 +226,10 @@ impl Navigable for ProjectView {
             return;
         };
         if idx == 0 {
-            self.sub_page = Some(SubProjectView::LongDescription(self.project.long_desc));
+            self.sub_page = Some(SubProjectView::LongDescription(DetailView::new(
+                self.project.name,
+                self.project.long_desc,
+            )));
         } else if let Some(sub_project) = self.project.sub_projects.get(idx - 2).cloned() {
             self.sub_page = Some(SubProjectView::SubProject(Box::new(ProjectView {
                 menu: ListState::new(sub_project.sub_projects.len()),
@@ -242,19 +250,19 @@ impl Navigable for ProjectView {
     }
 }
 
-impl Navigable for SubProjectView {
+impl<'a> Navigable for SubProjectView<'a> {
     fn increment_selection(&mut self) {
-        let SubProjectView::SubProject(inner) = self else {
-            return;
-        };
-        inner.increment_selection()
+        match self {
+            SubProjectView::LongDescription(inner) => inner.increment_selection(),
+            SubProjectView::SubProject(inner) => inner.increment_selection(),
+        }
     }
 
     fn decrement_selection(&mut self) {
-        let SubProjectView::SubProject(inner) = self else {
-            return;
-        };
-        inner.decrement_selection()
+        match self {
+            SubProjectView::LongDescription(inner) => inner.decrement_selection(),
+            SubProjectView::SubProject(inner) => inner.decrement_selection(),
+        }
     }
 
     fn handle_enter(&mut self) {
@@ -272,30 +280,47 @@ impl Navigable for SubProjectView {
     }
 }
 
-fn render_two_blocks<'a>(
+fn render_two_blocks(
     area: Rect,
     buf: &mut Buffer,
     details: impl Iterator<Item = (&'static str, &'static str)>,
 ) {
     let borders = [
-            (Borders::ALL, Set {
+        (
+            Borders::ALL,
+            Set {
                 top_right: symbols::line::NORMAL.horizontal_down,
                 bottom_right: symbols::line::NORMAL.horizontal_up,
                 ..Default::default()
-            }),
-            (Borders::ALL ^ Borders::LEFT, Set {
+            },
+        ),
+        (
+            Borders::ALL ^ Borders::LEFT,
+            Set {
                 top_right: symbols::line::NORMAL.horizontal_down,
                 bottom_right: symbols::line::NORMAL.horizontal_up,
                 ..Default::default()
-            }),
-        ];
+            },
+        ),
+    ];
     let cells: [Rect; 2] = Layout::horizontal(Constraint::from_percentages([50; 2])).areas(area);
-    for ((cell, (title, content)), (borders, set)) in cells.into_iter().zip(details.into_iter()).zip(borders.into_iter()) {
+    for ((cell, (title, content)), (borders, set)) in cells
+        .into_iter()
+        .zip(details.into_iter())
+        .zip(borders.into_iter())
+    {
         render_block(cell, buf, title, content, borders, set);
     }
 }
 
-fn render_block(area: Rect, buf: &mut Buffer, title: &'static str, content: &'static str, border: Borders, set: Set) {
+fn render_block(
+    area: Rect,
+    buf: &mut Buffer,
+    title: &'static str,
+    content: &'static str,
+    border: Borders,
+    set: Set,
+) {
     let block = Block::bordered()
         .title(title)
         .title_alignment(Alignment::Left)
@@ -304,6 +329,6 @@ fn render_block(area: Rect, buf: &mut Buffer, title: &'static str, content: &'st
         .style(DEFAULT_STYLE);
     let rect = block.inner(area);
     block.render(area, buf);
-    let content = crate::markdown::convert_md(content, rect.width as usize);
+    let content = crate::markdown::convert_md(content);
     Paragraph::new(content).render(rect, buf);
 }

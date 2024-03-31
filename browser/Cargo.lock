@@ -401,7 +401,6 @@ dependencies = [
 [[package]]
 name = "resume-tui"
 version = "0.0.3"
-source = "git+https://github.com/FreeMasen/resume-tui?tag=v0.0.3#8f9b220cd27a509c973f1db98582ce853dba1461"
 dependencies = [
  "color-eyre",
  "log",

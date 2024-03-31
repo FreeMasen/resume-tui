@@ -36,7 +36,7 @@ crossterm = ["dep:crossterm", "ratatui/crossterm"]
 
 
 [workspace]
-members = ["browser"]
+exclude = ["browser"]
 
 [package.metadata.wix]
 upgrade-guid = "B050A522-06FC-432E-B378-BFCF6C47F3B7"

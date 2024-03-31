@@ -22,7 +22,12 @@ impl ratatui::backend::Backend for Terminal {
     where
         I: Iterator<Item = (u16, u16, &'a ratatui::prelude::buffer::Cell)>,
     {
-        writeToTerminal(content.into_iter().map(|(x, y, c)| ansiify_cell(x, y, c)).collect());
+        writeToTerminal(
+            content
+                .into_iter()
+                .map(|(x, y, c)| ansiify_cell(x, y, c))
+                .collect(),
+        );
         Ok(())
     }
 
@@ -69,7 +74,6 @@ impl ratatui::backend::Backend for Terminal {
     }
 }
 
-
 fn ansiify_cell(x: u16, y: u16, cell: &Cell) -> String {
     const BOLD: &str = "\x1B[1m";
     const DIM: &str = "\x1B[2m";
@@ -79,7 +83,7 @@ fn ansiify_cell(x: u16, y: u16, cell: &Cell) -> String {
     const REVERSED: &str = "\x1B[7m";
     const HIDDEN: &str = "\x1B[8m";
     const STRIKE_THROUGH: &str = "\x1B[9m";
-    let mut ret = format!("\x1B[{};{}H", y+1, x + 1);
+    let mut ret = format!("\x1B[{};{}H", y + 1, x + 1);
     ret.push_str(ansiify_color_fg(cell.fg));
     ret.push_str(ansiify_color_bg(cell.bg));
     if cell.modifier.contains(Modifier::BOLD) {
@@ -106,7 +110,7 @@ fn ansiify_cell(x: u16, y: u16, cell: &Cell) -> String {
     if cell.modifier.contains(Modifier::REVERSED) {
         ret.push_str(REVERSED);
     }
-    
+
     ret.push_str(cell.symbol());
     ret.push_str("\x1B[0m");
     ret

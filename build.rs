@@ -20,7 +20,7 @@ fn main() {
     emit_rebuild_directives(&path);
 
     let rust = generate_from_toml_files(path);
-    fs::write(&dest_path, &rust).unwrap();
+    fs::write(dest_path, &rust).unwrap();
     fs::write("debug.rs", &rust).unwrap();
     std::process::Command::new("rustfmt")
         .arg("debug.rs")

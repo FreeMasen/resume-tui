@@ -4,8 +4,8 @@ use ratatui::{
     text::{Line, Span, Text},
 };
 
-pub fn convert_md(s: &'static str, width: usize) -> Text<'static> {
-    convert(s, width).unwrap_or_else(|| {
+pub fn convert_md(s: &'static str) -> Text<'static> {
+    convert(s).unwrap_or_else(|| {
         log::debug!("Plain text!");
         Text::raw(s)
     })
@@ -15,9 +15,9 @@ const fn default_style() -> Style {
     crate::DEFAULT_STYLE
 }
 
-fn convert(s: &'static str, width: usize) -> Option<Text<'static>> {
+fn convert(s: &'static str) -> Option<Text<'static>> {
     let parser = Parser::new(s);
-    let mut wrapper = Wrapper::new(width);
+    let mut wrapper = Wrapper::new();
     for event in parser {
         log::trace!("Event: {event:#?}");
         match event {
@@ -124,7 +124,7 @@ fn convert(s: &'static str, width: usize) -> Option<Text<'static>> {
                 wrapper.new_line();
             }
             Event::Rule => {
-                wrapper.push_text_with_style("-".repeat(width), default_style());
+                wrapper.push_text_with_style("-".repeat(5), default_style());
                 wrapper.new_line();
                 wrapper.new_line();
             }
@@ -141,8 +141,6 @@ fn convert(s: &'static str, width: usize) -> Option<Text<'static>> {
 struct Wrapper {
     line: Vec<Span<'static>>,
     lines: Vec<Line<'static>>,
-    max_width: usize,
-    current_width: usize,
     style: Style,
     line_prefix: Option<Span<'static>>,
     list_number: Option<u64>,
@@ -150,9 +148,8 @@ struct Wrapper {
 }
 
 impl Wrapper {
-    pub fn new(max_width: usize) -> Self {
+    pub fn new() -> Self {
         Self {
-            max_width,
             ..Default::default()
         }
     }
@@ -162,8 +159,6 @@ impl Wrapper {
     /// for dealing with lists and other similar text
     fn push_symbol(&mut self, ch: impl ToString) {
         self.line.push(ch.to_string().into());
-        self.current_width += 1;
-        self.check_line_length();
     }
 
     /// Push text into the current line, wrapping as needed
@@ -174,35 +169,15 @@ impl Wrapper {
     /// Push text into the current line, wrapping as needed
     fn push_text_with_style(&mut self, content: impl ToString, style: Style) {
         let content = content.to_string();
-        let mut span = Span::from(content).style(style);
-        while self.current_width + span.width() > self.max_width {
-            let idx: usize = self.max_width - self.current_width;
-            if idx > 0 {
-                let (left, right) = split_span(span, idx);
-                span = right;
-                self.line.push(left);
-                self.new_line();
-            } else {
-                self.new_line();
-                break;
-            }
-        }
-        self.current_width += span.width();
+        let span = Span::from(content).style(style);
         self.line.push(span);
     }
 
-    fn check_line_length(&mut self) {
-        if self.current_width >= self.max_width {
-            self.new_line();
-        }
-    }
-
     fn new_line(&mut self) {
-        let prev_lines = core::mem::replace(&mut self.line, Vec::new());
+        let prev_lines = core::mem::take(&mut self.line);
         self.lines.push(Line::from(prev_lines));
-        self.current_width = 0;
         if let Some(prefix) = self.line_prefix.clone() {
-            self.current_width += prefix.width();
+            // self.current_width += prefix.width();
             self.line.push(prefix);
         }
     }
@@ -257,17 +232,6 @@ impl Wrapper {
     }
 }
 
-fn split_span(span: Span<'static>, idx: usize) -> (Span<'static>, Span<'static>) {
-    let start: String = span.content.chars().take(idx).collect();
-    let last_space = start.rfind(' ').unwrap_or(idx);
-    let start = span.content[..last_space].to_string();
-    let end = span.content[last_space + 1..].to_string();
-    (
-        Span::from(start).style(span.style),
-        Span::from(end).style(span.style),
-    )
-}
-
 #[cfg(test)]
 mod test {
     use ratatui::{
@@ -315,14 +279,14 @@ fn main() {
 > don't forget that
 > these also auto-wrap
         "#;
-        assert_rendered!(convert_md(md, 40));
+        assert_rendered!(convert_md(md));
     }
 
     #[test]
     fn convert_markdown_one_line() {
         env_logger::builder().is_test(true).try_init().ok();
         let md = r#"just text"#;
-        assert_rendered!(convert_md(md, 40));
+        assert_rendered!(convert_md(md));
     }
 
     #[test]
@@ -337,7 +301,7 @@ hard
 
 
 double hard"#;
-        assert_rendered!(convert_md(md, 40));
+        assert_rendered!(convert_md(md));
     }
 
     #[test]
@@ -345,6 +309,6 @@ double hard"#;
         env_logger::builder().is_test(true).try_init().ok();
         let md = r#"> super important
 > block quote"#;
-        assert_rendered!(convert_md(md, 40));
+        assert_rendered!(convert_md(md));
     }
 }

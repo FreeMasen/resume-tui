@@ -5,6 +5,7 @@ use ratatui::{
 };
 
 mod data;
+mod detail_view;
 mod edu;
 mod list_state;
 mod markdown;
@@ -16,9 +17,9 @@ use data::source::DATABASE;
 const DEFAULT_STYLE: Style = Style::new().fg(Color::Green).bg(Color::Black);
 
 #[derive(Debug, Clone)]
-pub struct App {
+pub struct App<'a> {
     main_menu_state: ListState,
-    sub_page: Option<Page>,
+    sub_page: Option<Page<'a>>,
 }
 
 pub trait Navigable {
@@ -29,13 +30,13 @@ pub trait Navigable {
 }
 
 #[derive(Debug, Clone)]
-enum Page {
-    Work(work::WorkView),
-    Oss(oss::OssView),
+enum Page<'a> {
+    Work(work::WorkView<'a>),
+    Oss(oss::OssView<'a>),
     Edu(edu::EduView),
 }
 
-impl Navigable for Page {
+impl<'a> Navigable for Page<'a> {
     fn increment_selection(&mut self) {
         match self {
             Page::Work(inner) => inner.increment_selection(),
@@ -68,7 +69,13 @@ impl Navigable for Page {
     }
 }
 
-impl App {
+impl<'a> Default for App<'a> {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+impl<'a> App<'a> {
     pub fn new() -> Self {
         Self {
             main_menu_state: ListState::new(4),
@@ -127,11 +134,7 @@ impl App {
         ]);
         let list = if self.sub_page.is_some() {
             list.style(Style::new().add_modifier(Modifier::DIM))
-                .highlight_style(
-                    DEFAULT_STYLE
-                        .bold()
-                        .remove_modifier(Modifier::DIM),
-                )
+                .highlight_style(DEFAULT_STYLE.bold().remove_modifier(Modifier::DIM))
         } else {
             list.highlight_style(Style::new().bg(Color::Green).fg(Color::Black))
         };
@@ -148,8 +151,7 @@ impl App {
             .title(Title::from(title))
             .title_alignment(Alignment::Center)
             .style(DEFAULT_STYLE)
-            .border_set(
-            ratatui::symbols::border::Set {
+            .border_set(ratatui::symbols::border::Set {
                 top_left: symbols::line::NORMAL.horizontal_down,
                 bottom_left: symbols::line::NORMAL.horizontal_up,
                 ..symbols::border::PLAIN
@@ -238,12 +240,9 @@ impl App {
     }
 }
 
-impl Widget for &mut App {
+impl<'a> Widget for &mut App<'a> {
     fn render(self, area: Rect, buf: &mut Buffer) {
-        let full = Layout::horizontal([
-            Constraint::Length(12),
-            Constraint::Min(1)
-        ]);
+        let full = Layout::horizontal([Constraint::Length(12), Constraint::Min(1)]);
         let [menu_area, display_area] = full.areas(area);
 
         self.render_menu(menu_area, buf);

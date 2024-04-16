@@ -1,5 +1,13 @@
 name = "Luxure"
 short_desc = "HTTP Framework"
 
-long_desc = """
+long_desc = """This project was my initial entry into the Cosock organization, initially to support
+a SmartThings Edge Driver that acts as a virtual smart switch via a locally hosted HTTP server. This
+project provides and Express-like API for defining an HTTP server, where a `Server` is
+instantiated and provided an IP address, port pair to listen on. Endpoints are defined by calling
+methods on the `Server` corresponding to the HTTP Methods (GET, POST, PUT, etc). Finally the
+`Server` can be driven either via `run` which will occupy the whole process or can be driven
+manually via `tick` which will accept a single incoming request which allows the server to be
+used as a component of a process.  
+
 """

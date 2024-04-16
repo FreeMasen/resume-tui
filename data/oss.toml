@@ -13,9 +13,11 @@ they want to use.
 name = "Cosock"
 short_desc = "Lua couroutine I/O libraries"
 
-long_desc = """Cosock is both a coroutine executor based on LuaSocket and a collection of libraries
-for I/O operations on-top of those coroutines.
-
+long_desc = """Cosock is both a project and an organization. The Project is a coroutine executor
+based on the [LuaSocket API](https://github.com/lunarmodules/luasocket) and uses a polling via
+`select` to schedule coroutines. It provides udp, tcp, and tls socket facilities and an MPSC channel
+implementation. The Cosock organization includes projects that build upon these primitives to
+provide HTTP facilities.
 """
 
 [[project]]

@@ -4,7 +4,7 @@ use ratatui::{
     style::{Color, Style},
     symbols::{self, border::Set},
     text::Text,
-    widgets::{Block, Borders, List, ListItem, Paragraph, StatefulWidget, Widget},
+    widgets::{Block, Borders, List, ListItem, Paragraph, ScrollbarState, StatefulWidget, Widget},
 };
 
 use crate::{
@@ -92,6 +92,7 @@ impl<'a> Navigable for OssView<'a> {
 #[derive(Debug, Clone)]
 pub struct ProjectView<'a> {
     project: Project,
+    long_desc: DetailView<'a>,
     menu: ListState,
     sub_page: Option<SubProjectView<'a>>,
 }
@@ -106,6 +107,7 @@ impl<'a> From<&Project> for ProjectView<'a> {
     fn from(value: &Project) -> Self {
         Self {
             project: value.clone(),
+            long_desc: DetailView::new("Detailed Description", value.long_desc),
             menu: ListState::new(value.sub_projects.len() + 1),
             sub_page: None,
         }
@@ -136,14 +138,12 @@ impl<'a> Widget for ProjectView<'a> {
         );
 
         if self.project.sub_projects.is_empty() {
-            render_block(
-                details,
-                buf,
-                "Detailed Description",
-                self.project.long_desc,
-                Borders::ALL,
-                Default::default(),
-            );
+            self.long_desc.render(details, buf);
+            // render_long_desc(
+            //     details,
+            //     buf,
+            //     self.project.long_desc,
+            // );
             return;
         }
         let mut items = vec![
@@ -184,6 +184,7 @@ impl<'a> Navigable for ProjectView<'a> {
         log::trace!("ProjectView::increment_selection");
         let Some(sub_page) = self.sub_page.as_mut() else {
             if self.project.sub_projects.is_empty() {
+                self.long_desc.increment_selection();
                 return;
             }
             self.menu.increment();
@@ -201,6 +202,7 @@ impl<'a> Navigable for ProjectView<'a> {
     fn decrement_selection(&mut self) {
         let Some(sub_page) = self.sub_page.as_mut() else {
             if self.project.sub_projects.is_empty() {
+                self.long_desc.decrement_selection();
                 return;
             }
             self.menu.decrement();
@@ -233,6 +235,7 @@ impl<'a> Navigable for ProjectView<'a> {
         } else if let Some(sub_project) = self.project.sub_projects.get(idx - 2).cloned() {
             self.sub_page = Some(SubProjectView::SubProject(Box::new(ProjectView {
                 menu: ListState::new(sub_project.sub_projects.len()),
+                long_desc: DetailView::new("Detailed Description", sub_project.long_desc),
                 project: sub_project,
                 sub_page: None,
             })))
@@ -297,8 +300,6 @@ fn render_two_blocks(
         (
             Borders::ALL ^ Borders::LEFT,
             Set {
-                top_right: symbols::line::NORMAL.horizontal_down,
-                bottom_right: symbols::line::NORMAL.horizontal_up,
                 ..Default::default()
             },
         ),
@@ -331,4 +332,12 @@ fn render_block(
     block.render(area, buf);
     let content = crate::markdown::convert_md(content);
     Paragraph::new(content).render(rect, buf);
+}
+
+fn render_long_desc(
+    area: Rect,
+    buf: &mut Buffer,
+    content: &'static str,
+) {
+    DetailView::new("Detailed Description", content).render(area, buf);
 }

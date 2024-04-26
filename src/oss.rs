@@ -4,7 +4,7 @@ use ratatui::{
     style::{Color, Style},
     symbols::{self, border::Set},
     text::Text,
-    widgets::{Block, Borders, List, ListItem, Paragraph, ScrollbarState, StatefulWidget, Widget},
+    widgets::{Block, Borders, List, ListItem, Paragraph, StatefulWidget, Widget},
 };
 
 use crate::{
@@ -332,12 +332,4 @@ fn render_block(
     block.render(area, buf);
     let content = crate::markdown::convert_md(content);
     Paragraph::new(content).render(rect, buf);
-}
-
-fn render_long_desc(
-    area: Rect,
-    buf: &mut Buffer,
-    content: &'static str,
-) {
-    DetailView::new("Detailed Description", content).render(area, buf);
 }

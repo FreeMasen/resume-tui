@@ -8,11 +8,14 @@ deployed across the world, I developed a system for collecting and reporting met
 This system was constrained by the needs of the device's relatively low memory and long expected
 lifetime, meaning keeping a time series either on disk or in memory was unavailable. To achieve some
 level of visibility, I developed a solution that would allow queries to be sent to devices using
-Launch Darkly, once recieved the query would start collecting any metrics events in a low overhead
-_report_. This report would then be emitted to our platform's cloud for post-processing.
+Launch Darkly, once received the query would start collecting any metrics events in a low overhead
+report. This report would then be emitted to our platform's cloud for post-processing.
 
-For counters and gauges, I developed a solution that would calculate the min, max, and average
-values on the fly. For histogram events, the _HdrHistogram_ crate provided the calculations with a
-wrapper for handling float values in an integer-only implementation.
+For counters the report can calculate its state on the fly quite trivially. For gauges, I developed
+a solution that would calculate the min, max, and average values on the fly. For histogram events,
+the _HdrHistogram_ crate provided the calculations with a fixed size memory footprint with the
+limitation that all values need to be provided as an integer. Since the _metrics_ crate only
+provides histogram data as a 64-bit floating point number I developed a solution to for converting
+these float values to/from a u64 with an acceptable amount of data loss.
 
 """

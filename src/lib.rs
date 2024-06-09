@@ -12,7 +12,7 @@ mod markdown;
 mod oss;
 mod work;
 
-use data::source::DATABASE;
+pub use data::source::DATABASE;
 
 const DEFAULT_STYLE: Style = Style::new().fg(Color::Green).bg(Color::Black);
 

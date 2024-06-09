@@ -2,3 +2,5 @@
 /*.rs
 /*.log
 .vscode
+/**/.DS_Store
+resume.pdf

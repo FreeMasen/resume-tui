@@ -9,5 +9,5 @@ edition = "2021"
 resume-tui = { path = "../" }
 tempfile = "3.10"
 serde_yaml = "0.9"
-printpdf = "0.7"
+printpdf = {version = "0.7", features = ["svg"] }
 owned_ttf_parser = "0.21"

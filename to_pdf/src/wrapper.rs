@@ -11,9 +11,7 @@ pub struct WithCalc {
 
 impl WithCalc {
     pub fn new(font: TtfFace) -> Self {
-        Self {
-            font
-        }
+        Self { font }
     }
 
     pub fn word_width(&self, word: &str, pts_height: f32) -> f32 {
@@ -21,9 +19,10 @@ impl WithCalc {
     }
 
     fn char_width(&self, c: char, pts_height: f32) -> f32 {
-        let id = self.font.glyph_id(c).unwrap_or_else(|| {
-            panic!("Unknown glyph: {c}")
-        });
+        let id = self
+            .font
+            .glyph_id(c)
+            .unwrap_or_else(|| panic!("Unknown glyph: {c}"));
         let w = self.font.glyph_metrics(id).unwrap_or_else(|| {
             panic!("Unexpected glyph! {c} {id}");
         });
@@ -43,7 +42,8 @@ pub struct TtfFace {
 
 impl TtfFace {
     pub fn from_vec(v: Vec<u8>) -> Result<Self, String> {
-        let face = OwnedFace::from_vec(v, 0).map_err(|e| format!("Error parsing font face: {e}"))?;
+        let face =
+            OwnedFace::from_vec(v, 0).map_err(|e| format!("Error parsing font face: {e}"))?;
         let units_per_em = face.as_face_ref().units_per_em();
         Ok(Self {
             inner: std::sync::Arc::new(face),
@@ -72,8 +72,10 @@ impl FontData for TtfFace {
     fn glyph_ids(&self) -> HashMap<u16, char> {
         let subtables = self
             .face()
-            .tables().cmap.map(|cmap| cmap.subtables.into_iter().filter(|v| v.is_unicode()));
-         let Some(subtables) = subtables else{
+            .tables()
+            .cmap
+            .map(|cmap| cmap.subtables.into_iter().filter(|v| v.is_unicode()));
+        let Some(subtables) = subtables else {
             return HashMap::new();
         };
         let mut map = HashMap::with_capacity(self.face().number_of_glyphs().into());

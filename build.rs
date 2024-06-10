@@ -42,6 +42,8 @@ fn generate_from_toml_files(path: PathBuf) -> String {
     let tag_line = LitStr::new(&info.tag_line, Span::call_site());
     let github = optional_str(info.github);
     let linkedin = optional_str(info.linkedin);
+    let email = optional_str(info.email);
+    let phone = optional_str(info.phone);
     let jobs_text = std::fs::read_to_string(path.join("jobs.toml")).unwrap();
     let mut jobs_value: Jobs = toml::from_str(&jobs_text).unwrap();
     collect_jobs(&path, &mut jobs_value);
@@ -59,6 +61,8 @@ fn generate_from_toml_files(path: PathBuf) -> String {
             tag_line: #tag_line,
             github: #github,
             linkedin: #linkedin,
+            email: #email,
+            phone: #phone,
             jobs: #jobs,
             open_source: #oss,
             education: #edu,
@@ -114,6 +118,8 @@ pub struct Info {
     tag_line: String,
     github: Option<String>,
     linkedin: Option<String>,
+    email: Option<String>,
+    phone: Option<String>,
 }
 #[derive(Debug, Deserialize)]
 pub struct Jobs {

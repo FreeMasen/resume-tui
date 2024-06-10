@@ -4,6 +4,8 @@ pub struct Database {
     pub tag_line: &'static str,
     pub github: Option<&'static str>,
     pub linkedin: Option<&'static str>,
+    pub email: Option<&'static str>,
+    pub phone: Option<&'static str>,
     pub jobs: &'static [Workplace],
     pub open_source: &'static [Project],
     pub education: &'static [School],

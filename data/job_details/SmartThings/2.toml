@@ -8,6 +8,7 @@ devices. This project used, seccomp, nsjail, runtime checks, and an RPC layer to
 from the rest of the product.
 
 The RPC was implemented using gRPC over a unix domain socket where 1 child process was spawned for
-each 3rd party script installed by the user. 
+each 3rd party script installed by the user. I later refactored the RPC mechanism to use a simpler
+system I developed based on unix datagrams sent over anonymous pairs of sockets. 
 
 """

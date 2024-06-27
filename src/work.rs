@@ -1,24 +1,18 @@
-
 use ratatui::{
     buffer::Buffer,
     layout::{Alignment, Constraint, Flex, Layout, Rect},
     style::{Color, Modifier, Style, Stylize},
-    symbols::{
-        self,
-        border::Set,
-    },
+    symbols::{self, border::Set},
     text::{Line, Text},
-    widgets::{
-        Block, Borders, List, ListItem, Paragraph, StatefulWidget, Widget,
-    },
+    widgets::{Block, Borders, List, ListItem, Paragraph, StatefulWidget, Widget},
 };
 
 use crate::{
     data::{source::DATABASE, Detail, Workplace},
+    detail_view::DetailView,
     list_state::ListStateWrapper as ListState,
     markdown::convert_md,
     Navigable, DEFAULT_STYLE,
-    detail_view::DetailView,
 };
 
 #[derive(Debug, Clone)]
@@ -146,11 +140,7 @@ impl<'a> Navigable for JobView<'a> {
             log::warn!("menu selected returned None");
             return;
         };
-        self.detail = self
-            .workplace
-            .details
-            .get(idx)
-            .map(Into::into);
+        self.detail = self.workplace.details.get(idx).map(Into::into);
     }
 
     fn handle_left(&mut self) -> bool {

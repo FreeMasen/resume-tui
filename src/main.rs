@@ -22,8 +22,7 @@ fn main() -> color_eyre::Result<()> {
         if let TermEvent::Key(key) = event::read()? {
             if key.kind == KeyEventKind::Press {
                 let ev = match key.code {
-                    KeyCode::Char('q') 
-                    | KeyCode::Esc => Event::Quit,
+                    KeyCode::Char('q') | KeyCode::Esc => Event::Quit,
                     KeyCode::Char('c') if key.modifiers == KeyModifiers::CONTROL => Event::Quit,
                     KeyCode::Char('h') | KeyCode::Left => Event::Left,
                     KeyCode::Char('j') | KeyCode::Down => Event::Down,

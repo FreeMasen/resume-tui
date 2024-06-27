@@ -1,0 +1,6 @@
+headline = "Utility Services"
+snippet = "Develop platform utility services to address shared needs across multiple teams"
+detail = """
+These utilities include a flexible key-value store interface, preferred ip address
+provider, disk asset management, and testing utilities.
+"""

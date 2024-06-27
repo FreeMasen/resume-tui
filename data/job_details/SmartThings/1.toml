@@ -1,8 +1,7 @@
 headline = "Hub Local Metrics"
 snippet = "Implementing a memory efficient, metrics collector for an embedded linux target"
 
-detail = """
-To gain additional visibility into the performance of our embedded Linux devices
+detail = """To gain additional visibility into the performance of our embedded Linux devices
 deployed across the world, I developed a system for collecting and reporting metrics for our fleet.
 
 This system was constrained by the needs of the device's relatively low memory and long expected

@@ -9,8 +9,8 @@ use ratatui::{
 
 use crate::{
     data::{source::DATABASE, Project},
-    list_state::ListStateWrapper as ListState,
     detail_view::DetailView,
+    list_state::ListStateWrapper as ListState,
     Navigable, DEFAULT_STYLE,
 };
 

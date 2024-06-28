@@ -1,0 +1,9 @@
+name = "RESS"
+short_desc = "JavaScript Tokenizer in Rust"
+
+long_desc = """This is probably the most obvious entrypoint for contributors in the project it
+provides a `Scanner` that will produce a stream of `Token`s representing the discrete segments of
+the provided JavaScript. It even has the ability to detect if any `/` represents numeric division or
+is the beginning of a regular expression.
+
+"""

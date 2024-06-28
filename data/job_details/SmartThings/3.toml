@@ -1,0 +1,6 @@
+headline = "Edge API"
+snippet = "Built an HTTP API running on edge devices to act as a cloud service"
+detail = """
+Build an Actix-Web based HTTP server for local communication and processing of
+cloud originated messages on the edge.
+"""

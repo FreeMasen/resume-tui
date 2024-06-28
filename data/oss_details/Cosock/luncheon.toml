@@ -1,0 +1,12 @@
+name = "Luncheon"
+short_desc = "HTTP Parsing, Serialization and Types"
+
+long_desc = """I developed this project to act as a shared set of definitions to by used by an
+HTTP server implementation called Luxure and a WebSocket implementation called Lustre.
+
+This project provides an abstraction for `HttpMessage`s, which are inherited by the Request and
+Response types. These types also share a definition for a `Headers` map. All types can be parsed
+from an incoming stream and also generate messages that can be written to outgoing sinks. It
+supports 3 schemes for request and response termination, `content-length` encoding, `chunk` encoding
+and socket close.
+"""

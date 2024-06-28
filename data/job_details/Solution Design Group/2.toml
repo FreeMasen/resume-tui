@@ -1,0 +1,9 @@
+headline = "Modernization and Consistency"
+snippet = "Introduce static analysis utilities to increase code quality and consistency"
+
+detail = """
+Performed multi-version, breaking change upgrades of the Angular front-end framework
+including converting the shared HTTP interface from Observables to Promises.
+
+Introduced TSlint to CI to improve overall code quality and consistency.
+"""

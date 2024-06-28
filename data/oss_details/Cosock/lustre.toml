@@ -1,0 +1,7 @@
+name = "Lustre"
+short_desc = "Websockets in Lua"
+
+long_desc = """I started this library as an experiement in parsing a data format that was slightly
+more complicated than HTTP. Currently, there is only a client side implementation but supports all
+features using cosock primitives to allow for concurrency.
+"""

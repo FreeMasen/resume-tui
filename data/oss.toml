@@ -1,56 +1,30 @@
 [[project]]
-id = "proj-1"
-name = "Project 1"
-short_desc = "Short description of project"
+name = "Rusty ECMA"
+short_desc = "JavaScript Parsing/Generating libraries"
 
-long_desc = """long description of project
+long_desc = """As an excuse to learn more about how parsers work in software, I started this project with the 
+primary goal of providing a flexible, general purpose suite of libraries for interacting with JavaScript source code.
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore
-et dolore magna aliqua. Sed risus pretium quam vulputate dignissim suspendisse in. Lectus arcu
-bibendum at varius. At lectus urna duis convallis. Adipiscing enim eu turpis egestas pretium aenean
-pharetra magna. Massa placerat duis ultricies lacus sed turpis tincidunt id. Vitae auctor eu augue
-ut lectus. In nisl nisi scelerisque eu ultrices vitae auctor eu. Nulla posuere sollicitudin aliquam
-ultrices sagittis orci a scelerisque purus. Morbi tincidunt ornare massa eget egestas purus viverra.
-Platea dictumst vestibulum rhoncus est pellentesque elit ullamcorper dignissim cras. Erat imperdiet
-sed euismod nisi porta lorem mollis aliquam ut. Morbi quis commodo odio aenean. Sem nulla pharetra
-diam sit. Nisi est sit amet facilisis magna. Neque vitae tempus quam pellentesque nec.
-
-Aenean sed adipiscing diam donec adipiscing tristique. Id aliquet lectus proin nibh nisl. Non quam
-lacus suspendisse faucibus interdum posuere lorem ipsum dolor. Pharetra vel turpis nunc eget lorem
-dolor sed. Ultrices sagittis orci a scelerisque. Neque volutpat ac tincidunt vitae semper. Facilisi
-nullam vehicula ipsum a arcu cursus. Cursus sit amet dictum sit amet. Vehicula ipsum a arcu cursus
-vitae. Vitae purus faucibus ornare suspendisse sed nisi lacus sed. Turpis egestas pretium aenean
-pharetra magna ac. Viverra nibh cras pulvinar mattis. Sit amet nisl purus in mollis nunc. Egestas
-maecenas pharetra convallis posuere morbi leo. Lobortis feugiat vivamus at augue eget arcu. Arcu
-cursus euismod quis viverra. Vulputate ut pharetra sit amet aliquam id diam maecenas ultricies.
-Mauris augue neque gravida in fermentum et. In cursus turpis massa tincidunt dui ut. """
+The project consists of a handful of crates that I've tried to seperate logically to allow user to opt-in to the code
+they want to use.
+"""
 
 [[project]]
-name = "Project 2"
-short_desc = "Short description of project"
+name = "Cosock"
+short_desc = "Lua couroutine I/O libraries"
 
-long_desc = """Mauris sit amet massa vitae. Gravida cum sociis natoque penatibus. Nullam vehicula
-ipsum a arcu cursus vitae congue. Habitasse platea dictumst vestibulum rhoncus est pellentesque elit
-ullamcorper dignissim. Tincidunt arcu non sodales neque sodales ut. Senectus et netus et malesuada
-fames ac. Quis auctor elit sed vulputate mi. Ut eu sem integer vitae justo eget magna fermentum.
-Suspendisse interdum consectetur libero id faucibus nisl. Nibh venenatis cras sed felis eget velit
-aliquet sagittis id. Magna fringilla urna porttitor rhoncus dolor purus non enim praesent. Porttitor
-massa id neque aliquam vestibulum morbi blandit cursus risus. Tortor id aliquet lectus proin nibh.
-Pharetra massa massa ultricies mi quis. In hac habitasse platea dictumst. Odio pellentesque diam
-volutpat commodo sed egestas. Turpis egestas sed tempus urna et. Suspendisse interdum consectetur
-libero id. Ullamcorper morbi tincidunt ornare massa eget.
+long_desc = """Cosock is both a project and an organization. The Project is a coroutine executor
+based on the [LuaSocket API](https://github.com/lunarmodules/luasocket) and uses a polling via
+`select` to schedule coroutines. It provides udp, tcp, and tls socket facilities and an MPSC channel
+implementation. The Cosock organization includes projects that build upon these primitives to
+provide HTTP facilities.
+"""
 
+[[project]]
+name = "Luminary"
+short_desc = "A compiler for Lua"
+
+long_desc = """As an exercise in learning more about compilers, this project is a Lua front-end for
+LLVM.
 
 """
-sub_projects = [
-    { name = "inline sub-project", short_desc = "Short description of project", long_desc = """Amet
-    est placerat in egestas. Purus sit amet luctus venenatis lectus magna. Sem fringilla ut morbi
-    tincidunt augue interdum velit. Ornare lectus sit amet est placerat in egestas erat. Consequat
-    id porta nibh venenatis cras sed. Egestas fringilla phasellus faucibus scelerisque. Tincidunt
-    augue interdum velit euismod. Vitae et leo duis ut diam quam nulla porttitor massa. Purus sit
-    amet volutpat consequat. Dui ut ornare lectus sit amet est. Odio ut enim blandit volutpat
-    maecenas. Fermentum iaculis eu non diam phasellus vestibulum lorem sed risus. Egestas sed tempus
-    urna et pharetra pharetra massa massa. Augue mauris augue neque gravida in fermentum et. Nec
-    feugiat in fermentum posuere. Varius quam quisque id diam vel quam elementum. Senectus et netus
-    et malesuada. Ullamcorper a lacus vestibulum sed arcu non odio euismod.""" }, 
-]

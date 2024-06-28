@@ -47,6 +47,8 @@ function takeObject(idx) {
     return ret;
 }
 
+function notDefined(what) { return () => { throw new Error(`${what} is not defined`); }; }
+
 let cachedInt32Memory0 = null;
 
 function getInt32Memory0() {
@@ -87,8 +89,6 @@ export function event(event) {
         wasm.__wbindgen_add_to_stack_pointer(16);
     }
 }
-
-function notDefined(what) { return () => { throw new Error(`${what} is not defined`); }; }
 
 let WASM_VECTOR_LEN = 0;
 

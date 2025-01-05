@@ -1,6 +1,6 @@
 [package]
 name = "resume-tui"
-version = "0.0.3"
+version = "0.0.4"
 edition = "2021"
 repository = "https://github.com/FreeMasen/resume-tui"
 authors = ["Robert Masen <r.f.masen@gmail.com>"]

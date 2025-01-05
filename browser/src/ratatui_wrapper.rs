@@ -51,10 +51,10 @@ impl ratatui::backend::Backend for Terminal {
         Ok(())
     }
 
-    fn size(&self) -> std::io::Result<ratatui::prelude::Rect> {
+    fn size(&self) -> std::io::Result<ratatui::layout::Size> {
         let w = canvasSizeW();
         let h = canvasSizeH();
-        Ok(ratatui::prelude::Rect::new(0, 0, w, h))
+        Ok(ratatui::layout::Size::new(w, h))
     }
 
     fn window_size(&mut self) -> std::io::Result<ratatui::prelude::backend::WindowSize> {
@@ -70,6 +70,16 @@ impl ratatui::backend::Backend for Terminal {
     }
 
     fn flush(&mut self) -> std::io::Result<()> {
+        Ok(())
+    }
+
+    fn get_cursor_position(&mut self) -> Result<ratatui::layout::Position, std::io::Error> {
+        Ok((0, 0).into())
+    }
+    fn set_cursor_position<P>(&mut self, _: P) -> Result<(), std::io::Error>
+    where
+        P: Into<ratatui::layout::Position>,
+    {
         Ok(())
     }
 }

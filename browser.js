@@ -47,8 +47,6 @@ function takeObject(idx) {
     return ret;
 }
 
-function notDefined(what) { return () => { throw new Error(`${what} is not defined`); }; }
-
 let cachedInt32Memory0 = null;
 
 function getInt32Memory0() {
@@ -89,6 +87,8 @@ export function event(event) {
         wasm.__wbindgen_add_to_stack_pointer(16);
     }
 }
+
+function notDefined(what) { return () => { throw new Error(`${what} is not defined`); }; }
 
 let WASM_VECTOR_LEN = 0;
 
@@ -182,6 +182,13 @@ function __wbg_get_imports() {
     imports.wbg = {};
     imports.wbg.__wbg_canvasSizeW_596017ea4e8a3bbb = typeof canvasSizeW == 'function' ? canvasSizeW : notDefined('canvasSizeW');
     imports.wbg.__wbg_canvasSizeH_ffa0d897531664d0 = typeof canvasSizeH == 'function' ? canvasSizeH : notDefined('canvasSizeH');
+    imports.wbg.__wbindgen_string_new = function(arg0, arg1) {
+        const ret = getStringFromWasm0(arg0, arg1);
+        return addHeapObject(ret);
+    };
+    imports.wbg.__wbindgen_object_drop_ref = function(arg0) {
+        takeObject(arg0);
+    };
     imports.wbg.__wbg_writeToTerminal_3fbae981982e4115 = function(arg0, arg1) {
         let deferred0_0;
         let deferred0_1;
@@ -192,13 +199,6 @@ function __wbg_get_imports() {
         } finally {
             wasm.__wbindgen_free(deferred0_0, deferred0_1, 1);
         }
-    };
-    imports.wbg.__wbindgen_string_new = function(arg0, arg1) {
-        const ret = getStringFromWasm0(arg0, arg1);
-        return addHeapObject(ret);
-    };
-    imports.wbg.__wbindgen_object_drop_ref = function(arg0) {
-        takeObject(arg0);
     };
     imports.wbg.__wbg_log_5bb5f88f245d7762 = function(arg0) {
         console.log(getObject(arg0));

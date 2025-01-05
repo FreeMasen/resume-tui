@@ -135,7 +135,7 @@ fn convert(s: &'static str) -> Option<Text<'static>> {
                 let text = if complete { "- [x] " } else { "- [ ]" };
                 wrapper.push_text_with_style(text, default_style());
             }
-            Event::DisplayMath(_) | Event::InlineMath(_) => return None,
+            Event::DisplayMath(_) | Event::InlineMath(_) => {},
         }
     }
     Some(wrapper.finish())
@@ -249,7 +249,7 @@ mod test {
         ($text:expr) => {
             let backend = TestBackend::new(45, $text.height() as _);
             let mut term = Terminal::new(backend).unwrap();
-            term.draw(|f| f.render_widget($text, f.size())).unwrap();
+            term.draw(|f| f.render_widget($text, f.area())).unwrap();
             term.backend_mut().flush().unwrap();
             insta::assert_snapshot!(term.backend());
         };

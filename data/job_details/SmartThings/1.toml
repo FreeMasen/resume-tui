@@ -13,7 +13,7 @@ report. This report would then be emitted to our platform's cloud for post-proce
 For counters the report can calculate its state on the fly quite trivially. For gauges, I developed
 a solution that would calculate the min, max, and average values on the fly. For histogram events,
 the _HdrHistogram_ crate provided the calculations with a fixed size memory footprint with the
-limitation that all values need to be provided as an integer. Since the _metrics_ crate only
+limitation that all values need to be provided as an integer. Since the `metrics` crate only
 provides histogram data as a 64-bit floating point number I developed a solution to for converting
 these float values to/from a u64 with an acceptable amount of data loss.
 

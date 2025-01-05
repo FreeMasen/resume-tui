@@ -9,7 +9,7 @@ quite large enough to warrant their own entry.
 ---
 A single sqlite table was used with a composite primary key of two TEXT columns, the first 
 being a namespace while the second a unique identifier in that namespace. A Third TEXT column
-contains the values encoded as JSON A handle to the store would be constructed with the namespace
+contains the values encoded as JSON. A handle to the store would be constructed with the namespace
 key so that consumers could avoid concerns about key uniqueness.
 
 
@@ -17,11 +17,11 @@ key so that consumers could avoid concerns about key uniqueness.
 ---
 The application we developed could be deployed to a number of products, some of which acted as
 a Router in end-user's homes. This meant we needed a way to communicate our current IP address
-on the local area network in a uniform way and avoiding potentially providing the address that
+on the local area network in a uniform way avoiding potentially providing the address that
 would be accessible from outside of a user's home.
 
 This service would act as the single source of truth for what IP address the device should be
-using based on the current interface name configured by either a supervisor application or the
+using based on the an interface name configured by either a supervisor application or the
 operating system's read only disk partition.
 
 Consumers could request the current IP address as needed or subscribe to events to know when
@@ -42,9 +42,10 @@ a previous version.
 
 **Stable UUIDs in Tests**
 ---
-I developed a set of functions that would generate v4 UUIDs by hashing some input text as that would
-use test thread names as the basis for this input text. This enabled developers to no longer have to
-maintain manual UUID definitions and/or work around the randomness provided by UUIDs while
-maintaining a stable value across runs of the same tests.
+I developed a set of functions that would generate v4 UUIDs by hashing some input text and then
+built a series of helper functions that would use use test thread names as the base value for this
+input text but could be extended. This enabled developers to no longer have to maintain manual UUID
+definitions and/or work around the randomness provided by UUIDs while maintaining a stable value
+across runs of the same tests.
 
 """

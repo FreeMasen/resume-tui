@@ -4,12 +4,14 @@ detail = """
 Build an Actix-Web based HTTP server for local communication and processing of
 cloud originated messages on the edge. A service was deployed in the cloud to receive messages
 destined for a device on the edge, this service would look up the the device by ID and then
-forward the request through a persistent connection. The device's HTTP server would receive
-this request, perform authorization of both client and principal (typically a user) before
-executing the endpoint and returning a response through the same persistent connection. This system
-was developed to be flexible enough to act as an RPC system on a Tizen/Android based devices as well
-as the potential for end users to access the interface on the local area network. The authorization
-mechanism uses a sequence of attempts to authorize the principal including local evaluation of a
-subset of definitions, caching previous authorizations and a call out to the cloud service that acts
-as a platform single source of truth.
+forward the request through a persistent connection.
+
+The device's HTTP server would receive this request, perform authorization of both client and
+principal (typically a user) before executing the endpoint and returning a response through the same
+persistent connection. This system was developed to be flexible enough to act as an RPC system on a
+Tizen/Android based devices as well as the potential for end users to access the interface on the
+local area network. The authorization mechanism uses a sequence of attempts to authorize the
+principal including local evaluation of a subset of definitions, caching previous authorizations and
+a call out to the cloud service that acts as a platform single source of truth.
+
 """

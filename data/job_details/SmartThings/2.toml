@@ -7,4 +7,8 @@ maintenance on a sand-boxed execution environment for Lua scripts to interact wi
 devices. This project used seccomp, nsjail, runtime checks, and an RPC layer to isolate scripts
 from the rest of the product. 
 
+In this system each script (aka "driver") is executed in its own child process with an anonymous UDS
+pair acting as the RPC connection. Protected operations include creating and/or communicating on
+TCP/UDP sockets sending, receiving messages from the Zigbee, Thread, and ZWave radios, and
+communicating device status to/from our cloud platform.
 """

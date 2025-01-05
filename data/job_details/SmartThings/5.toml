@@ -1,6 +1,50 @@
 headline = "Utility Services"
 snippet = "Develop platform utility services to address shared needs across multiple teams"
 detail = """
-These utilities include a flexible key-value store interface, preferred ip address
-provider, disk asset management, and testing utilities.
+As with any job, some of the work I have done doesn't quite fit into its own category, the following
+projects describe some of the smaller projects I developed that had a significant impact but were not
+quite large enough to warrant their own entry.
+
+**Flexible Key-Value Store**
+---
+A single sqlite table was used with a composite primary key of two TEXT columns, the first 
+being a namespace while the second a unique identifier in that namespace. A Third TEXT column
+contains the values encoded as JSON A handle to the store would be constructed with the namespace
+key so that consumers could avoid concerns about key uniqueness.
+
+
+**IP Source**
+---
+The application we developed could be deployed to a number of products, some of which acted as
+a Router in end-user's homes. This meant we needed a way to communicate our current IP address
+on the local area network in a uniform way and avoiding potentially providing the address that
+would be accessible from outside of a user's home.
+
+This service would act as the single source of truth for what IP address the device should be
+using based on the current interface name configured by either a supervisor application or the
+operating system's read only disk partition.
+
+Consumers could request the current IP address as needed or subscribe to events to know when
+the current IP address had changed.
+
+**Asset Manager**
+---
+Devices deployed in the field would need to request and maintain assets associated with
+different sub-systems. One example is the Lua script files that represent an Edge Driver
+(see Lua Sandbox) or the Matter firmware assets.
+
+This service exposes a HashMap-like interface for accessing the root of these assets on disk
+based on a unique identifier and a version identifier key pair. If an asset is requested with
+a pair of identifiers that are unknown, the asset is requested from its source and once on disk
+the requester is provided the new path. All assets are held on disk for a configurable length of
+time to avoid potential flash-wear and/or extra work for assets that may be reverted quickly to
+a previous version.
+
+**Stable UUIDs in Tests**
+---
+I developed a set of functions that would generate v4 UUIDs by hashing some input text as that would
+use test thread names as the basis for this input text. This enabled developers to no longer have to
+maintain manual UUID definitions and/or work around the randomness provided by UUIDs while
+maintaining a stable value across runs of the same tests.
+
 """

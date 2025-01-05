@@ -37,7 +37,6 @@ fn main() {
 }
 
 fn setup_logging() {
-
     use env_logger::{Env, Target};
     let env = Env::default().filter("BUILD_LOG");
     let mut b = env_logger::Builder::from_env(env);
@@ -46,7 +45,12 @@ fn setup_logging() {
     } else {
         "log.log".to_string()
     };
-    let target_file = std::fs::File::options().write(true).create(true).truncate(true).open(file_path).unwrap();
+    let target_file = std::fs::File::options()
+        .write(true)
+        .create(true)
+        .truncate(true)
+        .open(file_path)
+        .unwrap();
     b.target(Target::Pipe(Box::new(target_file)));
     b.init();
 }

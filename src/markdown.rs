@@ -27,7 +27,7 @@ fn convert(s: &'static str) -> Option<Text<'static>> {
                     wrapper.clear_style();
                     wrapper.modify_style(Modifier::BOLD)
                 }
-                Tag::BlockQuote => {
+                Tag::BlockQuote(_) => {
                     wrapper.line_prefix = Some(Span::raw("| ").style(default_style()));
                     wrapper.push_symbol("| ");
                 }
@@ -67,6 +67,9 @@ fn convert(s: &'static str) -> Option<Text<'static>> {
                 }
                 Tag::Image { .. } => return None,
                 Tag::MetadataBlock(_) => return None,
+                Tag::DefinitionList => return None,
+                Tag::DefinitionListTitle => return None,
+                Tag::DefinitionListDefinition => return None,
             },
             Event::End(tag) => {
                 match tag {
@@ -93,10 +96,10 @@ fn convert(s: &'static str) -> Option<Text<'static>> {
                         wrapper.push_text_with_style("```", default_style());
                         wrapper.new_line();
                     }
-                    TagEnd::BlockQuote => {
+                    TagEnd::BlockQuote(_) => {
                         // If there is only 1 span in the line, it is probably the
                         // prefix, we don't want to render that but just to be defensive
-                        // we check to see if they prefix exists and if the last element
+                        // we check to see if the prefix exists and if the last element
                         // in the line is the prefix, if not then we render whatever
                         // is in the line.
                         wrapper.clear_prefix();
@@ -132,6 +135,7 @@ fn convert(s: &'static str) -> Option<Text<'static>> {
                 let text = if complete { "- [x] " } else { "- [ ]" };
                 wrapper.push_text_with_style(text, default_style());
             }
+            Event::DisplayMath(_) | Event::InlineMath(_) => return None,
         }
     }
     Some(wrapper.finish())

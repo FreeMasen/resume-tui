@@ -99,7 +99,7 @@ impl<'a> App<'a> {
     }
 
     fn draw(&mut self, terminal: &mut Terminal<impl Backend>) -> std::io::Result<()> {
-        terminal.draw(|f| f.render_widget(self, f.size()))?;
+        terminal.draw(|f| f.render_widget(self, f.area()))?;
         Ok(())
     }
 
@@ -156,7 +156,7 @@ impl<'a> App<'a> {
                 bottom_left: symbols::line::NORMAL.horizontal_up,
                 ..symbols::border::PLAIN
             })
-            .padding(Padding::zero());
+            .padding(Padding::ZERO);
         let inner_rect = total_area.inner(area);
         total_area.render(area, buf);
         let Some(sub_page) = self.sub_page.clone() else {

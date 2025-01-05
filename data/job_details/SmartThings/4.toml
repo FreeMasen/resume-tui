@@ -1,6 +1,15 @@
-headline = "Utility Services"
-snippet = "Develop platform utility services to address shared needs across multiple teams"
-detail = """
-These utilities include a flexible key-value store interface, preferred ip address
-provider, disk asset management, and testing utilities.
+headline = "RPC Rewrite"
+snippet = "Swapping out gRPC for a custom RPC solution"
+
+detail = """The _Lua Sandbox_'s RPC mechanism was initially developed using an off the shelf
+library for gRPC. This solution seemed like the right choice initially since gRPC provides
+a very flexible interface, however the constraints of an embedded linux environment and
+using a Unix Domain Socket(UDS) pair as the underlying transport made some parts of gRPC less
+than ideal. To replace this solution, I developed a solution initially using 
+a UDS pair with datagram semantics which when initially deployed resulted in an average
+20% performance gain however we discovered that some of our messaging between parent
+and child process was much too large to fit into a reasonably sized datagram and in some
+cases was too large for the default OS maximum of 200+ kb. This lead to a second iteration
+that used a UDS pair with stream semantics to allow for larger messages. This stream based
+implementation used a 4 byte length as a prefix to all messages. 
 """

@@ -47,9 +47,6 @@ fn setup_logging() {
         "log.log".to_string()
     };
     let target_file = std::fs::File::options().write(true).create(true).truncate(true).open(file_path).unwrap();
-
-    // if let Ok(f) = target_file {
-    // }
     b.target(Target::Pipe(Box::new(target_file)));
     b.init();
 }

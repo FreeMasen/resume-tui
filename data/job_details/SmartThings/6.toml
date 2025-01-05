@@ -1,8 +1,5 @@
-headline = "Formal Mentor"
-snippet = "Mentored an Associate Software Engineer with the goal of getting promoted"
-
-detail = """As part of an official effort to improve Diversity, Equity and Inclusion at SmartThings
-I participated in a formal mentorship program. As part of this program, I was paired with a
-junior-level engineer whose goal was to get promoted in the next promotion cycle. To achieve this
-goal we worked through some of the ways that they could increase their visibility, track their own
-performance, and tell a compelling story about why they deserve to be promoted."""
+headline = "Documentation and Design"
+snippet = """Document changes and future opportunities"""
+detail = """Using a mixture of `rust-doc`, Confluence, PlantUML, Mermaid.js, and Lucid Chart I
+documented existing behavior, communicated proposed changes, and design documents for future
+opportunities"""

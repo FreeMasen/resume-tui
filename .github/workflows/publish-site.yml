@@ -25,16 +25,16 @@ jobs:
           && wasm-pack build --target web --no-pack --release
       - name: Install and run oranda
         run: >-
-          echo "# Live Example" > ./live-example.md
+          echo "# Live Example" > ./live-preview.md
           && curl --proto '=https' --tlsv1.2 -LsSf https://github.com/axodotdev/oranda/releases/latest/download/oranda-installer.sh | sh
           && oranda build
       - name: Move wasm-pack output and index.html
         run: >-
           rm ./browser/pkg/.gitignore
-          && rm ./public/live-example.md
-          && mkdir ./public/live-example
-          && cp -r ./browser/pkg/* ./public/live-example/
-          && cp -r ./browser/index.html ./public/live-example/
+          && rm ./public/live-preview.md
+          && mkdir ./public/live-preview
+          && cp -r ./browser/pkg/* ./public/live-preview/
+          && cp -r ./browser/index.html ./public/live-preview/
       - uses: peaceiris/actions-gh-pages@v3
         if: ${{ github.ref == 'refs/heads/main' }}
         with:

@@ -2,7 +2,7 @@
     "build": {
         "path_prefix": "resume-tui",
         "additional_pages": {
-            "Live Example": "live-example.md"
+            "Live Preview": "live-preview.md"
         }
     },
     "styles": {

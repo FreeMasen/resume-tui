@@ -5,8 +5,7 @@ permissions:
   contents: write
 # Controls when the workflow will run
 on:
-  # Triggers the workflow on push or pull request events but only for the "main" branch
-  push:
+  pull_request:
     branches: [ "main" ]
 
   # Allows you to run this workflow manually from the Actions tab
@@ -22,15 +21,27 @@ jobs:
         uses: jetli/wasm-pack-action@v0.4.0
       - name: Build pkg
         run: >-
-          cd browser &&
-          wasm-pack build --target web --no-pack --release
-      - name: repack
+          cd browser
+          && wasm-pack build --target web --no-pack --release
+      - name: Install and run oranda
         run: >-
-          cd browser &&
-          rm ./pkg/.gitignore
-          && cp ./pkg/* ./public
+          echo "# Live Example" > ./live-preview.md
+          && curl --proto '=https' --tlsv1.2 -LsSf https://github.com/axodotdev/oranda/releases/latest/download/oranda-installer.sh | sh
+          && oranda build
+      - name: Move wasm-pack output and index.html
+        run: >-
+          rm ./browser/pkg/.gitignore
+          && rm ./public/live-preview.md
+          && mkdir ./public/live-preview
+          && cp -r ./browser/pkg/* ./public/live-preview/
+          && cp -r ./browser/index.html ./public/live-preview/
       - uses: peaceiris/actions-gh-pages@v3
         if: ${{ github.ref == 'refs/heads/main' }}
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./browser/public
+          publish_dir: ./public
+      - name: PR upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: site
+          path: ./public/*

@@ -1,0 +1,11 @@
+{
+    "build": {
+        "path_prefix": "resume-tui",
+        "additional_pages": {
+            "Live Preview": "live-preview.md"
+        }
+    },
+    "styles": {
+        "theme": "hacker"
+    }
+}

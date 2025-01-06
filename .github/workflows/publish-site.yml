@@ -31,6 +31,8 @@ jobs:
       - name: Move wasm-pack output and index.html
         run: >-
           rm ./browser/pkg/.gitignore
+          && rm ./public/live-example.md
+          && mkdir ./public/live-example
           && cp -r ./browser/pkg/* ./public/live-example/
           && cp -r ./browser/index.html ./public/live-example/
       - uses: peaceiris/actions-gh-pages@v3

@@ -1,231 +1,355 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-        <link rel="manifest" href="/site.webmanifest">
-        <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
-        <meta name="msapplication-TileColor" content="#da532c">
-        <meta name="theme-color" content="#ffffff">
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/xterm/5.4.0/xterm.js"
-            integrity="sha512-a1TxekVOakgPoY7Z2SbpYAMhA6ZnhRGsczeVJLZPrleMzRcK84GnVo0JOPg/BVCNerWlZLPt4cEMKP8GDyfyxA=="
-            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-        <style>
-            :root {
-                --green: #4e9a06;
-                --black: #2e3436;
-            }
+<html lang="en" id="oranda" class="hacker">
+  <head>
+    <title>resume-tui</title>
+    
+    
+      <link rel="icon" href="/resume-tui/favicon.ico" />
+    
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+      <meta name="description" content="My resume as a TUI application" />
+      <meta property="og:description" content="My resume as a TUI application" />
+    
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="resume-tui" />
+    
+    
+    
+    <meta http-equiv="Permissions-Policy" content="interest-cohort=()" />
+    <link rel="stylesheet" href="/resume-tui/oranda-v0.6.1.css" />
+    
+    
+  </head>
+  <body>
+    <div class="container">
+      <div class="page-body">
+        
+          <div class="repo_banner">
+            <a href="https://github.com/FreeMasen/resume-tui">
+              <div class="github-icon" aria-hidden="true"></div>
+              Check out our GitHub!
+            </a>
+          </div>
+        
+
+        <main>
+          <header>
+            
+            <h1 class="title">resume-tui</h1>
+            
+  <nav class="nav">
+    <ul>
+      <li><a href="/resume-tui/">Home</a></li>
+
+      
+        
+          <li><a href="/resume-tui/live-preview/">Live Preview</a></li>
+        
+      
+
+      
+
+      
+
+      
+
+      
+        <li><a href="/resume-tui/changelog/">Changelog</a></li>
+      
+    </ul>
+  </nav>
+
+          </header>
+
+          
 
 
-            body {
-                margin: 0;
-                overflow: hidden;
-                background: var(--black);
-                width: 100%;
-                height: 100%;
-                display: flex;
-                flex-flow: column;
-                align-items: center;
-            } 
-            #term-container {
-                margin: 5px auto;
-                margin-top: 5px;
-                margin-left: auto;
-                margin-right: auto;
-                overflow: hidden;
-                position: relative;
-            }
-            .xterm-helpers {
-                color: transparent;
-            }
-            .xterm-char-measure-element {
-                display: hidden;
-            }
-            #controls {
-                display: grid;
-                position: absolute;
-                left: 13px;
-                bottom: 35px;
-                grid-template-rows: repeat(3, 1fr);
-                grid-template-columns: repeat(3, 1fr);
-                grid-template-areas:
-                    ". u ."
-                    "l . r"
-                    ". d .";
-            }
-            #up {
-                grid-area: u;
-            }
-            #left {
-                grid-area: l;
-            }
-            #right {
-                grid-area: r;
-            }
-            #down {
-                grid-area: d;
-            }
-            #controls button {
-                border-radius: 50%;
-                border-color: var(--green);
-                background-color: #2e3436;
-                color: var(--green);
-                display: none;
-            }
-            /* Detecting mobile browsers... */
-            @media (pointer:none), (pointer:coarse) {
-                body {
-                    overflow: scroll;
-                }
-                #controls {
-                    width: 100px;
-                    height: 100px;
-                }
-                #controls #up,
-                #controls #down,
-                #controls #left,
-                #controls #right {
-                    display: unset;
-                }
-            }
-        </style>
-    </head>
-    <body>
-        <div id="term-container">
-            <div id = "terminal"></div>
-            <div id="controls">
-                <button type="button" id="up">^</button>
-                <button type="button" id="down">v</button>
-                <button type="button" id="left"><</button>
-                <button type="button" id="right">></button>
-            </div>
-        </div>
-        <aside>
+    <h1>Resume TUI</h1>
+<p>This project is an attempt to make an interactive resume as a TUI application similar to efforts
+like <a href="https://github.com/JSLegendDev/2d-portfolio-kaboom" rel="noopener noreferrer">This 2d animation portfolio</a>.</p>
+<p><img src="./assets/tui.gif" alt="demo gif"></p>
+<h2>Installation</h2>
+<h3>Github Releases</h3>
+<h2>How it works</h2>
+<p>The application itself is built with the data needed, to achieve this I've setup a build script
+to generate a rust module that is only present at built time named <code>source_data.rs</code></p>
+<p>In a <code>build.rs</code>, the <code>DATABASE</code> static variable is generated by parsing a handful of toml files in a
+specific directory layout corrisponding to the details of each view. The layout is outlined below.
+The default location for this is a <code>data</code> directory in the current working directory when building,
+this can be overridden by using the <code>RESUME_DATA_PATH</code> environment variable.</p>
+<h3>Directory Layout</h3>
+<pre style="background-color:#263238;"><span style="color:#eeffff;">./data
+</span><span style="color:#eeffff;">├── edu.toml
+</span><span style="color:#eeffff;">├── info.toml
+</span><span style="color:#eeffff;">├── job_details
+</span><span style="color:#eeffff;">│   └── &lt;Job Name or Id&gt;
+</span><span style="color:#eeffff;">│       ├── bullet-1.toml
+</span><span style="color:#eeffff;">│       └── bullet-2.toml
+</span><span style="color:#eeffff;">├── jobs.toml
+</span><span style="color:#eeffff;">├── oss.toml
+</span><span style="color:#eeffff;">└── oss_details
+</span><span style="color:#eeffff;">    └── &lt;Project Name or Id&gt;
+</span><span style="color:#eeffff;">        ├── subproject-1.toml
+</span><span style="color:#eeffff;">        ├── subproject-2.toml
+</span><span style="color:#eeffff;">        └── subproject-4.toml
+</span></pre>
 
-        </aside>
-        <div id="controls">
-            <button type="button" id="up">^</button>
-            <button type="button" id="down">v</button>
-            <button type="button" id="left"><</button>
-            <button type="button" id="right">></button>
-        </div>
-        <script type="module">
-            import init, * as app from "./browser.js";
-            Promise.sleep = (ms) => {
-                return new Promise(r => setTimeout(r, ms || 100));
-            }
-            const Event = Object.freeze({
-                up: 1,
-                down: 2,
-                left: 3,
-                right: 4,
-            })
-            let eventHandler = eventId => {
-                console.log("eventHandler")
-                if (!app) {
-                    return console.warn("App not yet initialized");
-                }
-                console.log("calling app.event with arg", eventId);
-                app.event(eventId);
-            }
-            document.getElementById("up").addEventListener("click", () => eventHandler(Event.up));
-            document.getElementById("left").addEventListener("click", () => eventHandler(Event.left));
-            document.getElementById("right").addEventListener("click", () => eventHandler(Event.right));
-            document.getElementById("down").addEventListener("click", () => eventHandler(Event.down));
-            
-            let canvas = document.getElementById("terminal");
-            window.canvasSizeW = function () {
-                return 100;
-            }
-            window.canvasSizeH = function () {
-                return 30;
-            }
-            let term = new window.Terminal({
-                cursorBlink: false,
-                // +2 here to add 1 character of padding
-                // around the rendered symbols
-                cols: canvasSizeW()+2,
-                rows: canvasSizeH()+2,
-                cursorInactiveStyle: "none",
-                disableStdin: true,
-                fontFamily: 'monospace',
-                fontSize: 16,
-                scrollback: 0,
-                theme: {
-                    selectionBackground: "transparent",
-                    selectionForeground: "transparent",
-                    selectionInactiveBackground: "transparent",
-                },
-            });
+<h4><code>info.toml</code></h4>
+<p>The primary entrypoint for the Home page is the <code>info.toml</code> file where the base information is
+stored; it includes a name and a "tag line".</p>
+<details>
+<summary>JSON Schema</summary>
+<pre style="background-color:#263238;"><span style="color:#89ddff;">{
+</span><span style="color:#eeffff;">    </span><span style="color:#c792ea;">"title"</span><span style="color:#89ddff;">: "</span><span style="color:#c3e88d;">Info</span><span style="color:#89ddff;">",
+</span><span style="color:#eeffff;">    </span><span style="color:#c792ea;">"description"</span><span style="color:#89ddff;">: "</span><span style="color:#c3e88d;">Basic information</span><span style="color:#89ddff;">",
+</span><span style="color:#eeffff;">    </span><span style="color:#c792ea;">"type"</span><span style="color:#89ddff;">: "</span><span style="color:#c3e88d;">object</span><span style="color:#89ddff;">",
+</span><span style="color:#eeffff;">    </span><span style="color:#c792ea;">"properties"</span><span style="color:#89ddff;">: {
+</span><span style="color:#eeffff;">        </span><span style="color:#ffcb6b;">"name"</span><span style="color:#89ddff;">: {
+</span><span style="color:#eeffff;">            </span><span style="color:#f78c6c;">"description"</span><span style="color:#89ddff;">: "</span><span style="color:#c3e88d;">The name displayed on the Home page.</span><span style="color:#89ddff;">",
+</span><span style="color:#eeffff;">            </span><span style="color:#f78c6c;">"type"</span><span style="color:#89ddff;">: "</span><span style="color:#c3e88d;">string</span><span style="color:#89ddff;">",
+</span><span style="color:#eeffff;">        </span><span style="color:#89ddff;">},
+</span><span style="color:#eeffff;">        </span><span style="color:#ffcb6b;">"tag_line"</span><span style="color:#89ddff;">: {
+</span><span style="color:#eeffff;">            </span><span style="color:#f78c6c;">"description"</span><span style="color:#89ddff;">: "</span><span style="color:#c3e88d;">The tagline to display below the name on the Home page.</span><span style="color:#89ddff;">",
+</span><span style="color:#eeffff;">            </span><span style="color:#f78c6c;">"type"</span><span style="color:#89ddff;">: "</span><span style="color:#c3e88d;">string</span><span style="color:#89ddff;">"
+</span><span style="color:#eeffff;">        </span><span style="color:#89ddff;">}
+</span><span style="color:#eeffff;">    </span><span style="color:#89ddff;">}
+</span><span style="color:#89ddff;">}
+</span></pre>
 
-            term.open(canvas);
-            if (!!term.textarea) {
-                term.textarea.hidden = true;
-            }
-            window.term = term;
-            term.attachCustomKeyEventHandler((ev) => {
-                console.log("attachCustomKeyEventHandler", ev);
-            });
-            /**
-             * @param text {string}
-             * @param x {integer}
-             * @param y {integer}
-             * @param bold {bool}
-             * @param italic {bool}
-             * */
-            window.writeToCanvas = function (text, x, y, bold, italic) {
-                console.log("writeToCanvas", text)
-                // +1 here because we have an extra character
-                // of padding around the edge of the terminal
-                // element
-                term.write(`\x1B[${y+1};${x+1}H`);
-                if (bold) {
-                    term.write("\x1B[1m");
-                }
-                if (italic) {
-                    term.write("\x1b[3m");
-                }
-                term.write(text);
-                term.refresh(x, Math.min(x+1, term.rows - 1));
-            }
-            window.writeToTerminal = (text) => {
-                console.log("writeToTerminal", text)
-                term.write(text);
-            }
-            
-            window.addEventListener("keydown", ev => {
-                ev.stopPropagation();
-                ev.stopImmediatePropagation();
-                let arg = 0;
-                switch (ev.key) {
-                    case "ArrowUp":
-                        arg = Event.up;
-                        break;
-                    case "ArrowDown":
-                        arg = Event.down;
-                        break;
-                    case "ArrowLeft":
-                        arg = Event.left;
-                        break;
-                    case "Enter":
-                    case "ArrowRight":
-                        arg = Event.right;
-                        break;
-                    default:
-                        console.warn("Unknown key:", ev.code);
-                        break;
-                }
-                eventHandler(arg);
-                return false;
-            });
-            
-            init("./browser_bg.wasm").then(async () => {
-                console.log("running app");
-                app.run();
-                app.event(1);
-            }).catch(console.error);
-            
-        </script>
-    </body>
+</details>
+<h4><code>jobs.toml</code></h4>
+<p>This file is the entry point for the professional experience portion of the resume. The top level is
+an array of <code>Job</code> objects under the key <code>job</code> or <code>jobs</code> <sup class="footnote-ref"><a href="#fn-1" id="fnref-1" rel="noopener noreferrer">1</a></sup>.</p>
+<details>
+<summary>JSON Schema</summary>
+<pre style="background-color:#263238;"><span style="color:#89ddff;">{
+</span><span style="color:#eeffff;">    </span><span style="color:#c792ea;">"title"</span><span style="color:#89ddff;">: "</span><span style="color:#c3e88d;">Jobs</span><span style="color:#89ddff;">",
+</span><span style="color:#eeffff;">    </span><span style="color:#c792ea;">"description"</span><span style="color:#89ddff;">: "</span><span style="color:#c3e88d;">List of job details</span><span style="color:#89ddff;">",
+</span><span style="color:#eeffff;">    </span><span style="color:#c792ea;">"type"</span><span style="color:#89ddff;">: "</span><span style="color:#c3e88d;">object</span><span style="color:#89ddff;">",
+</span><span style="color:#eeffff;">    </span><span style="color:#c792ea;">"properties"</span><span style="color:#89ddff;">: {
+</span><span style="color:#eeffff;">        </span><span style="color:#ffcb6b;">"jobs"</span><span style="color:#89ddff;">: {
+</span><span style="color:#eeffff;">            </span><span style="color:#f78c6c;">"description"</span><span style="color:#89ddff;">: "</span><span style="color:#c3e88d;">list of jobs</span><span style="color:#89ddff;">",
+</span><span style="color:#eeffff;">            </span><span style="color:#f78c6c;">"type"</span><span style="color:#89ddff;">: "</span><span style="color:#c3e88d;">array</span><span style="color:#89ddff;">",
+</span><span style="color:#eeffff;">            </span><span style="color:#f78c6c;">"items"</span><span style="color:#89ddff;">: {
+</span><span style="color:#eeffff;">                </span><span style="color:#ff5370;">"type"</span><span style="color:#89ddff;">: "</span><span style="color:#c3e88d;">Job</span><span style="color:#89ddff;">"
+</span><span style="color:#eeffff;">            </span><span style="color:#89ddff;">},
+</span><span style="color:#eeffff;">        </span><span style="color:#89ddff;">}
+</span><span style="color:#eeffff;">    </span><span style="color:#89ddff;">}
+</span><span style="color:#89ddff;">}
+</span></pre>
+
+</details>
+<p>Each <code>Job</code> object contains some basic information about the position including company name, title,
+start date, optional end date, a list of details and an optional id. The list of details can either
+be included directly in the toml file or can be stored in the <code>job_details</code> directory. <code>job_details</code>
+is layed as directories, each directory will be named have either the <code>company</code> or <code>id</code>. The job
+details when in the TOML file should be rendered in the order they are defined and any additional
+details in teh <code>job_details</code> directory will be appended to this list in the order they are returned
+from <code>read_dir</code>.</p>
+<details>
+<summary>JSON Schema</summary>
+<pre style="background-color:#263238;"><span style="color:#89ddff;">{
+</span><span style="color:#eeffff;">    </span><span style="color:#c792ea;">"title"</span><span style="color:#89ddff;">: "</span><span style="color:#c3e88d;">Job</span><span style="color:#89ddff;">",
+</span><span style="color:#eeffff;">    </span><span style="color:#c792ea;">"description"</span><span style="color:#89ddff;">: "</span><span style="color:#c3e88d;">Overview of each job</span><span style="color:#89ddff;">",
+</span><span style="color:#eeffff;">    </span><span style="color:#c792ea;">"type"</span><span style="color:#89ddff;">: "</span><span style="color:#c3e88d;">object</span><span style="color:#89ddff;">",
+</span><span style="color:#eeffff;">    </span><span style="color:#c792ea;">"patternProperties"</span><span style="color:#89ddff;">: {
+</span><span style="color:#eeffff;">        </span><span style="color:#ffcb6b;">"id"</span><span style="color:#89ddff;">: {
+</span><span style="color:#eeffff;">            </span><span style="color:#f78c6c;">"description"</span><span style="color:#89ddff;">: "</span><span style="color:#c3e88d;">An optional unique ID for a job used for file based details when representing multiple jobs at the same company.</span><span style="color:#89ddff;">",
+</span><span style="color:#eeffff;">            </span><span style="color:#f78c6c;">"type"</span><span style="color:#89ddff;">: "</span><span style="color:#c3e88d;">string</span><span style="color:#89ddff;">"
+</span><span style="color:#eeffff;">        </span><span style="color:#89ddff;">},
+</span><span style="color:#eeffff;">        </span><span style="color:#ffcb6b;">"company"</span><span style="color:#89ddff;">: {
+</span><span style="color:#eeffff;">            </span><span style="color:#f78c6c;">"description"</span><span style="color:#89ddff;">: "</span><span style="color:#c3e88d;">The name of the company</span><span style="color:#89ddff;">",
+</span><span style="color:#eeffff;">            </span><span style="color:#f78c6c;">"type"</span><span style="color:#89ddff;">: "</span><span style="color:#c3e88d;">string</span><span style="color:#89ddff;">"
+</span><span style="color:#eeffff;">        </span><span style="color:#89ddff;">},
+</span><span style="color:#eeffff;">        </span><span style="color:#ffcb6b;">"title"</span><span style="color:#89ddff;">: {
+</span><span style="color:#eeffff;">            </span><span style="color:#f78c6c;">"description"</span><span style="color:#89ddff;">: "</span><span style="color:#c3e88d;">Job title at this company</span><span style="color:#89ddff;">",
+</span><span style="color:#eeffff;">            </span><span style="color:#f78c6c;">"type"</span><span style="color:#89ddff;">: "</span><span style="color:#c3e88d;">string</span><span style="color:#89ddff;">"
+</span><span style="color:#eeffff;">        </span><span style="color:#89ddff;">},
+</span><span style="color:#eeffff;">        </span><span style="color:#ffcb6b;">"start"</span><span style="color:#89ddff;">: {
+</span><span style="color:#eeffff;">            </span><span style="color:#f78c6c;">"description"</span><span style="color:#89ddff;">: "</span><span style="color:#c3e88d;">The date this position started</span><span style="color:#89ddff;">",
+</span><span style="color:#eeffff;">            </span><span style="color:#f78c6c;">"type"</span><span style="color:#89ddff;">: "</span><span style="color:#c3e88d;">string</span><span style="color:#89ddff;">"
+</span><span style="color:#eeffff;">        </span><span style="color:#89ddff;">}
+</span><span style="color:#eeffff;">        </span><span style="color:#89ddff;">,
+</span><span style="color:#eeffff;">        </span><span style="color:#ffcb6b;">"end"</span><span style="color:#89ddff;">: {
+</span><span style="color:#eeffff;">            </span><span style="color:#f78c6c;">"description"</span><span style="color:#89ddff;">: "</span><span style="color:#c3e88d;">The date this position ended, if not provided it will display 'current'</span><span style="color:#89ddff;">",
+</span><span style="color:#eeffff;">            </span><span style="color:#f78c6c;">"type"</span><span style="color:#89ddff;">: "</span><span style="color:#c3e88d;">string</span><span style="color:#89ddff;">"
+</span><span style="color:#eeffff;">        </span><span style="color:#89ddff;">},
+</span><span style="color:#eeffff;">        </span><span style="color:#ffcb6b;">"details?"</span><span style="color:#89ddff;">: {
+</span><span style="color:#eeffff;">            </span><span style="color:#f78c6c;">"description"</span><span style="color:#89ddff;">: "</span><span style="color:#c3e88d;">A list of job details</span><span style="color:#89ddff;">",
+</span><span style="color:#eeffff;">            </span><span style="color:#f78c6c;">"type"</span><span style="color:#89ddff;">: "</span><span style="color:#c3e88d;">array</span><span style="color:#89ddff;">",
+</span><span style="color:#eeffff;">            </span><span style="color:#f78c6c;">"items"</span><span style="color:#89ddff;">: {
+</span><span style="color:#eeffff;">                </span><span style="color:#ff5370;">"type"</span><span style="color:#89ddff;">: "</span><span style="color:#c3e88d;">JobDetail</span><span style="color:#89ddff;">"
+</span><span style="color:#eeffff;">            </span><span style="color:#89ddff;">},
+</span><span style="color:#eeffff;">        </span><span style="color:#89ddff;">}
+</span><span style="color:#eeffff;">    </span><span style="color:#89ddff;">},
+</span><span style="color:#eeffff;">    </span><span style="color:#c792ea;">"required"</span><span style="color:#89ddff;">: [ "</span><span style="color:#c3e88d;">company</span><span style="color:#89ddff;">", "</span><span style="color:#c3e88d;">title</span><span style="color:#89ddff;">", "</span><span style="color:#c3e88d;">start</span><span style="color:#89ddff;">" ]
+</span><span style="color:#89ddff;">}
+</span></pre>
+
+</details>
+<p>Each <code>Detail</code> is essentially a bullet point for this job, it will contain a headline, snippet and
+long form description.</p>
+<details>
+<summary>JSON Schema</summary>
+<pre style="background-color:#263238;"><span style="color:#89ddff;">{
+</span><span style="color:#eeffff;">    </span><span style="color:#c792ea;">"title"</span><span style="color:#89ddff;">: "</span><span style="color:#c3e88d;">JobDetail</span><span style="color:#89ddff;">",
+</span><span style="color:#eeffff;">    </span><span style="color:#c792ea;">"description"</span><span style="color:#89ddff;">: "</span><span style="color:#c3e88d;">A highlight from a job</span><span style="color:#89ddff;">",
+</span><span style="color:#eeffff;">    </span><span style="color:#c792ea;">"type"</span><span style="color:#89ddff;">: "</span><span style="color:#c3e88d;">object</span><span style="color:#89ddff;">",
+</span><span style="color:#eeffff;">    </span><span style="color:#c792ea;">"properties"</span><span style="color:#89ddff;">: {
+</span><span style="color:#eeffff;">        </span><span style="color:#ffcb6b;">"headline"</span><span style="color:#89ddff;">: {
+</span><span style="color:#eeffff;">            </span><span style="color:#f78c6c;">"description"</span><span style="color:#89ddff;">: "</span><span style="color:#c3e88d;">The headline</span><span style="color:#89ddff;">",
+</span><span style="color:#eeffff;">            </span><span style="color:#f78c6c;">"type"</span><span style="color:#89ddff;">: "</span><span style="color:#c3e88d;">string</span><span style="color:#89ddff;">"
+</span><span style="color:#eeffff;">        </span><span style="color:#89ddff;">},
+</span><span style="color:#eeffff;">        </span><span style="color:#ffcb6b;">"snippet"</span><span style="color:#89ddff;">: {
+</span><span style="color:#eeffff;">            </span><span style="color:#f78c6c;">"description"</span><span style="color:#89ddff;">: "</span><span style="color:#c3e88d;">A snippet describing this detail</span><span style="color:#89ddff;">",
+</span><span style="color:#eeffff;">            </span><span style="color:#f78c6c;">"type"</span><span style="color:#89ddff;">: "</span><span style="color:#c3e88d;">string</span><span style="color:#89ddff;">"
+</span><span style="color:#eeffff;">        </span><span style="color:#89ddff;">},
+</span><span style="color:#eeffff;">        </span><span style="color:#ffcb6b;">"detail"</span><span style="color:#89ddff;">: {
+</span><span style="color:#eeffff;">            </span><span style="color:#f78c6c;">"description"</span><span style="color:#89ddff;">: "</span><span style="color:#c3e88d;">The long form description, Commonmark markdown can be used to style this content</span><span style="color:#89ddff;">",
+</span><span style="color:#eeffff;">            </span><span style="color:#f78c6c;">"type"</span><span style="color:#89ddff;">: "</span><span style="color:#c3e88d;">string</span><span style="color:#89ddff;">"
+</span><span style="color:#eeffff;">        </span><span style="color:#89ddff;">}
+</span><span style="color:#eeffff;">    </span><span style="color:#89ddff;">}
+</span><span style="color:#89ddff;">}
+</span></pre>
+
+</details>
+<h4><code>oss.toml</code></h4>
+<p>This file is the entry point for the open source work portion of the resume. The top level is
+an array of <code>Project</code> objects under the key <code>projects</code> or <code>project</code> <sup class="footnote-ref"><a href="#fn-1" id="fnref-1" rel="noopener noreferrer">1</a></sup>.</p>
+<details>
+<summary>JSON Schema</summary>
+<pre style="background-color:#263238;"><span style="color:#89ddff;">{
+</span><span style="color:#eeffff;">    </span><span style="color:#c792ea;">"title"</span><span style="color:#89ddff;">: "</span><span style="color:#c3e88d;">Projects</span><span style="color:#89ddff;">",
+</span><span style="color:#eeffff;">    </span><span style="color:#c792ea;">"description"</span><span style="color:#89ddff;">: "</span><span style="color:#c3e88d;">List of oss projects</span><span style="color:#89ddff;">",
+</span><span style="color:#eeffff;">    </span><span style="color:#c792ea;">"type"</span><span style="color:#89ddff;">: "</span><span style="color:#c3e88d;">object</span><span style="color:#89ddff;">",
+</span><span style="color:#eeffff;">    </span><span style="color:#c792ea;">"patternProperties"</span><span style="color:#89ddff;">: {
+</span><span style="color:#eeffff;">        </span><span style="color:#ffcb6b;">"projects?"</span><span style="color:#89ddff;">: {
+</span><span style="color:#eeffff;">            </span><span style="color:#f78c6c;">"type"</span><span style="color:#89ddff;">: "</span><span style="color:#c3e88d;">array</span><span style="color:#89ddff;">",
+</span><span style="color:#eeffff;">            </span><span style="color:#f78c6c;">"items"</span><span style="color:#89ddff;">: {
+</span><span style="color:#eeffff;">                </span><span style="color:#ff5370;">"type"</span><span style="color:#89ddff;">: "</span><span style="color:#c3e88d;">Project</span><span style="color:#89ddff;">"
+</span><span style="color:#eeffff;">            </span><span style="color:#89ddff;">},
+</span><span style="color:#eeffff;">        </span><span style="color:#89ddff;">}
+</span><span style="color:#eeffff;">    </span><span style="color:#89ddff;">}
+</span><span style="color:#89ddff;">}
+</span></pre>
+
+</details>
+<p>A <code>Project</code> is a recursive data structure for describing open source contribution it contains a
+project name, short description, long description and a list of sub projects. This structure
+makes it easier to represent GitHub Organizations and their repositories and/or crates
+that have workspace crates that deserve additional details.</p>
+<details>
+<summary>JSON Schema</summary>
+<pre style="background-color:#263238;"><span style="color:#89ddff;">{
+</span><span style="color:#eeffff;">    </span><span style="color:#c792ea;">"title"</span><span style="color:#89ddff;">: "</span><span style="color:#c3e88d;">Project</span><span style="color:#89ddff;">",
+</span><span style="color:#eeffff;">    </span><span style="color:#c792ea;">"description"</span><span style="color:#89ddff;">: "</span><span style="color:#c3e88d;">A Project outline</span><span style="color:#89ddff;">",
+</span><span style="color:#eeffff;">    </span><span style="color:#c792ea;">"type"</span><span style="color:#89ddff;">: "</span><span style="color:#c3e88d;">object</span><span style="color:#89ddff;">",
+</span><span style="color:#eeffff;">    </span><span style="color:#c792ea;">"properties"</span><span style="color:#89ddff;">: {
+</span><span style="color:#eeffff;">        </span><span style="color:#ffcb6b;">"name"</span><span style="color:#89ddff;">: {
+</span><span style="color:#eeffff;">            </span><span style="color:#f78c6c;">"description"</span><span style="color:#89ddff;">: "</span><span style="color:#c3e88d;">The name of the project</span><span style="color:#89ddff;">",
+</span><span style="color:#eeffff;">            </span><span style="color:#f78c6c;">"type"</span><span style="color:#89ddff;">: "</span><span style="color:#c3e88d;">string</span><span style="color:#89ddff;">",
+</span><span style="color:#eeffff;">        </span><span style="color:#89ddff;">},
+</span><span style="color:#eeffff;">        </span><span style="color:#ffcb6b;">"short_desc"</span><span style="color:#89ddff;">: {
+</span><span style="color:#eeffff;">            </span><span style="color:#f78c6c;">"description"</span><span style="color:#89ddff;">: "</span><span style="color:#c3e88d;">A snippet about this project</span><span style="color:#89ddff;">",
+</span><span style="color:#eeffff;">            </span><span style="color:#f78c6c;">"type"</span><span style="color:#89ddff;">: "</span><span style="color:#c3e88d;">string</span><span style="color:#89ddff;">"
+</span><span style="color:#eeffff;">        </span><span style="color:#89ddff;">},
+</span><span style="color:#eeffff;">        </span><span style="color:#ffcb6b;">"long_desc"</span><span style="color:#89ddff;">: {
+</span><span style="color:#eeffff;">            </span><span style="color:#f78c6c;">"description"</span><span style="color:#89ddff;">: "</span><span style="color:#c3e88d;">A long form overview of this project, Commonmark markdown can be used to style this content</span><span style="color:#89ddff;">",
+</span><span style="color:#eeffff;">            </span><span style="color:#f78c6c;">"type"</span><span style="color:#89ddff;">: "</span><span style="color:#c3e88d;">string</span><span style="color:#89ddff;">"
+</span><span style="color:#eeffff;">        </span><span style="color:#89ddff;">},
+</span><span style="color:#eeffff;">        </span><span style="color:#ffcb6b;">"sub_projects"</span><span style="color:#89ddff;">: {
+</span><span style="color:#eeffff;">            </span><span style="color:#f78c6c;">"description"</span><span style="color:#89ddff;">: "</span><span style="color:#c3e88d;">A list of sub-projects related to this project, this is recursive in nature so these sub projects can also have sub-projects</span><span style="color:#89ddff;">",
+</span><span style="color:#eeffff;">            </span><span style="color:#f78c6c;">"type"</span><span style="color:#89ddff;">: "</span><span style="color:#c3e88d;">array</span><span style="color:#89ddff;">",
+</span><span style="color:#eeffff;">            </span><span style="color:#f78c6c;">"items"</span><span style="color:#89ddff;">: {
+</span><span style="color:#eeffff;">                </span><span style="color:#ff5370;">"type"</span><span style="color:#89ddff;">: "</span><span style="color:#c3e88d;">Project</span><span style="color:#89ddff;">"
+</span><span style="color:#eeffff;">            </span><span style="color:#89ddff;">}
+</span><span style="color:#eeffff;">        </span><span style="color:#89ddff;">}
+</span><span style="color:#eeffff;">    </span><span style="color:#89ddff;">},
+</span><span style="color:#eeffff;">    </span><span style="color:#c792ea;">"required"</span><span style="color:#89ddff;">: ["</span><span style="color:#c3e88d;">name</span><span style="color:#89ddff;">", "</span><span style="color:#c3e88d;">short_desc</span><span style="color:#89ddff;">", "</span><span style="color:#c3e88d;">long_desc</span><span style="color:#89ddff;">"]
+</span><span style="color:#89ddff;">}
+</span></pre>
+
+</details>
+<h4><code>edu.toml</code></h4>
+<p>This file is the entry point for the open source work portion of the resume. The top level is
+an array of <code>School</code> objects under the key <code>schools</code> or <code>school</code> <sup class="footnote-ref"><a href="#fn-1" id="fnref-1" rel="noopener noreferrer">1</a></sup>.</p>
+<details>
+<summary>JSON Schema</summary>
+<pre style="background-color:#263238;"><span style="color:#89ddff;">{
+</span><span style="color:#eeffff;">    </span><span style="color:#c792ea;">"title"</span><span style="color:#89ddff;">: "</span><span style="color:#c3e88d;">Education</span><span style="color:#89ddff;">",
+</span><span style="color:#eeffff;">    </span><span style="color:#c792ea;">"description"</span><span style="color:#89ddff;">: "</span><span style="color:#c3e88d;">List of school details</span><span style="color:#89ddff;">",
+</span><span style="color:#eeffff;">    </span><span style="color:#c792ea;">"type"</span><span style="color:#89ddff;">: "</span><span style="color:#c3e88d;">object</span><span style="color:#89ddff;">",
+</span><span style="color:#eeffff;">    </span><span style="color:#c792ea;">"patternProperties"</span><span style="color:#89ddff;">: {
+</span><span style="color:#eeffff;">        </span><span style="color:#ffcb6b;">"schools?"</span><span style="color:#89ddff;">: {
+</span><span style="color:#eeffff;">            </span><span style="color:#f78c6c;">"type"</span><span style="color:#89ddff;">: "</span><span style="color:#c3e88d;">array</span><span style="color:#89ddff;">"
+</span><span style="color:#eeffff;">            </span><span style="color:#89ddff;">"</span><span style="color:#c3e88d;">items</span><span style="color:#89ddff;">"</span><span style="background-color:#ff5370;color:#ffffff;">:</span><span style="color:#eeffff;"> </span><span style="color:#89ddff;">{
+</span><span style="color:#eeffff;">                </span><span style="color:#ff5370;">"type"</span><span style="color:#89ddff;">: "</span><span style="color:#c3e88d;">School</span><span style="color:#89ddff;">"
+</span><span style="color:#eeffff;">            </span><span style="color:#89ddff;">},
+</span><span style="color:#eeffff;">        </span><span style="color:#89ddff;">},
+</span><span style="color:#eeffff;">    </span><span style="color:#89ddff;">}
+</span><span style="color:#89ddff;">}
+</span></pre>
+
+
+<p>A <code>School</code> is a breif description of an educational experience including the name of the institution
+a description of the course of study and an optional graduation date.</p>
+<details>
+<summary>JSON Schema</summary>
+<pre style="background-color:#263238;"><span style="color:#89ddff;">{
+</span><span style="color:#eeffff;">    </span><span style="color:#c792ea;">"title"</span><span style="color:#89ddff;">: "</span><span style="color:#c3e88d;">School</span><span style="color:#89ddff;">",
+</span><span style="color:#eeffff;">    </span><span style="color:#c792ea;">"description"</span><span style="color:#89ddff;">: "</span><span style="color:#c3e88d;">Description of schooling</span><span style="color:#89ddff;">",
+</span><span style="color:#eeffff;">    </span><span style="color:#c792ea;">"type"</span><span style="color:#89ddff;">: "</span><span style="color:#c3e88d;">object</span><span style="color:#89ddff;">",
+</span><span style="color:#eeffff;">    </span><span style="color:#c792ea;">"properties"</span><span style="color:#89ddff;">: {
+</span><span style="color:#eeffff;">        </span><span style="color:#ffcb6b;">"name"</span><span style="color:#89ddff;">: {
+</span><span style="color:#eeffff;">            </span><span style="color:#f78c6c;">"description"</span><span style="color:#89ddff;">: "</span><span style="color:#c3e88d;">The name of the institution</span><span style="color:#89ddff;">",
+</span><span style="color:#eeffff;">            </span><span style="color:#f78c6c;">"type"</span><span style="color:#89ddff;">: "</span><span style="color:#c3e88d;">string</span><span style="color:#89ddff;">"
+</span><span style="color:#eeffff;">        </span><span style="color:#89ddff;">},
+</span><span style="color:#eeffff;">        </span><span style="color:#ffcb6b;">"desc"</span><span style="color:#89ddff;">: {
+</span><span style="color:#eeffff;">            </span><span style="color:#f78c6c;">"description"</span><span style="color:#89ddff;">: "</span><span style="color:#c3e88d;">A description of this course of study</span><span style="color:#89ddff;">",
+</span><span style="color:#eeffff;">            </span><span style="color:#f78c6c;">"type"</span><span style="color:#89ddff;">: "</span><span style="color:#c3e88d;">string</span><span style="color:#89ddff;">"
+</span><span style="color:#eeffff;">        </span><span style="color:#89ddff;">},
+</span><span style="color:#eeffff;">        </span><span style="color:#ffcb6b;">"graduation_date"</span><span style="color:#89ddff;">: {
+</span><span style="color:#eeffff;">            </span><span style="color:#f78c6c;">"description"</span><span style="color:#89ddff;">: "</span><span style="color:#c3e88d;">If completed, when that happened</span><span style="color:#89ddff;">",
+</span><span style="color:#eeffff;">            </span><span style="color:#f78c6c;">"type"</span><span style="color:#89ddff;">: "</span><span style="color:#c3e88d;">string</span><span style="color:#89ddff;">",
+</span><span style="color:#eeffff;">        </span><span style="color:#89ddff;">}
+</span><span style="color:#eeffff;">    </span><span style="color:#89ddff;">},
+</span><span style="color:#eeffff;">    </span><span style="color:#c792ea;">"required"</span><span style="color:#89ddff;">: ["</span><span style="color:#c3e88d;">name</span><span style="color:#89ddff;">", "</span><span style="color:#c3e88d;">desc</span><span style="color:#89ddff;">"]
+</span><span style="color:#89ddff;">}
+</span></pre>
+
+</details>
+
+<ol>
+<li id="fn-1">
+<p>Because toml allows for 2 array syntaxes, array properties have a serde <code>alias</code> to allow
+them to be formatted as either an inline array (<code>&lt;list-name&gt; = []</code>) or with the <code>[[&lt;list-name&gt;]]</code> syntax. I personally
+find it to be more plesent to use the plural name for the former and non-plural for the latter. <a href="#fnref-1" class="footnote-backref" rel="noopener noreferrer">↩</a></p>
+</li>
+</ol>
+
+</details>
+
+
+        </main>
+      </div>
+
+      <footer>
+        
+          <a href="https://github.com/FreeMasen/resume-tui"><div class="github-icon" aria-hidden="true"></div></a>
+        
+        <span>
+          resume-tui
+        </span>
+      </footer>
+    </div>
+
+    
+    
+
+    
+
+
+  </body>
 </html>

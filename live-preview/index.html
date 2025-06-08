@@ -195,16 +195,20 @@
                 let arg = 0;
                 switch (ev.key) {
                     case "ArrowUp":
+                    case "h":
                         arg = Event.up;
                         break;
                     case "ArrowDown":
+                    case "l":
                         arg = Event.down;
                         break;
                     case "ArrowLeft":
+                    case "j":
                         arg = Event.left;
                         break;
                     case "Enter":
                     case "ArrowRight":
+                    case "k":
                         arg = Event.right;
                         break;
                     default:

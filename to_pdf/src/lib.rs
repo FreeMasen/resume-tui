@@ -6,7 +6,7 @@ use printpdf::{
 use resume_tui::DATABASE;
 use wrapper::WithCalc;
 
-static RESUME_FONT: &[u8] = include_bytes!("../../assets/BhuTukaExpandedOne-Regular.ttf");
+static RESUME_FONT: &[u8] = include_bytes!("../../assets/IosevkaEtoile-Thin.ttc");
 static GITHUB_IMG: &str = include_str!("../../assets/github.svg");
 static LI_IMG: &str = include_str!("../../assets/linkedin.svg");
 static PH_IMG: &str = include_str!("../../assets/phone.svg");
@@ -172,7 +172,7 @@ pub fn generate_pdf(out_path: impl AsRef<Path>) -> Result<(), String> {
         });
         current_y -= 5.0;
         current_layer.use_text(job.title, 12.0, Mm(X_MARGIN + 2.0), Mm(current_y), &font);
-        current_y -= 3.0;
+        current_y -= 4.0;
         for d in job.details {
             current_layer.add_polygon(Polygon {
                 rings: vec![diamond_points(X_MARGIN + 3.0, current_y + 1.0)],

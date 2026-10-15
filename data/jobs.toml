@@ -1,7 +1,13 @@
 [[job]]
+company = "Vultr"
+title = "Staff Software Engineer"
+start = "July 2025"
+
+[[job]]
 company = "SmartThings"
 title = "Staff Software Engineer"
 start = "March 2020"
+end = "July 2025"
 
 [[job]]
 company = "Solution Design Group"

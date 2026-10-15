@@ -1,0 +1,5 @@
+headline = "Spearhead Rust project workspace organization"
+snippet = "Lead an effort to transition a proof of concept rust hypervisor project to a full cargo workspace"
+
+detail = """
+"""

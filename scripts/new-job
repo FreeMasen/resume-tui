@@ -1,0 +1,29 @@
+#! /bin/bash
+
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+PROJECT_ROOT=$(dirname $SCRIPT_DIR)
+DATA_DIR="${DATA_DIR:-$PROJECT_ROOT/data}"
+JOB_TOML="$DATA_DIR/jobs.toml"
+
+
+JOB_NAME=$1
+
+if [ -z ${JOB_NAME+x} ]; then 
+    echo "1 argument is required <job-name>" >2
+    exit 1
+fi
+
+tmp=$(mktemp)
+
+mkdir -p "$DATA_DIR/job_details/$JOB_NAME"
+echo '[[job]]' > $tmp
+echo "company = \"$JOB_NAME\"" >> $tmp
+echo 'title = ""' >> $tmp
+echo 'start = ""' >> $tmp
+echo '' >> $tmp
+
+while IFS= read -r line; do
+    echo "$line" >> $tmp
+done < $JOB_TOML
+
+mv $tmp $JOB_TOML

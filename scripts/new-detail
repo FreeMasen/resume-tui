@@ -1,0 +1,26 @@
+#! /bin/bash
+
+DETAILS_DIR=$1
+if [ -z ${DETAILS_DIR+x} ]; then 
+    echo "1 argument is required a path to the details directory to add the details to" >2
+    exit 1
+fi
+
+DETAIL_NAME=$2
+echo "dir: $DETAILS_DIR"
+if [ -z ${2+x} ]; then
+    CT=$(ls $DETAILS_DIR | wc -l | tr -d ' ')
+    INDEX=$(($CT+1))
+    DETAIL_NAME="$INDEX.toml"
+fi
+echo "name: $DETAIL_NAME"
+
+DETAILS_PATH="$DETAILS_DIR/$DETAIL_NAME"
+
+echo "path: $DETAILS_PATH"
+
+echo "headline = \"\"" > $DETAILS_PATH
+echo "snippet = \"\"" >> $DETAILS_PATH
+echo "" >> $DETAILS_PATH
+echo "detail = \"\"\"\"" >> $DETAILS_PATH
+echo "\"\"\"" >> $DETAILS_PATH

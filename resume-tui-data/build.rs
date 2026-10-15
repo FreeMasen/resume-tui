@@ -1,7 +1,5 @@
 use std::{
-    cmp::Ordering,
-    env, fs,
-    path::{Path, PathBuf},
+    cmp::Ordering, env, fmt, fs, path::{Path, PathBuf},
 };
 
 use proc_macro2::{Span, TokenStream};
@@ -9,23 +7,28 @@ use quote::quote;
 use serde::Deserialize;
 use syn::{LitStr, Token, punctuated::Punctuated};
 
+fn log(args: fmt::Arguments) {
+    println!("cargo::warning={}", args);
+}
+
 fn main() {
-    setup_logging();
     let out_dir = env::var_os("OUT_DIR").unwrap();
     let dest_path = Path::new(&out_dir).join("source_data.rs");
 
     let path = if let Ok(cfg) = env::var("RESUME_DATA_PATH") {
         PathBuf::from(cfg)
+    } else if let Ok(root) = env::var("CARGO_MANIFEST_DIR") {
+        PathBuf::from(root).parent().unwrap().join("data")
     } else {
         PathBuf::from("data")
     };
     emit_rebuild_directives(&path);
-    log::debug!("reading data from {}", path.display());
+    log(format_args!("reading data from {}", path.display()));
     let rust = generate_from_toml_files(path);
-    log::debug!("writing to {}", dest_path.display());
+    log(format_args!("writing to {}", dest_path.display()));
     fs::write(dest_path, &rust).unwrap();
     if let Ok(path) = std::env::var("BUILD_SCRIPT_DEBUG_PATH") {
-        log::debug!("writing debug path: {path}");
+        log(format_args!("writing debug path: {path}"));
         fs::write("debug.rs", path).unwrap();
     }
     std::process::Command::new("rustfmt")
@@ -36,25 +39,6 @@ fn main() {
         .unwrap();
 }
 
-fn setup_logging() {
-    use env_logger::{Env, Target};
-    let env = Env::default().filter("BUILD_LOG");
-    let mut b = env_logger::Builder::from_env(env);
-    let file_path = if let Ok(log_file) = std::env::var("BUILD_LOG_FILE") {
-        log_file
-    } else {
-        "log.log".to_string()
-    };
-    let target_file = std::fs::File::options()
-        .write(true)
-        .create(true)
-        .truncate(true)
-        .open(file_path)
-        .unwrap();
-    b.target(Target::Pipe(Box::new(target_file)));
-    b.init();
-}
-
 fn emit_rebuild_directives(path: impl AsRef<Path>) {
     println!("cargo:rerun-if-changed=build.rs");
     println!("cargo:rerun-if-changed={}", path.as_ref().display());
@@ -63,7 +47,6 @@ fn emit_rebuild_directives(path: impl AsRef<Path>) {
 fn generate_from_toml_files(path: PathBuf) -> String {
     let info_text = std::fs::read_to_string(path.join("info.toml")).unwrap();
     let info: Info = toml::from_str(&info_text).unwrap();
-    log::debug!("{info:#?}");
     let name = LitStr::new(&info.name, Span::call_site());
     let tag_line = LitStr::new(&info.tag_line, Span::call_site());
     let github = optional_str(info.github);
@@ -73,12 +56,10 @@ fn generate_from_toml_files(path: PathBuf) -> String {
     let jobs_text = std::fs::read_to_string(path.join("jobs.toml")).unwrap();
     let mut jobs_value: Jobs = toml::from_str(&jobs_text).unwrap();
     collect_jobs(&path, &mut jobs_value);
-    log::debug!("{jobs_value:#?}");
     let jobs = TokenStream::from(jobs_value);
     let oss_text = std::fs::read_to_string(path.join("oss.toml")).unwrap();
     let mut oss: Projects = toml::from_str(&oss_text).unwrap();
     collect_oss(&path, &mut oss);
-    log::debug!("{oss:#?}");
     let oss = TokenStream::from(oss);
     let edu_text = std::fs::read_to_string(path.join("edu.toml")).unwrap();
     let edu: Education = toml::from_str(&edu_text).unwrap();

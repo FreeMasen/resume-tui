@@ -1,11 +1,10 @@
 use ratatui::{
     style::Stylize,
-    symbols,
-    text::{Line, Span, Text},
-    widgets::{List, ListItem, Widget},
+    text::Text,
+    widgets::{List, Widget},
 };
 
-use crate::{data::source::DATABASE, Navigable, DEFAULT_STYLE};
+use crate::DEFAULT_STYLE;
 
 #[derive(Debug, Clone, Default)]
 pub struct Help;

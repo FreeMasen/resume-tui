@@ -1,8 +1,6 @@
-use std::{io::Cursor, path::Path};
+use std::path::Path;
 
-use printpdf::{
-    Font, IndirectFontRef, Line, Mm, PdfLayerReference, Point, Polygon, Pt, Px, SvgTransform,
-};
+use printpdf::{Line, Mm, Point, Polygon, SvgTransform};
 use resume_tui_data::data::source::DATABASE;
 use wrapper::WithCalc;
 
@@ -60,7 +58,7 @@ pub fn generate_pdf(out_path: impl AsRef<Path>) -> Result<(), String> {
         let img_width = Mm::from(svg_ref.width.into_pt(300.0)).0;
         let img_width = (img_width * 0.04) + 0.5;
         current_x += img_width;
-        let phone_width = w.word_width(&phone, 10.0);
+        let phone_width = w.word_width(phone, 10.0);
         current_layer.use_text(phone, 10.0, Mm(current_x), Mm(current_y), &font);
         current_x += phone_width + 1.5;
     }
@@ -80,7 +78,7 @@ pub fn generate_pdf(out_path: impl AsRef<Path>) -> Result<(), String> {
         let img_width = Mm::from(svg_ref.width.into_pt(300.0)).0;
         let img_width = (img_width * 0.04) + 0.5;
         current_x += img_width;
-        let email_width = w.word_width(&email, 10.0);
+        let email_width = w.word_width(email, 10.0);
         current_layer.use_text(email, 10.0, Mm(current_x), Mm(current_y), &font);
         current_x += email_width + 2.0;
     }
@@ -291,13 +289,13 @@ fn diamond_points(center_x: f32, center_y: f32) -> Vec<(Point, bool)> {
     let top_point = point(center_x, center_y - half_width);
     let right_point = point(center_x + half_width, center_y);
     let bottom_point = point(center_x, center_y + half_width);
-    let mut ret = Vec::new();
-    ret.push((left_point, false));
-    ret.push((top_point, false));
-    ret.push((right_point, false));
-    ret.push((bottom_point, false));
-    ret.push((left_point, false));
-    ret
+    vec![
+        (left_point, false),
+        (top_point, false),
+        (right_point, false),
+        (bottom_point, false),
+        (left_point, false),
+    ]
 }
 
 fn point(x: f32, y: f32) -> Point {

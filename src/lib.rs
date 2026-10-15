@@ -261,7 +261,7 @@ impl<'a> App<'a> {
 
     fn handle_print(&self) -> Result<(), Error> {
         Ok(
-            to_pdf::generate_pdf(&PathBuf::from(DATABASE.name).with_extension("pdf"))
+            to_pdf::generate_pdf(PathBuf::from(DATABASE.name).with_extension("pdf"))
                 .map_err(std::io::Error::other)?,
         )
     }

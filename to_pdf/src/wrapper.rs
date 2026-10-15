@@ -3,7 +3,7 @@ use std::collections::HashMap;
 use owned_ttf_parser::{AsFaceRef, Face, OwnedFace};
 use printpdf::{FontData, FontMetrics, GlyphMetrics};
 
-const MM_IN_PT: f32 = 0.3527777778;
+const MM_IN_PT: f32 = 0.352_777_78;
 
 pub struct WithCalc {
     font: TtfFace,

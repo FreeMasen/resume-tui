@@ -222,7 +222,7 @@
                                     let file_url = URL.createObjectURL(file);
                                     const tmp1 = document.createElement("a");
                                     tmp1.href = file_url;
-                                    tmp1.download = `downloaded_file.${encodeURIComponent("Robert Masen Resume.pdf")}`;
+                                    tmp1.download = encodeURIComponent("Robert Masen Resume.pdf");
                                     document.body.appendChild(tmp1);
                                     tmp1.click();
                                     URL.revokeObjectURL(file_url);

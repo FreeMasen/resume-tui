@@ -263,7 +263,7 @@ fn render_job_details<'a>(
     );
 }
 
-fn map_detail_to_list_item(detail: &Detail) -> ListItem {
+fn map_detail_to_list_item<'a>(detail: &'a Detail) -> ListItem<'a> {
     let title = Line::from(detail.headline.add_modifier(Modifier::BOLD));
     let details = Line::from(format!("  {}", detail.snippet));
     let text = Text::from(vec![title, details]);

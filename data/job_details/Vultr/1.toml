@@ -1,4 +1,4 @@
-headline = "Virtual Machine Metadata Rewrite"
+headline = "Virtual Machine Metadata Server"
 snippet = "Ported a Virtual Machine Metadata server from PHP to Rust"
 
 detail = """

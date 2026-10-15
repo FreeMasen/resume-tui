@@ -1,3 +1,4 @@
+#[cfg(feature = "pdf")]
 use std::path::PathBuf;
 
 use list_state::ListStateWrapper as ListState;
@@ -186,7 +187,10 @@ impl<'a> App<'a> {
             Page::Work(work_state) => work_state.render(inner_rect, buf),
             Page::Oss(inner) => inner.render(inner_rect, buf),
             Page::Edu(inner) => inner.render(inner_rect, buf),
-            Page::Help(_) => crate::help::Help.render(inner_rect, buf),
+            Page::Help(_) => {
+                #[cfg(feature = "pdf")]
+                crate::help::Help.render(inner_rect, buf)
+            },
         }
     }
 
@@ -260,10 +264,13 @@ impl<'a> App<'a> {
     }
 
     fn handle_print(&self) -> Result<(), Error> {
-        Ok(
-            to_pdf::generate_pdf(PathBuf::from(DATABASE.name).with_extension("pdf"))
-                .map_err(std::io::Error::other)?,
-        )
+        cfg_select! {
+            feature = "pdf" => Ok(
+                to_pdf::generate_pdf(PathBuf::from(DATABASE.name).with_extension("pdf"))
+                    .map_err(std::io::Error::other)?,
+            ),
+            _ => Ok(())
+        }
     }
 
     fn handle_help(&mut self) {

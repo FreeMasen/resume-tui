@@ -40,6 +40,9 @@ jobs:
           && mkdir ./public/live-preview
           && cp -r ./browser/pkg/* ./public/live-preview/
           && cp -r ./browser/index.html ./public/live-preview/
+      - name: build pdf
+        run: >-
+          cargo run -p to_pdf './public/Robert Masen Resume.pdf'
       - uses: peaceiris/actions-gh-pages@v3
         if: ${{ github.ref == 'refs/heads/main' }}
         with:

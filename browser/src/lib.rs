@@ -49,6 +49,7 @@ fn handle_event(event: u8, app: &mut App) -> Result<(), JsValue> {
         2 => Event::Down,
         3 => Event::Left,
         4 => Event::Right,
+        5 => Event::Help,
         _ => {
             return Ok(());
         }

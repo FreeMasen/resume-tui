@@ -113,6 +113,7 @@
                 down: 2,
                 left: 3,
                 right: 4,
+                help: 5,
             })
             let eventHandler = eventId => {
                 console.log("eventHandler")
@@ -211,9 +212,28 @@
                     case "l":
                         arg = Event.right;
                         break;
+                    case "?":
+                        arg = Event.help;
+                        break;
+                    case "p":
+                        fetch(encodeURIComponent("/Robert Masen Resume.pdf")).then(resp => {
+                            if (resp.ok) {
+                                resp.blob().then(file => {
+                                    let file_url = URL.createObjectURL(file);
+                                    const tmp1 = document.createElement("a");
+                                    tmp1.href = file_url;
+                                    tmp1.download = `downloaded_file.${encodeURIComponent("Robert Masen Resume.pdf")}`;
+                                    document.body.appendChild(tmp1);
+                                    tmp1.click();
+                                    URL.revokeObjectURL(file_url);
+                                    tmp1.remove();
+                                });
+                            }
+                        });
+                        return;
                     default:
                         console.warn("Unknown key:", ev.code);
-                        break;
+                        return;
                 }
                 eventHandler(arg);
                 return false;

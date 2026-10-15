@@ -188,7 +188,6 @@ impl<'a> App<'a> {
             Page::Oss(inner) => inner.render(inner_rect, buf),
             Page::Edu(inner) => inner.render(inner_rect, buf),
             Page::Help(_) => {
-                #[cfg(feature = "pdf")]
                 crate::help::Help.render(inner_rect, buf)
             },
         }

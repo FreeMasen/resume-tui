@@ -135,7 +135,7 @@ fn convert(s: &'static str) -> Option<Text<'static>> {
                 let text = if complete { "- [x] " } else { "- [ ]" };
                 wrapper.push_text_with_style(text, default_style());
             }
-            Event::DisplayMath(_) | Event::InlineMath(_) => {},
+            Event::DisplayMath(_) | Event::InlineMath(_) => {}
         }
     }
     Some(wrapper.finish())

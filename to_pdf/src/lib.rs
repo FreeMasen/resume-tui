@@ -119,13 +119,7 @@ pub fn generate_pdf(out_path: impl AsRef<Path>) -> Result<(), String> {
         let li_width = Mm::from(svg_ref.width.into_pt(300.0)).0;
         let li_width = (li_width * 0.065) + 0.5;
         current_x += li_width;
-        current_layer.use_text(
-            li,
-            10.0,
-            Mm(current_x),
-            Mm(current_y),
-            &font,
-        );
+        current_layer.use_text(li, 10.0, Mm(current_x), Mm(current_y), &font);
     }
     if DATABASE.phone.is_some()
         || DATABASE.email.is_some()
@@ -146,10 +140,10 @@ pub fn generate_pdf(out_path: impl AsRef<Path>) -> Result<(), String> {
     };
     current_layer.add_line(line);
     current_y -= 6.0;
-    
+
     current_layer.use_text("Work", 18.0, Mm(X_MARGIN), Mm(current_y), &font);
     current_y -= 2.0;
-    
+
     for job in DATABASE.jobs {
         current_y -= 3.0;
         current_layer.use_text(job.name, 14.0, Mm(X_MARGIN), Mm(current_y), &font);
@@ -211,7 +205,13 @@ pub fn generate_pdf(out_path: impl AsRef<Path>) -> Result<(), String> {
             is_closed: false,
         });
         current_y -= 5.0;
-        current_layer.use_text(proj.short_desc, 12.0, Mm(X_MARGIN + 2.0), Mm(current_y), &font);
+        current_layer.use_text(
+            proj.short_desc,
+            12.0,
+            Mm(X_MARGIN + 2.0),
+            Mm(current_y),
+            &font,
+        );
         current_y -= 3.0;
         for d in proj.sub_projects {
             current_layer.add_polygon(Polygon {

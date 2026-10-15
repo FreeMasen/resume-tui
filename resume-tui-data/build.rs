@@ -7,7 +7,7 @@ use std::{
 use proc_macro2::{Span, TokenStream};
 use quote::quote;
 use serde::Deserialize;
-use syn::{punctuated::Punctuated, LitStr, Token};
+use syn::{LitStr, Token, punctuated::Punctuated};
 
 fn main() {
     setup_logging();

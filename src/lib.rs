@@ -9,6 +9,7 @@ pub use resume_tui_data::data;
 
 mod detail_view;
 mod edu;
+mod help;
 mod list_state;
 mod markdown;
 mod oss;
@@ -22,7 +23,6 @@ const DEFAULT_STYLE: Style = Style::new().fg(Color::Green).bg(Color::Black);
 pub struct App<'a> {
     main_menu_state: ListState,
     sub_page: Option<Page<'a>>,
-    pub menu_footer: Option<String>,
 }
 
 pub trait Navigable {
@@ -37,6 +37,7 @@ enum Page<'a> {
     Work(work::WorkView<'a>),
     Oss(oss::OssView<'a>),
     Edu(edu::EduView),
+    Help(Option<Box<Self>>),
 }
 
 impl<'a> Navigable for Page<'a> {
@@ -45,6 +46,7 @@ impl<'a> Navigable for Page<'a> {
             Page::Work(inner) => inner.increment_selection(),
             Page::Oss(inner) => inner.increment_selection(),
             Page::Edu(inner) => inner.increment_selection(),
+            Page::Help(_) => {}
         }
     }
     fn decrement_selection(&mut self) {
@@ -52,6 +54,7 @@ impl<'a> Navigable for Page<'a> {
             Page::Work(inner) => inner.decrement_selection(),
             Page::Oss(inner) => inner.decrement_selection(),
             Page::Edu(inner) => inner.decrement_selection(),
+            Page::Help(_) => {}
         }
     }
 
@@ -60,6 +63,7 @@ impl<'a> Navigable for Page<'a> {
             Page::Work(inner) => inner.handle_enter(),
             Page::Oss(inner) => inner.handle_enter(),
             Page::Edu(inner) => inner.handle_enter(),
+            Page::Help(_) => {}
         }
     }
 
@@ -68,6 +72,7 @@ impl<'a> Navigable for Page<'a> {
             Page::Work(inner) => inner.handle_left(),
             Page::Oss(inner) => inner.handle_left(),
             Page::Edu(inner) => inner.handle_left(),
+            Page::Help(_) => false,
         }
     }
 }
@@ -83,7 +88,6 @@ impl<'a> App<'a> {
         Self {
             main_menu_state: ListState::new(4),
             sub_page: None,
-            menu_footer: None,
         }
     }
     pub fn tick(&mut self, terminal: &mut Terminal<impl Backend>) -> Result<(), Error> {
@@ -98,7 +102,14 @@ impl<'a> App<'a> {
             Event::Left => self.handle_left(),
             Event::Right => self.handle_right(),
             Event::Print => self.handle_print()?,
-            Event::Quit => return Err(Error::Exit),
+            Event::Help => self.handle_help(),
+            Event::Quit => {
+                if self.sub_page.is_some() {
+                    self.handle_left();
+                } else {
+                    return Err(Error::Exit);
+                }
+            }
         }
         Ok(())
     }
@@ -131,7 +142,8 @@ impl<'a> App<'a> {
             .style(DEFAULT_STYLE);
         let content_area = block.inner(area);
         block.render(area, buf);
-        let [menu_area, footer_area] = Layout::vertical([Constraint::Fill(1), Constraint::Length(1)]).areas(content_area);
+        let [menu_area, footer_area] =
+            Layout::vertical([Constraint::Fill(1), Constraint::Length(1)]).areas(content_area);
         let list = List::new([
             ListItem::from("Home"),
             "Work".into(),
@@ -145,9 +157,7 @@ impl<'a> App<'a> {
             list.highlight_style(Style::new().bg(Color::Green).fg(Color::Black))
         };
         StatefulWidget::render(list, menu_area, buf, self.main_menu_state.as_mut());
-        if let Some(footer) = self.menu_footer.as_ref() {
-            Line::raw(footer).render(footer_area, buf);
-        }
+        Line::raw("? for help").render(footer_area, buf);
     }
 
     fn render_page(&mut self, area: Rect, buf: &mut Buffer) {
@@ -176,6 +186,7 @@ impl<'a> App<'a> {
             Page::Work(work_state) => work_state.render(inner_rect, buf),
             Page::Oss(inner) => inner.render(inner_rect, buf),
             Page::Edu(inner) => inner.render(inner_rect, buf),
+            Page::Help(_) => crate::help::Help.render(inner_rect, buf),
         }
     }
 
@@ -249,7 +260,20 @@ impl<'a> App<'a> {
     }
 
     fn handle_print(&self) -> Result<(), Error> {
-        Ok(to_pdf::generate_pdf(&PathBuf::from(DATABASE.name).with_extension("pdf")).map_err(std::io::Error::other)?)
+        Ok(
+            to_pdf::generate_pdf(&PathBuf::from(DATABASE.name).with_extension("pdf"))
+                .map_err(std::io::Error::other)?,
+        )
+    }
+
+    fn handle_help(&mut self) {
+        if let Some(Page::Help(previous_page)) = self.sub_page.take() {
+            self.sub_page = previous_page.map(|p| *p);
+        } else if let Some(current) = self.sub_page.take() {
+            self.sub_page = Some(Page::Help(Some(Box::new(current))));
+        } else {
+            self.sub_page = Some(Page::Help(None));
+        }
     }
 }
 
@@ -270,6 +294,7 @@ pub enum Event {
     Right,
     Quit,
     Print,
+    Help,
 }
 
 #[derive(Debug, thiserror::Error)]

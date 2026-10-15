@@ -21,6 +21,7 @@ fn main() -> color_eyre::Result<()> {
         app.tick(&mut terminal)?;
         if let TermEvent::Key(key) = event::read()? {
             if key.kind == KeyEventKind::Press {
+                app.menu_footer = Some(format!("{}+{}", key.code, key.modifiers));
                 let ev = match key.code {
                     KeyCode::Char('q') | KeyCode::Esc => Event::Quit,
                     KeyCode::Char('c') if key.modifiers == KeyModifiers::CONTROL => Event::Quit,
@@ -28,6 +29,8 @@ fn main() -> color_eyre::Result<()> {
                     KeyCode::Char('j') | KeyCode::Down => Event::Down,
                     KeyCode::Char('k') | KeyCode::Up => Event::Up,
                     KeyCode::Char('l') | KeyCode::Right | KeyCode::Enter => Event::Right,
+                    KeyCode::Char('c') if key.modifiers == KeyModifiers::CONTROL => Event::Quit,
+                    KeyCode::Char('p') if key.modifiers == KeyModifiers::CONTROL => Event::Print,
                     _ => continue,
                 };
                 let res = app.event(ev);

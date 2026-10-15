@@ -1,10 +1,12 @@
+use std::path::PathBuf;
+
 use list_state::ListStateWrapper as ListState;
 use ratatui::{
     prelude::*,
     widgets::{block::Title, *},
 };
+pub use resume_tui_data::data;
 
-mod data;
 mod detail_view;
 mod edu;
 mod list_state;
@@ -20,6 +22,7 @@ const DEFAULT_STYLE: Style = Style::new().fg(Color::Green).bg(Color::Black);
 pub struct App<'a> {
     main_menu_state: ListState,
     sub_page: Option<Page<'a>>,
+    pub menu_footer: Option<String>,
 }
 
 pub trait Navigable {
@@ -80,6 +83,7 @@ impl<'a> App<'a> {
         Self {
             main_menu_state: ListState::new(4),
             sub_page: None,
+            menu_footer: None,
         }
     }
     pub fn tick(&mut self, terminal: &mut Terminal<impl Backend>) -> Result<(), Error> {
@@ -93,6 +97,7 @@ impl<'a> App<'a> {
             Event::Down => self.increment_selection(),
             Event::Left => self.handle_left(),
             Event::Right => self.handle_right(),
+            Event::Print => self.handle_print()?,
             Event::Quit => return Err(Error::Exit),
         }
         Ok(())
@@ -126,6 +131,7 @@ impl<'a> App<'a> {
             .style(DEFAULT_STYLE);
         let content_area = block.inner(area);
         block.render(area, buf);
+        let [menu_area, footer_area] = Layout::vertical([Constraint::Fill(1), Constraint::Length(1)]).areas(content_area);
         let list = List::new([
             ListItem::from("Home"),
             "Work".into(),
@@ -138,7 +144,10 @@ impl<'a> App<'a> {
         } else {
             list.highlight_style(Style::new().bg(Color::Green).fg(Color::Black))
         };
-        StatefulWidget::render(list, content_area, buf, self.main_menu_state.as_mut());
+        StatefulWidget::render(list, menu_area, buf, self.main_menu_state.as_mut());
+        if let Some(footer) = self.menu_footer.as_ref() {
+            Line::raw(footer).render(footer_area, buf);
+        }
     }
 
     fn render_page(&mut self, area: Rect, buf: &mut Buffer) {
@@ -238,6 +247,10 @@ impl<'a> App<'a> {
             _ => return,
         }
     }
+
+    fn handle_print(&self) -> Result<(), Error> {
+        Ok(to_pdf::generate_pdf(&PathBuf::from(DATABASE.name).with_extension("pdf")).map_err(std::io::Error::other)?)
+    }
 }
 
 impl<'a> Widget for &mut App<'a> {
@@ -256,6 +269,7 @@ pub enum Event {
     Left,
     Right,
     Quit,
+    Print,
 }
 
 #[derive(Debug, thiserror::Error)]

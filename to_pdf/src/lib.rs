@@ -3,7 +3,7 @@ use std::{io::Cursor, path::Path};
 use printpdf::{
     Font, IndirectFontRef, Line, Mm, PdfLayerReference, Point, Polygon, Pt, Px, SvgTransform,
 };
-use resume_tui::DATABASE;
+use resume_tui_data::data::source::DATABASE;
 use wrapper::WithCalc;
 
 static RESUME_FONT: &[u8] = include_bytes!("../../assets/IosevkaEtoile-Thin.ttc");

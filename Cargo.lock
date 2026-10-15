@@ -1182,9 +1182,24 @@ dependencies = [
  "pulldown-cmark",
  "quote",
  "ratatui",
+ "resume-tui-data",
  "serde",
  "syn 2.0.119",
  "thiserror",
+ "to_pdf",
+ "toml",
+]
+
+[[package]]
+name = "resume-tui-data"
+version = "0.1.0"
+dependencies = [
+ "env_logger",
+ "log",
+ "proc-macro2",
+ "quote",
+ "serde",
+ "syn 2.0.119",
  "toml",
 ]
 
@@ -1597,7 +1612,7 @@ version = "0.1.0"
 dependencies = [
  "owned_ttf_parser 0.21.0",
  "printpdf",
- "resume-tui",
+ "resume-tui-data",
  "serde_yaml",
  "tempfile",
 ]

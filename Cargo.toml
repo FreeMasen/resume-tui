@@ -17,6 +17,8 @@ pulldown-cmark = "0.12"
 ratatui = { version = "0.29", default-features = false }
 env_logger = { version = "0.11", optional = true }
 thiserror = "2"
+resume-tui-data = { path = "./resume-tui-data" }
+to_pdf = { path = "./to_pdf" }
 
 [dev-dependencies]
 insta = "1.36"
@@ -39,7 +41,7 @@ crossterm = ["dep:crossterm", "ratatui/crossterm"]
 
 [workspace]
 exclude = ["browser"]
-members = ["to_pdf"]
+members = ["resume-tui-data","to_pdf"]
 
 [package.metadata.wix]
 upgrade-guid = "B050A522-06FC-432E-B378-BFCF6C47F3B7"

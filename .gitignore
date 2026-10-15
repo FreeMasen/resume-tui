@@ -1,6 +1,6 @@
 /target
 /*.rs
-/*.log
+/**/*.log
 .vscode
 /**/.DS_Store
 resume.pdf

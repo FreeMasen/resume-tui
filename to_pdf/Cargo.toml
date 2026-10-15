@@ -2,6 +2,14 @@
 name = "to_pdf"
 version = "0.1.0"
 edition = "2021"
+authors = ["Robert Masen <r.f.masen@gmail.com>"]
+
+
+[package.metadata.wix]
+upgrade-guid = "6A395076-C6FF-4EE6-9813-992EB0F53E36"
+path-guid = "D34FBE02-F77E-4811-B367-130A41BF34FE"
+license = false
+eula = false
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 

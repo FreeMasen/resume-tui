@@ -5,6 +5,7 @@ edition = "2021"
 repository = "https://github.com/FreeMasen/resume-tui"
 authors = ["Robert Masen <r.f.masen@gmail.com>"]
 description = "My resume as a TUI application"
+homepage = "http://gh.freemasen.com/resume-tui/"
 
 [lib]
 crate-type = ["cdylib", "rlib"]

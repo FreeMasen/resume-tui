@@ -114,7 +114,8 @@
                 left: 3,
                 right: 4,
                 help: 5,
-            })
+            });
+            let resume_file_name = "";
             let eventHandler = eventId => {
                 console.log("eventHandler")
                 if (!app) {
@@ -216,13 +217,13 @@
                         arg = Event.help;
                         break;
                     case "p":
-                        fetch(encodeURIComponent("/Robert Masen Resume.pdf")).then(resp => {
+                        fetch(`/${encodeURIComponent(resume_file_name)}`).then(resp => {
                             if (resp.ok) {
                                 resp.blob().then(file => {
                                     let file_url = URL.createObjectURL(file);
                                     const tmp1 = document.createElement("a");
                                     tmp1.href = file_url;
-                                    tmp1.download = encodeURIComponent("Robert Masen Resume.pdf");
+                                    tmp1.download = encodeURIComponent(resume_file_name);
                                     document.body.appendChild(tmp1);
                                     tmp1.click();
                                     URL.revokeObjectURL(file_url);
@@ -241,6 +242,11 @@
             
             init("./browser_bg.wasm").then(async () => {
                 console.log("running app");
+                let fn = app.get_resume_file_name();
+                console.log("fn: ", fn);
+                if (!!fn) {
+                    resume_file_name = fn;
+                }
                 app.run();
                 app.event(1);
             }).catch(console.error);

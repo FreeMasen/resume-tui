@@ -39,6 +39,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "683d7910e743518b0e34f1186f92494becacb047c7b6bf616c96772180fef923"
 
 [[package]]
+name = "ansi_rgb"
+version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a730095eb14ee842a0f1e68504b85c8d4a19b1ef2ac2a9b4debf0ed982f9b08a"
+dependencies = [
+ "rgb",
+]
+
+[[package]]
 name = "anstream"
 version = "1.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -138,6 +147,20 @@ name = "bitflags"
 version = "2.13.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3ded4057c258ba199e2d26386d3af3780957ecaee6c4ef4041c6b4b8b97c0b06"
+
+[[package]]
+name = "browser"
+version = "0.0.4"
+dependencies = [
+ "ansi_rgb",
+ "console_error_panic_hook",
+ "js-sys",
+ "log",
+ "ratatui",
+ "resume-tui",
+ "wasm-bindgen",
+ "web-sys",
+]
 
 [[package]]
 name = "bstr"
@@ -251,6 +274,16 @@ dependencies = [
  "encode_unicode",
  "libc",
  "windows-sys 0.61.2",
+]
+
+[[package]]
+name = "console_error_panic_hook"
+version = "0.1.7"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a06aeb73f470f66dcdbf7223caeebb85984942f22f1adb2a088cf9668146bbbc"
+dependencies = [
+ "cfg-if",
+ "wasm-bindgen",
 ]
 
 [[package]]
@@ -1178,21 +1211,16 @@ dependencies = [
  "env_logger",
  "insta",
  "log",
- "proc-macro2",
  "pulldown-cmark",
- "quote",
  "ratatui",
  "resume-tui-data",
- "serde",
- "syn 2.0.119",
  "thiserror",
  "to_pdf",
- "toml",
 ]
 
 [[package]]
 name = "resume-tui-data"
-version = "0.1.0"
+version = "0.0.4"
 dependencies = [
  "env_logger",
  "log",
@@ -1201,6 +1229,15 @@ dependencies = [
  "serde",
  "syn 2.0.119",
  "toml",
+]
+
+[[package]]
+name = "rgb"
+version = "0.8.53"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "47b34b781b31e5d73e9fbc8689c70551fd1ade9a19e3e28cfec8580a79290cc4"
+dependencies = [
+ "bytemuck",
 ]
 
 [[package]]
@@ -1608,7 +1645,7 @@ checksum = "fd3ca314f692efd6c868f8408f53fe444634a845f96c028b97d35f6a1f79f0ee"
 
 [[package]]
 name = "to_pdf"
-version = "0.1.0"
+version = "0.0.4"
 dependencies = [
  "owned_ttf_parser 0.21.0",
  "printpdf",
@@ -1928,6 +1965,16 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "23f0c9c52aa7cd7d77769a4cfe2a9adb1b331f489a41d912ce14513d5ab995c6"
 dependencies = [
  "unicode-ident",
+]
+
+[[package]]
+name = "web-sys"
+version = "0.3.106"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "88261b9deccee56594c11a3460c462c41f58d148598fe70ad77070126a68aba4"
+dependencies = [
+ "js-sys",
+ "wasm-bindgen",
 ]
 
 [[package]]

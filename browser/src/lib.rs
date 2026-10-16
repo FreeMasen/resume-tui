@@ -2,7 +2,7 @@ use std::sync::OnceLock;
 
 use ratatui::Terminal as RatatTerm;
 use ratatui_wrapper::Terminal;
-use resume_tui::{App, Event};
+use resume_tui::{App, DATABASE, Event};
 use wasm_bindgen::prelude::*;
 
 mod ratatui_wrapper;
@@ -57,6 +57,11 @@ fn handle_event(event: u8, app: &mut App) -> Result<(), JsValue> {
     app.event(ev)
         .map_err(|e| JsValue::from_str(&format!("EventError: {e}")))?;
     Ok(())
+}
+
+#[wasm_bindgen]
+pub fn get_resume_file_name() -> JsValue {
+    JsValue::from_str(&format!("{} Resume.pdf", DATABASE.name))
 }
 
 struct Log;

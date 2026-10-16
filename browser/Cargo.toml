@@ -1,7 +1,11 @@
 [package]
 name = "browser"
-version = "0.1.0"
-edition = "2021"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+description.workspace = true
+homepage.workspace = true
+repository.workspace = true
 publish = false
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
@@ -10,8 +14,8 @@ publish = false
 ansi_rgb = "0.2.0"
 console_error_panic_hook = "0.1.5"
 js-sys = "0.3.76"
-log = {version = "0.4", features = ["std"] }
-ratatui = { version = "0.29", default-features = false, features = []}
+log = {workspace = true, features = ["std"] }
+ratatui = { workspace = true, default-features = false, features = []}
 wasm-bindgen = "0.2"
 web-sys = { version = "0.3", features = ["console"] }
 

@@ -30,11 +30,11 @@ function __wbg_get_imports() {
         __wbg___wbindgen_throw_41e9ee4f547fc59a: function(arg0, arg1) {
             throw new Error(getStringFromWasm0(arg0, arg1));
         },
-        __wbg_canvasSizeH_ef0833f2fabdf1d3: function() {
+        __wbg_canvasSizeH_6c33aeea565b8a4a: function() {
             const ret = canvasSizeH();
             return ret;
         },
-        __wbg_canvasSizeW_c8132db4f00bd9b8: function() {
+        __wbg_canvasSizeW_fb2089e15cb80a11: function() {
             const ret = canvasSizeW();
             return ret;
         },
@@ -63,7 +63,7 @@ function __wbg_get_imports() {
             getDataViewMemory0().setInt32(arg0 + 4 * 1, len1, true);
             getDataViewMemory0().setInt32(arg0 + 4 * 0, ptr1, true);
         },
-        __wbg_writeToTerminal_e62420d08f1bb6c6: function(arg0, arg1) {
+        __wbg_writeToTerminal_7f64eb7e142cff56: function(arg0, arg1) {
             let deferred0_0;
             let deferred0_1;
             try {

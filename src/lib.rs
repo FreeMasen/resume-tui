@@ -2,10 +2,7 @@
 use std::path::PathBuf;
 
 use list_state::ListStateWrapper as ListState;
-use ratatui::{
-    prelude::*,
-    widgets::{block::Title, *},
-};
+use ratatui::{prelude::*, widgets};
 pub use resume_tui_data::data;
 
 mod detail_view;
@@ -115,8 +112,10 @@ impl<'a> App<'a> {
         Ok(())
     }
 
-    fn draw(&mut self, terminal: &mut Terminal<impl Backend>) -> std::io::Result<()> {
-        terminal.draw(|f| f.render_widget(self, f.area()))?;
+    fn draw(&mut self, terminal: &mut Terminal<impl Backend>) -> Result<(), Error> {
+        terminal
+            .draw(|f| f.render_widget(self, f.area()))
+            .map_err(Error::render)?;
         Ok(())
     }
 
@@ -135,18 +134,18 @@ impl<'a> App<'a> {
     }
 
     fn render_menu(&mut self, area: Rect, buf: &mut Buffer) {
-        let block = Block::bordered()
+        let block = widgets::Block::bordered()
             .title("Menu")
             .title_alignment(Alignment::Center)
             .border_set(ratatui::symbols::border::PLAIN)
-            .borders(Borders::TOP | Borders::LEFT | Borders::BOTTOM)
+            .borders(widgets::Borders::TOP | widgets::Borders::LEFT | widgets::Borders::BOTTOM)
             .style(DEFAULT_STYLE);
         let content_area = block.inner(area);
         block.render(area, buf);
         let [menu_area, footer_area] =
             Layout::vertical([Constraint::Fill(1), Constraint::Length(1)]).areas(content_area);
-        let list = List::new([
-            ListItem::from("Home"),
+        let list = widgets::List::new([
+            widgets::ListItem::from("Home"),
             "Work".into(),
             "Open Source".into(),
             "Education".into(),
@@ -167,8 +166,8 @@ impl<'a> App<'a> {
         } else {
             format!("{} - {}", DATABASE.name, self.get_selected_menu_name())
         };
-        let total_area = Block::bordered()
-            .title(Title::from(title))
+        let total_area = widgets::Block::bordered()
+            .title(title)
             .title_alignment(Alignment::Center)
             .style(DEFAULT_STYLE)
             .border_set(ratatui::symbols::border::Set {
@@ -176,7 +175,7 @@ impl<'a> App<'a> {
                 bottom_left: symbols::line::NORMAL.horizontal_up,
                 ..symbols::border::PLAIN
             })
-            .padding(Padding::ZERO);
+            .padding(widgets::Padding::ZERO);
         let inner_rect = total_area.inner(area);
         total_area.render(area, buf);
         let Some(sub_page) = self.sub_page.clone() else {
@@ -187,9 +186,7 @@ impl<'a> App<'a> {
             Page::Work(work_state) => work_state.render(inner_rect, buf),
             Page::Oss(inner) => inner.render(inner_rect, buf),
             Page::Edu(inner) => inner.render(inner_rect, buf),
-            Page::Help(_) => {
-                crate::help::Help.render(inner_rect, buf)
-            },
+            Page::Help(_) => crate::help::Help.render(inner_rect, buf),
         }
     }
 
@@ -198,12 +195,12 @@ impl<'a> App<'a> {
             .flex(layout::Flex::Center);
         let [_, content_area, _, footer] = layout.areas(area);
 
-        Paragraph::new(vec![DATABASE.name.bold().into(), DATABASE.tag_line.into()])
+        widgets::Paragraph::new(vec![DATABASE.name.bold().into(), DATABASE.tag_line.into()])
             .alignment(Alignment::Center)
             .render(content_area, buf);
         let foot_layout = Layout::horizontal(Constraint::from_percentages([50, 50]));
         let [lhs, rhs] = foot_layout.areas(footer);
-        Paragraph::new(
+        widgets::Paragraph::new(
             DATABASE
                 .github
                 .map(|gh| format!(" https://github.com/{gh}"))
@@ -211,7 +208,7 @@ impl<'a> App<'a> {
         )
         .alignment(Alignment::Left)
         .render(lhs, buf);
-        Paragraph::new(
+        widgets::Paragraph::new(
             DATABASE
                 .github
                 .map(|li| format!("https://www.linkedin.com/in/{li} "))
@@ -305,8 +302,16 @@ pub enum Event {
 
 #[derive(Debug, thiserror::Error)]
 pub enum Error {
-    #[error("{0}")]
+    #[error(transparent)]
     Io(#[from] std::io::Error),
+    #[error("{0}")]
+    Render(String),
     #[error("Exit")]
     Exit,
+}
+
+impl Error {
+    fn render(e: impl std::error::Error) -> Self {
+        Self::Render(format!("{e:#}"))
+    }
 }

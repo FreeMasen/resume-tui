@@ -305,11 +305,7 @@ fn render_two_blocks(
         ),
     ];
     let cells: [Rect; 2] = Layout::horizontal(Constraint::from_percentages([50; 2])).areas(area);
-    for ((cell, (title, content)), (borders, set)) in cells
-        .into_iter()
-        .zip(details)
-        .zip(borders)
-    {
+    for ((cell, (title, content)), (borders, set)) in cells.into_iter().zip(details).zip(borders) {
         render_block(cell, buf, title, content, borders, set);
     }
 }

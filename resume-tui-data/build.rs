@@ -1,11 +1,13 @@
 use std::{
-    cmp::Ordering, env, fmt, fs, path::{Path, PathBuf},
+    cmp::Ordering,
+    env, fmt, fs,
+    path::{Path, PathBuf},
 };
 
 use proc_macro2::{Span, TokenStream};
 use quote::quote;
 use serde::Deserialize;
-use syn::{LitStr, Token, punctuated::Punctuated};
+use syn::{punctuated::Punctuated, LitStr, Token};
 
 fn log(args: fmt::Arguments) {
     println!("cargo::warning={}", args);

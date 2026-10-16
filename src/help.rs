@@ -1,5 +1,4 @@
 use ratatui::{
-    style::Stylize,
     text::Text,
     widgets::{List, Widget},
 };

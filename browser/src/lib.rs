@@ -2,7 +2,7 @@ use std::sync::OnceLock;
 
 use ratatui::Terminal as RatatTerm;
 use ratatui_wrapper::Terminal;
-use resume_tui::{App, DATABASE, Event};
+use resume_tui::{App, Event, DATABASE};
 use wasm_bindgen::prelude::*;
 
 mod ratatui_wrapper;

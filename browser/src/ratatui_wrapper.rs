@@ -82,6 +82,12 @@ impl ratatui::backend::Backend for Terminal {
     {
         Ok(())
     }
+
+    type Error = std::io::Error;
+
+    fn clear_region(&mut self, _: ratatui::prelude::backend::ClearType) -> Result<(), Self::Error> {
+        Ok(())
+    }
 }
 
 fn ansiify_cell(x: u16, y: u16, cell: &Cell) -> String {

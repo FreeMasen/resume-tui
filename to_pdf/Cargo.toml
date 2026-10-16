@@ -20,5 +20,5 @@ eula = false
 resume-tui-data = { path = "../resume-tui-data" }
 tempfile = "3.10"
 serde_yaml = "0.9"
-printpdf = {version = "0.7", features = ["svg"] }
+printpdf = {version = "0.12.8", features = ["svg"] }
 owned_ttf_parser = "0.21"

@@ -1,9 +1,8 @@
 [workspace]
 members = [".", "resume-tui-data", "to_pdf", "browser"]
-default_members = ["."]
+default-members = ["."]
 
 [workspace.package]
-name = "resume-tui"
 version = "0.0.4"
 edition = "2021"
 authors = ["Robert Masen <r.f.masen@gmail.com>"]

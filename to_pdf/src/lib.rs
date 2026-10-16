@@ -334,7 +334,7 @@ pub fn generate_pdf(out_path: impl AsRef<Path>) -> Result<(), String> {
 
         // Date range (11 pt, right-aligned)
         let date = format!("{} - {}", job.start, job.end.unwrap_or("Current"));
-        let date_width = w.word_width(&date, 14.0);
+        let date_width = w.word_width(&date, 11.0);
         ops.push(Op::SaveGraphicsState);
         ops.push(Op::StartTextSection);
         ops.push(Op::SetTextCursor {
@@ -502,27 +502,27 @@ pub fn generate_pdf(out_path: impl AsRef<Path>) -> Result<(), String> {
                 is_closed: false,
             },
         });
-
-        current_y -= 5.0;
-
+        // let desc_width = doc.wi
+        let desc_width = w.word_width(&proj.short_desc, 11.0);
+        
         // Project short desc (12 pt)
         ops.push(Op::SaveGraphicsState);
         ops.push(Op::StartTextSection);
         ops.push(Op::SetTextCursor {
-            pos: Point::new(Mm(X_MARGIN + 2.0), Mm(current_y)),
+            pos: Point::new(Mm(LETTER_WIDTH_MM - X_MARGIN - desc_width), Mm(current_y)),
         });
         ops.push(Op::SetFont {
             font: PdfFontHandle::External(font_id.clone()),
-            size: Pt(12.0),
+            size: Pt(11.0),
         });
-        ops.push(Op::SetLineHeight { lh: Pt(12.0) });
+        ops.push(Op::SetLineHeight { lh: Pt(11.0) });
         ops.push(Op::ShowText {
             items: vec![TextItem::Text(proj.short_desc.to_string())],
         });
         ops.push(Op::EndTextSection);
         ops.push(Op::RestoreGraphicsState);
 
-        current_y -= 3.0;
+        current_y -= 4.0;
 
         for d in proj.sub_projects {
             ops.push(Op::DrawPolygon {
@@ -563,10 +563,48 @@ pub fn generate_pdf(out_path: impl AsRef<Path>) -> Result<(), String> {
                 current_y -= 4.0;
             }
         }
+        if proj.sub_projects.is_empty() {
+            ops.push(Op::DrawPolygon {
+                polygon: Polygon {
+                    rings: vec![PolygonRing {
+                        points: diamond_points(X_MARGIN + 3.0, current_y + 1.0),
+                    }],
+                    mode: PaintMode::Fill,
+                    winding_order: WindingOrder::EvenOdd,
+                },
+            });
+
+            let text = wrap_text(
+                &w,
+                proj.long_desc,
+                INNER_X_MARGIN,
+                LETTER_WIDTH_MM - (X_MARGIN * 2.2),
+                10.0,
+            );
+
+            for line in text.lines() {
+                ops.push(Op::SaveGraphicsState);
+                ops.push(Op::StartTextSection);
+                ops.push(Op::SetTextCursor {
+                    pos: Point::new(Mm(INNER_X_MARGIN), Mm(current_y)),
+                });
+                ops.push(Op::SetFont {
+                    font: PdfFontHandle::External(font_id.clone()),
+                    size: Pt(10.0),
+                });
+                ops.push(Op::SetLineHeight { lh: Pt(10.0) });
+                ops.push(Op::ShowText {
+                    items: vec![TextItem::Text(line.to_string())],
+                });
+                ops.push(Op::EndTextSection);
+                ops.push(Op::RestoreGraphicsState);
+
+                current_y -= 4.0;
+            }
+        }
     }
 
     // ---- "Education" header ----
-    current_y -= 3.0;
     ops.push(Op::SaveGraphicsState);
     ops.push(Op::StartTextSection);
     ops.push(Op::SetTextCursor {
@@ -582,6 +620,23 @@ pub fn generate_pdf(out_path: impl AsRef<Path>) -> Result<(), String> {
     });
     ops.push(Op::EndTextSection);
     ops.push(Op::RestoreGraphicsState);
+    current_y -= 1.0;
+    ops.push(Op::SetOutlineThickness { pt: Pt(1.0) });
+    ops.push(Op::DrawLine {
+        line: Line {
+            points: vec![
+                LinePoint {
+                    p: Point::new(Mm(X_MARGIN), Mm(current_y)),
+                    bezier: false,
+                },
+                LinePoint {
+                    p: Point::new(Mm(LETTER_WIDTH_MM - X_MARGIN), Mm(current_y)),
+                    bezier: false,
+                },
+            ],
+            is_closed: false,
+        },
+    });
     current_y -= 5.0;
 
     for school in DATABASE.education {

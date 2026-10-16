@@ -65,11 +65,13 @@ fn convert(s: &'static str) -> Option<Text<'static>> {
                     wrapper.link_url = Some(dest_url.to_string());
                     wrapper.push_symbol('[');
                 }
-                Tag::Image { .. } => return None,
-                Tag::MetadataBlock(_) => return None,
-                Tag::DefinitionList => return None,
-                Tag::DefinitionListTitle => return None,
-                Tag::DefinitionListDefinition => return None,
+                Tag::Image { .. }
+                | Tag::MetadataBlock(_)
+                | Tag::DefinitionList
+                | Tag::DefinitionListTitle
+                | Tag::DefinitionListDefinition
+                | Tag::Subscript
+                | Tag::Superscript => return None,
             },
             Event::End(tag) => {
                 match tag {

@@ -220,8 +220,8 @@ fn render_header(
     let cells: [Rect; 4] = Layout::horizontal(Constraint::from_percentages([25; 4])).areas(area);
     for ((cell, (title, content)), (borders, set)) in cells
         .into_iter()
-        .zip(details.into_iter())
-        .zip(borders.into_iter())
+        .zip(details)
+        .zip(borders)
     {
         render_header_block(cell, buf, title, content, borders, set);
     }

@@ -1,0 +1,24 @@
+[package]
+name = "to_pdf"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+description.workspace = true
+homepage.workspace = true
+repository.workspace = true
+
+[package.metadata.wix]
+upgrade-guid = "44B90443-32F8-49C0-A145-C30A9B70E8D3"
+path-guid = "FC2DC3E5-B7CB-4D35-A71A-ECC49DC3839A"
+license = false
+eula = false
+
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+resume-tui-data = { path = "../resume-tui-data" }
+tempfile = "3.10"
+serde_yaml = "0.9"
+printpdf = {version = "0.7", features = ["svg"] }
+owned_ttf_parser = "0.21"

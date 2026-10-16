@@ -1,3 +1,5 @@
+use std::path::PathBuf;
+
 use color_eyre::config::HookBuilder;
 use crossterm::{
     event::{self, Event as TermEvent, KeyCode, KeyEventKind, KeyModifiers},
@@ -11,6 +13,10 @@ use ratatui::{
 use resume_tui::{App, Error, Event};
 
 fn main() -> color_eyre::Result<()> {
+    if let Some(path) = std::env::args().nth(1)
+    {
+        return to_pdf::generate_pdf(path).map_err(|e| color_eyre::Report::msg(e));
+    }
     #[cfg(feature = "logging")]
     env_logger::init();
     // setup terminal
@@ -28,6 +34,9 @@ fn main() -> color_eyre::Result<()> {
                     KeyCode::Char('j') | KeyCode::Down => Event::Down,
                     KeyCode::Char('k') | KeyCode::Up => Event::Up,
                     KeyCode::Char('l') | KeyCode::Right | KeyCode::Enter => Event::Right,
+                    KeyCode::Char('c') if key.modifiers == KeyModifiers::CONTROL => Event::Quit,
+                    KeyCode::Char('p') if key.modifiers == KeyModifiers::CONTROL => Event::Print,
+                    KeyCode::Char('?') => Event::Help,
                     _ => continue,
                 };
                 let res = app.event(ev);

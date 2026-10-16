@@ -113,7 +113,9 @@
                 down: 2,
                 left: 3,
                 right: 4,
-            })
+                help: 5,
+            });
+            let resume_file_name = "";
             let eventHandler = eventId => {
                 console.log("eventHandler")
                 if (!app) {
@@ -211,9 +213,28 @@
                     case "l":
                         arg = Event.right;
                         break;
+                    case "?":
+                        arg = Event.help;
+                        break;
+                    case "p":
+                        fetch(`/${encodeURIComponent(resume_file_name)}`).then(resp => {
+                            if (resp.ok) {
+                                resp.blob().then(file => {
+                                    let file_url = URL.createObjectURL(file);
+                                    const tmp1 = document.createElement("a");
+                                    tmp1.href = file_url;
+                                    tmp1.download = encodeURIComponent(resume_file_name);
+                                    document.body.appendChild(tmp1);
+                                    tmp1.click();
+                                    URL.revokeObjectURL(file_url);
+                                    tmp1.remove();
+                                });
+                            }
+                        });
+                        return;
                     default:
                         console.warn("Unknown key:", ev.code);
-                        break;
+                        return;
                 }
                 eventHandler(arg);
                 return false;
@@ -221,6 +242,11 @@
             
             init("./browser_bg.wasm").then(async () => {
                 console.log("running app");
+                let fn = app.get_resume_file_name();
+                console.log("fn: ", fn);
+                if (!!fn) {
+                    resume_file_name = fn;
+                }
                 app.run();
                 app.event(1);
             }).catch(console.error);

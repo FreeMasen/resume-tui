@@ -104,7 +104,9 @@
 
         </aside>
         <script type="module">
-            import init, * as app from "./browser.js";
+            import init, {init_app, get_resume_file_name} from "./browser.js";
+            let app;
+            let resume_file_name;
             Promise.sleep = (ms) => {
                 return new Promise(r => setTimeout(r, ms || 100));
             }
@@ -115,14 +117,14 @@
                 right: 4,
                 help: 5,
             });
-            let resume_file_name = "";
+            
             let eventHandler = eventId => {
                 console.log("eventHandler")
                 if (!app) {
                     return console.warn("App not yet initialized");
                 }
                 console.log("calling app.event with arg", eventId);
-                app.event(eventId);
+                app.tick(eventId);
             }
             document.getElementById("up").addEventListener("click", () => eventHandler(Event.up));
             document.getElementById("left").addEventListener("click", () => eventHandler(Event.left));
@@ -240,15 +242,16 @@
                 return false;
             });
             
-            init("./browser_bg.wasm").then(async () => {
-                console.log("running app");
-                let fn = app.get_resume_file_name();
-                console.log("fn: ", fn);
-                if (!!fn) {
-                    resume_file_name = fn;
-                }
-                app.run();
-                app.event(1);
+            let bg = init("./browser_bg.wasm").then(async () => {
+                    console.log("running app");
+                    let fn = get_resume_file_name();
+                    console.log("fn: ", fn);
+                    if (!!fn) {
+                        resume_file_name = fn;
+                    }
+                    app = init_app();
+                    resume_file_name = get_resume_file_name();
+                    app.tick(1);
             }).catch(console.error);
             
         </script>

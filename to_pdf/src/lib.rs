@@ -1,7 +1,8 @@
 use std::path::Path;
 
 use printpdf::{
-    FontId, Line, LinePoint, Mm, Op, PaintMode, ParsedFont, PdfDocument, PdfFontHandle, PdfPage, PdfSaveOptions, Point, Polygon, PolygonRing, Pt, TextItem, WindingOrder, XObjectTransform,
+    FontId, Line, LinePoint, Mm, Op, PaintMode, ParsedFont, PdfDocument, PdfFontHandle, PdfPage,
+    PdfSaveOptions, Point, Polygon, PolygonRing, Pt, TextItem, WindingOrder, XObjectTransform,
 };
 use resume_tui_data::data::source::DATABASE;
 use wrapper::WithCalc;
@@ -26,8 +27,7 @@ pub fn generate_pdf(out_path: impl AsRef<Path>) -> Result<(), String> {
         font_id: FontId(String::new()),
     };
     let doc = g.generate()?;
-    let bytes = doc
-        .save(&PdfSaveOptions::default(), &mut Default::default());
+    let bytes = doc.save(&PdfSaveOptions::default(), &mut Default::default());
 
     std::fs::write(out_path, bytes).unwrap();
     Ok(())
@@ -860,8 +860,9 @@ impl PdfGenerator {
             Op::ShowText {
                 items: vec![TextItem::Text(DATABASE.name.to_string())],
             },
-        Op::EndTextSection,
-        Op::RestoreGraphicsState];
+            Op::EndTextSection,
+            Op::RestoreGraphicsState,
+        ];
 
         self.current_y -= 2.0;
         events.into_iter()

@@ -1,19 +1,25 @@
 /* tslint:disable */
 /* eslint-disable */
 
-export function event(event: number): void;
+export class BroswerApp {
+    private constructor();
+    free(): void;
+    [Symbol.dispose](): void;
+    tick(event: number): void;
+}
 
 export function get_resume_file_name(): any;
 
-export function run(): void;
+export function init_app(): BroswerApp;
 
 export type InitInput = RequestInfo | URL | Response | BufferSource | WebAssembly.Module;
 
 export interface InitOutput {
     readonly memory: WebAssembly.Memory;
-    readonly event: (a: number) => [number, number];
+    readonly __wbg_broswerapp_free: (a: number, b: number) => void;
+    readonly broswerapp_tick: (a: number, b: number) => [number, number];
     readonly get_resume_file_name: () => any;
-    readonly run: () => [number, number];
+    readonly init_app: () => number;
     readonly __wbindgen_free: (a: number, b: number, c: number) => void;
     readonly __wbindgen_malloc: (a: number, b: number) => number;
     readonly __wbindgen_realloc: (a: number, b: number, c: number, d: number) => number;

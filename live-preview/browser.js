@@ -1,14 +1,33 @@
 /* @ts-self-types="./browser.d.ts" */
 
-/**
- * @param {number} event
- */
-export function event(event) {
-    const ret = wasm.event(event);
-    if (ret[1]) {
-        throw takeFromExternrefTable0(ret[0]);
+export class BroswerApp {
+    static __wrap(ptr) {
+        const obj = Object.create(BroswerApp.prototype);
+        obj.__wbg_ptr = ptr;
+        BroswerAppFinalization.register(obj, obj.__wbg_ptr, obj);
+        return obj;
+    }
+    __destroy_into_raw() {
+        const ptr = this.__wbg_ptr;
+        this.__wbg_ptr = 0;
+        BroswerAppFinalization.unregister(this);
+        return ptr;
+    }
+    free() {
+        const ptr = this.__destroy_into_raw();
+        wasm.__wbg_broswerapp_free(ptr, 0);
+    }
+    /**
+     * @param {number} event
+     */
+    tick(event) {
+        const ret = wasm.broswerapp_tick(this.__wbg_ptr, event);
+        if (ret[1]) {
+            throw takeFromExternrefTable0(ret[0]);
+        }
     }
 }
+if (Symbol.dispose) BroswerApp.prototype[Symbol.dispose] = BroswerApp.prototype.free;
 
 /**
  * @returns {any}
@@ -18,11 +37,12 @@ export function get_resume_file_name() {
     return ret;
 }
 
-export function run() {
-    const ret = wasm.run();
-    if (ret[1]) {
-        throw takeFromExternrefTable0(ret[0]);
-    }
+/**
+ * @returns {BroswerApp}
+ */
+export function init_app() {
+    const ret = wasm.init_app();
+    return BroswerApp.__wrap(ret);
 }
 function __wbg_get_imports() {
     const import0 = {
@@ -94,6 +114,10 @@ function __wbg_get_imports() {
         "./browser_bg.js": import0,
     };
 }
+
+const BroswerAppFinalization = (typeof FinalizationRegistry === 'undefined')
+    ? { register: () => {}, unregister: () => {} }
+    : new FinalizationRegistry(ptr => wasm.__wbg_broswerapp_free(ptr, 1));
 
 let cachedDataViewMemory0 = null;
 function getDataViewMemory0() {

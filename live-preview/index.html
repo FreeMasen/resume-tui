@@ -217,7 +217,7 @@
                         arg = Event.help;
                         break;
                     case "p":
-                        fetch(`./${encodeURIComponent(resume_file_name)}`).then(resp => {
+                        fetch(`/${encodeURIComponent(resume_file_name)}`).then(resp => {
                             if (resp.ok) {
                                 resp.blob().then(file => {
                                     let file_url = URL.createObjectURL(file);

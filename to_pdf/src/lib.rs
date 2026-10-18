@@ -33,31 +33,109 @@ pub fn generate_pdf(out_path: impl AsRef<Path>) -> Result<(), String> {
     Ok(())
 }
 
-fn wrap_text(w: &wrapper::WithCalc, text: &str, x: f32, max_x: f32, font_size: f32) -> String {
+/// The pieces that make up the wrapped form of `text`: words borrowed from
+/// `text`, interspersed with the separators that join them.
+///
+/// Nothing is allocated. Words are slices of `text` and every separator is a
+/// `&'static str` literal, which coerces into the shorter `'a` so that both
+/// travel on a single `Item` type. Concatenating the pieces in order produces
+/// the wrapped text, where a separator is `" "` between two words on a line,
+/// `"\n"` where a line wrapped, and `"\n\n"` for a blank line in the source.
+fn wrap_text_pieces<'a>(
+    w: &'a wrapper::WithCalc,
+    text: &'a str,
+    x: f32,
+    max_x: f32,
+    font_size: f32,
+) -> impl Iterator<Item = &'a str> + 'a {
     let space_width = w.word_width(" ", font_size);
-    let mut ret_text = String::new();
+    let mut lines = text.lines();
+    let mut words: Option<std::str::SplitWhitespace<'a>> = None;
     let mut current_x = x;
-    for line in text.lines() {
-        if line.trim().is_empty() {
-            ret_text.push('\n');
-            ret_text.push('\n');
-            current_x = x;
-            continue;
+    // A word contributes at most three pieces: the wrap that precedes it, the
+    // word itself, then the space that follows it.
+    let mut buf: [&'a str; 3] = [""; 3];
+    let (mut len, mut pos) = (0usize, 0usize);
+
+    std::iter::from_fn(move || loop {
+        if pos < len {
+            let piece = buf[pos];
+            pos += 1;
+            return Some(piece);
         }
-        for word in line.split_whitespace() {
-            let word_len = w.word_width(word, font_size);
-            if current_x + word_len >= max_x {
-                ret_text.push('\n');
+        let Some(words_iter) = words.as_mut() else {
+            let line = lines.next()?;
+            if line.trim().is_empty() {
                 current_x = x;
+                return Some("\n\n");
             }
-            current_x += word_len;
-            ret_text.push_str(word);
-            if current_x + space_width <= max_x {
-                ret_text.push(' ');
+            words = Some(line.split_whitespace());
+            continue;
+        };
+        let Some(word) = words_iter.next() else {
+            words = None;
+            continue;
+        };
+        let word_len = w.word_width(word, font_size);
+        len = 0;
+        if current_x + word_len >= max_x {
+            current_x = x;
+            buf[len] = "\n";
+            len += 1;
+        }
+        current_x += word_len;
+        buf[len] = word;
+        len += 1;
+        if current_x + space_width <= max_x {
+            buf[len] = " ";
+            len += 1;
+            current_x += space_width;
+        }
+        pos = 0;
+    })
+}
+
+/// Groups [`wrap_text_pieces`] into the rendered lines of `text`.
+///
+/// The one `String` per line is what `Op::ShowText` needs anyway; what this
+/// avoids is the second `String` holding the whole wrapped block, and the
+/// re-scan that splitting it back apart required.
+fn wrap_text<'a>(
+    w: &'a wrapper::WithCalc,
+    text: &'a str,
+    x: f32,
+    max_x: f32,
+    font_size: f32,
+) -> impl Iterator<Item = String> + 'a {
+    let mut pieces = wrap_text_pieces(w, text, x, max_x, font_size);
+    let mut blank_pending = false;
+    let mut done = false;
+    std::iter::from_fn(move || {
+        if blank_pending {
+            blank_pending = false;
+            return Some(String::new());
+        }
+        if done {
+            return None;
+        }
+        let mut line = String::new();
+        loop {
+            // Words come from `split_whitespace`, so no word can be mistaken
+            // for one of the separators matched here.
+            match pieces.next() {
+                None => {
+                    done = true;
+                    return (!line.is_empty()).then_some(line);
+                }
+                Some("\n") => return Some(line),
+                Some("\n\n") => {
+                    blank_pending = true;
+                    return Some(line);
+                }
+                Some(piece) => line.push_str(piece),
             }
         }
-    }
-    ret_text
+    })
 }
 
 fn diamond_points(center_x: f32, center_y: f32) -> Vec<LinePoint> {
@@ -475,14 +553,13 @@ impl PdfGenerator {
                     },
                 });
 
-                let text = wrap_text(
+                for line in wrap_text(
                     &w,
                     d.snippet,
                     INNER_X_MARGIN,
-                    LETTER_WIDTH_MM - (X_MARGIN * 2.2),
+                    LETTER_WIDTH_MM - X_MARGIN,
                     10.0,
-                );
-                for line in text.lines() {
+                ) {
                     ops.push(Op::SaveGraphicsState);
                     ops.push(Op::StartTextSection);
                     ops.push(Op::SetTextCursor {
@@ -494,7 +571,7 @@ impl PdfGenerator {
                     });
                     ops.push(Op::SetLineHeight { lh: Pt(10.0) });
                     ops.push(Op::ShowText {
-                        items: vec![TextItem::Text(line.to_string())],
+                        items: vec![TextItem::Text(line)],
                     });
                     ops.push(Op::EndTextSection);
                     ops.push(Op::RestoreGraphicsState);
@@ -611,15 +688,13 @@ impl PdfGenerator {
                     },
                 });
 
-                let text = wrap_text(
+                for line in wrap_text(
                     &w,
                     &format!("{}: {}", d.name, d.short_desc),
                     INNER_X_MARGIN,
                     LETTER_WIDTH_MM - (X_MARGIN * 2.2),
                     10.0,
-                );
-
-                for line in text.lines() {
+                ) {
                     ops.push(Op::SaveGraphicsState);
                     ops.push(Op::StartTextSection);
                     ops.push(Op::SetTextCursor {
@@ -631,7 +706,7 @@ impl PdfGenerator {
                     });
                     ops.push(Op::SetLineHeight { lh: Pt(10.0) });
                     ops.push(Op::ShowText {
-                        items: vec![TextItem::Text(line.to_string())],
+                        items: vec![TextItem::Text(line)],
                     });
                     ops.push(Op::EndTextSection);
                     ops.push(Op::RestoreGraphicsState);
@@ -650,15 +725,13 @@ impl PdfGenerator {
                     },
                 });
 
-                let text = wrap_text(
+                for line in wrap_text(
                     &w,
                     proj.long_desc,
                     INNER_X_MARGIN,
                     LETTER_WIDTH_MM - (X_MARGIN * 2.2),
                     10.0,
-                );
-
-                for line in text.lines() {
+                ) {
                     ops.push(Op::SaveGraphicsState);
                     ops.push(Op::StartTextSection);
                     ops.push(Op::SetTextCursor {
@@ -670,7 +743,7 @@ impl PdfGenerator {
                     });
                     ops.push(Op::SetLineHeight { lh: Pt(10.0) });
                     ops.push(Op::ShowText {
-                        items: vec![TextItem::Text(line.to_string())],
+                        items: vec![TextItem::Text(line)],
                     });
                     ops.push(Op::EndTextSection);
                     ops.push(Op::RestoreGraphicsState);

@@ -1,0 +1,7 @@
+headline = "Develop high performance capacity inventory and vm host selection service"
+snippet = """Using real-time data published by virtual machine hosts for evaluating fleet wide capacity
+and selecting the most appropriate host for that customer, including pinned CPU and GPU offerings. 
+"""
+
+detail = """
+"""

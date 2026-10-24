@@ -9,3 +9,4 @@ resume.pdf
 public/
 /live-preview.md
 *.pdf
+data/**/*.md

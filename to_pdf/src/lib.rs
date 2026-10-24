@@ -618,6 +618,7 @@ impl PdfGenerator {
         self.current_y -= 5.0;
 
         for proj in DATABASE.open_source {
+            self.current_y -= 1.0;
             // Project name (14 pt)
             ops.push(Op::SaveGraphicsState);
             ops.push(Op::StartTextSection);
@@ -748,7 +749,7 @@ impl PdfGenerator {
                     ops.push(Op::EndTextSection);
                     ops.push(Op::RestoreGraphicsState);
 
-                    self.current_y -= 4.0;
+                    self.current_y -= 5.0;
                 }
             }
         }

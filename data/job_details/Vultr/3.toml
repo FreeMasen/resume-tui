@@ -1,5 +1,6 @@
 headline = "Ceph guest metrics from host kernel"
-snippet = ""
+snippet = """Developed a kernel patch to provide network disk performance metrics via the sys-fs debug interface
+for accessing performance of a virtual machine guest from the host"""
 
 detail = """
 """

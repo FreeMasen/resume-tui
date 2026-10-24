@@ -102,6 +102,9 @@ fn collect_details(maybe_job_path: impl AsRef<Path>, job: &mut Job) {
         if !file.file_type().map(|t| t.is_file()).unwrap_or(false) {
             continue;
         }
+        if !file.path().extension().is_some_and(|e| e == "toml") {
+            continue;
+        }
         let details_text = std::fs::read_to_string(file.path()).unwrap();
         let mut detail: Detail = toml::from_str(&details_text).unwrap();
         detail.id = file

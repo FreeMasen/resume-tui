@@ -1,5 +1,7 @@
 headline = "Lua Sandbox"
-snippet = "Develop and maintain 3rd party script sandbox"
+snippet = """Develop and maintain a Lua sandbox in Rust for executing untrusted code on embedded linux devices 
+using gRPC for interactions with the wider platform
+"""
 
 detail = """
 To enable our platform to be as flexible as possible, I developed and performed

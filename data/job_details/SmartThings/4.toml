@@ -1,5 +1,7 @@
 headline = "RPC Rewrite"
-snippet = "Swapping out gRPC for a custom RPC solution"
+snippet = """To address performance issues on embedded linux hardware, developed and transitioned the platform
+to use a purpose build RPC mechanism to replace Tonic and gRPC.
+"""
 
 detail = """
 The _Lua Sandbox_'s RPC mechanism was initially developed using an off the shelf

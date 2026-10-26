@@ -1,5 +1,5 @@
 headline = "Hub Local Metrics"
-snippet = "Implementing a memory efficient, metrics collector for an embedded linux target"
+snippet = "Implementing a memory efficient, Rust metrics collector for an embedded linux target"
 
 detail = """To gain additional visibility into the performance of our embedded Linux devices
 deployed across the world, I developed a system for collecting and reporting metrics for our fleet.

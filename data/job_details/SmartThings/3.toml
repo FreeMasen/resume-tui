@@ -1,5 +1,5 @@
 headline = "Edge HTTP API"
-snippet = "Built an HTTP API running on edge devices to act as a cloud service"
+snippet = "Built an HTTP API in Rust running on edge devices to act as a cloud service"
 detail = """
 Build an Actix-Web based HTTP server for local communication and processing of
 cloud originated messages on the edge. A service was deployed in the cloud to receive messages

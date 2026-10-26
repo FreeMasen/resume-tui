@@ -1,7 +1,5 @@
 headline = "Documentation and Design"
-snippet = """Document changes and future opportunities"""
-detail = """
-Using a mixture of `rust-doc`, Confluence, PlantUML, Mermaid.js, and Lucid Chart I
+snippet = """Using a mixture of `rust-doc`, Confluence, PlantUML, Mermaid.js, and Lucid Chart I
 documented existing behavior, communicated proposed changes, and design documents for future
-opportunities. 
-"""
+opportunities. """
+detail = ""

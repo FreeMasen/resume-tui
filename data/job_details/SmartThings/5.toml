@@ -1,5 +1,7 @@
 headline = "Utility Services"
-snippet = "Develop platform utility services to address shared needs across multiple teams"
+snippet = """Develop a significant number of Rust platform utility and services to address shared needs across
+multiple teams"""
+
 detail = """
 As with any job, some of the work I have done doesn't quite fit into its own category, the following
 projects describe some of the smaller projects I developed that had a significant impact but were not

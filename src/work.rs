@@ -1,9 +1,9 @@
 use ratatui::{
     buffer::Buffer,
     layout::{Alignment, Constraint, Flex, Layout, Rect},
-    style::{Color, Modifier, Style, Stylize},
+    style::{Color, Modifier, Style},
     symbols::{self, border::Set},
-    text::{Line, Text},
+    text::{Line, Span, Text},
     widgets::{Block, Borders, List, ListItem, Paragraph, StatefulWidget, Widget},
 };
 
@@ -250,7 +250,10 @@ fn render_job_details<'a>(
     area: Rect,
     buf: &mut Buffer,
 ) {
-    let list: Vec<_> = details.into_iter().map(map_detail_to_list_item).collect();
+    let list: Vec<_> = details
+        .into_iter()
+        .map(|d| map_detail_to_list_item(d, area.width))
+        .collect();
     StatefulWidget::render(
         List::new(list).highlight_style(Style::new().bg(Color::Green).fg(Color::Black)),
         area,
@@ -259,9 +262,42 @@ fn render_job_details<'a>(
     );
 }
 
-fn map_detail_to_list_item<'a>(detail: &'a Detail) -> ListItem<'a> {
-    let title = Line::from(detail.headline.add_modifier(Modifier::BOLD));
-    let details = Line::from(format!("  {}", detail.snippet));
-    let text = Text::from(vec![title, details]);
-    ListItem::new(text)
+fn map_detail_to_list_item<'a>(detail: &'a Detail, width: u16) -> ListItem<'a> {
+    use ratatui::style::Stylize;
+    let mut lines = vec![Line::from(detail.headline.add_modifier(Modifier::BOLD))];
+    lines.extend(wrap_str(detail.snippet, width, "  "));
+    ListItem::new(Text::from(lines))
+}
+
+/// Word-wraps `text` to `width` cells, indenting every line with `indent`.
+///
+/// `Paragraph` only wraps while it renders, so a `ListItem` has to arrive
+/// pre-wrapped for the list to give it the right height.
+fn wrap_str(text: &str, width: u16, indent: &str) -> Vec<Line<'static>> {
+    let budget = (width as usize)
+        .saturating_sub(Span::raw(indent).width())
+        .max(1);
+    let mut lines = Vec::new();
+    let mut line = String::from(indent);
+    let mut used = 0;
+    for word in text.split_whitespace() {
+        let word_width = Span::raw(word).width();
+        if used > 0 && used + 1 + word_width > budget {
+            lines.push(Line::from(std::mem::replace(
+                &mut line,
+                String::from(indent),
+            )));
+            used = 0;
+        }
+        if used > 0 {
+            line.push(' ');
+            used += 1;
+        }
+        line.push_str(word);
+        used += word_width;
+    }
+    if used > 0 {
+        lines.push(Line::from(line));
+    }
+    lines
 }

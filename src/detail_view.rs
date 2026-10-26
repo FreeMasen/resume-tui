@@ -34,7 +34,12 @@ impl<'a> DetailView<'a> {
 
 impl<'a> From<&'a Detail> for DetailView<'a> {
     fn from(detail: &'a Detail) -> Self {
-        Self::new(detail.headline, detail.detail)
+        let content = if detail.detail.trim().is_empty() {
+            detail.snippet
+        } else {
+            detail.detail
+        };
+        Self::new(detail.headline, content)
     }
 }
 

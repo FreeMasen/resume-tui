@@ -7,7 +7,7 @@ use printpdf::{
 use resume_tui_data::data::source::DATABASE;
 use wrapper::WithCalc;
 
-static RESUME_FONT: &[u8] = include_bytes!("../../assets/IosevkaEtoile-Light.ttc");
+static RESUME_FONT: &[u8] = include_bytes!("../../assets/JosefinSlab-Medium.ttf");
 static GITHUB_IMG: &str = include_str!("../../assets/github.svg");
 static LI_IMG: &str = include_str!("../../assets/linkedin.svg");
 static PH_IMG: &str = include_str!("../../assets/phone.svg");

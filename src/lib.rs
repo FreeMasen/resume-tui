@@ -99,7 +99,7 @@ impl<'a> App<'a> {
             Event::Down => self.increment_selection(),
             Event::Left => self.handle_left(),
             Event::Right => self.handle_right(),
-            Event::Print => self.handle_print()?,
+            Event::Print(print) => self.handle_print(print)?,
             Event::Help => self.handle_help(),
             Event::Quit => {
                 if self.sub_page.is_some() {
@@ -259,14 +259,20 @@ impl<'a> App<'a> {
         }
     }
 
-    fn handle_print(&self) -> Result<(), Error> {
-        cfg_select! {
-            feature = "pdf" => Ok(
+    fn handle_print(&self, print: Print) -> Result<(), Error> {
+        if cfg!(feature = "pdf") && matches!(print, Print::Pdf) {
+            return Ok(
                 to_pdf::generate_pdf(PathBuf::from(DATABASE.name).with_extension("pdf"))
                     .map_err(std::io::Error::other)?,
-            ),
-            _ => Ok(())
+            );
         }
+        if cfg!(feature = "md") && matches!(print, Print::Md) {
+            return Ok(
+                to_md::generate_md(PathBuf::from(DATABASE.name).with_extension("md"))
+                    .map_err(std::io::Error::other)?,
+            );
+        }
+        Ok(())
     }
 
     fn handle_help(&mut self) {
@@ -296,8 +302,13 @@ pub enum Event {
     Left,
     Right,
     Quit,
-    Print,
+    Print(Print),
     Help,
+}
+
+pub enum Print {
+    Pdf,
+    Md,
 }
 
 #[derive(Debug, thiserror::Error)]

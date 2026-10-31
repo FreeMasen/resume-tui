@@ -43,6 +43,9 @@ jobs:
       - name: build pdf
         run: >-
           cargo run -- './public/live-preview/Robert Masen Resume.pdf'
+      - name: build md
+        run: >-
+          cargo run -- './public/live-preview/Robert Masen Resume.md'
       - uses: peaceiris/actions-gh-pages@v3
         if: ${{ github.ref == 'refs/heads/main' }}
         with:

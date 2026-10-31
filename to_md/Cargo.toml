@@ -1,0 +1,13 @@
+[package]
+name = "to_md"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+description.workspace = true
+homepage.workspace = true
+repository.workspace = true
+
+[dependencies]
+pulldown-cmark.workspace = true
+resume-tui-data.workspace = true
+pulldown-cmark-to-cmark = "23.0.0"

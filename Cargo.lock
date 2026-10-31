@@ -1780,6 +1780,16 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "007d8adb5ddab6f8e3f491ac63566a7d5002cc7ed73901f72057943fa71ae1ae"
 
 [[package]]
+name = "pulldown-cmark-to-cmark"
+version = "23.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e9e14cd4ec725b2227ba76d4772169af814438bcf48f6d9b806d1308f40a7413"
+dependencies = [
+ "pulldown-cmark",
+ "unicase",
+]
+
+[[package]]
 name = "pxfm"
 version = "0.1.30"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1962,6 +1972,7 @@ dependencies = [
  "ratatui",
  "resume-tui-data",
  "thiserror",
+ "to_md",
  "to_pdf",
 ]
 
@@ -2512,6 +2523,15 @@ name = "tinyvec"
 version = "1.13.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "fd3ca314f692efd6c868f8408f53fe444634a845f96c028b97d35f6a1f79f0ee"
+
+[[package]]
+name = "to_md"
+version = "0.0.5"
+dependencies = [
+ "pulldown-cmark",
+ "pulldown-cmark-to-cmark",
+ "resume-tui-data",
+]
 
 [[package]]
 name = "to_pdf"

@@ -8,11 +8,19 @@ use ratatui::{
     backend::{Backend, CrosstermBackend},
     Terminal,
 };
-use resume_tui::{App, Error, Event};
+use resume_tui::{App, Error, Event, Print};
 
 fn main() -> color_eyre::Result<()> {
+    #[cfg(any(feature = "md", feature = "pdf"))]
     if let Some(path) = std::env::args().nth(1) {
-        return to_pdf::generate_pdf(path).map_err(|e| color_eyre::Report::msg(e));
+        #[cfg(feature = "md")]
+        if path.ends_with(".md") {
+            return to_md::generate_md(path).map_err(|e| color_eyre::Report::msg(e));
+        }
+        #[cfg(feature = "pdf")]
+        if path.ends_with(".pdf") {
+            return to_pdf::generate_pdf(path).map_err(|e| color_eyre::Report::msg(e));
+        }
     }
     #[cfg(feature = "logging")]
     env_logger::init();
@@ -32,7 +40,12 @@ fn main() -> color_eyre::Result<()> {
                     KeyCode::Char('k') | KeyCode::Up => Event::Up,
                     KeyCode::Char('l') | KeyCode::Right | KeyCode::Enter => Event::Right,
                     KeyCode::Char('c') if key.modifiers == KeyModifiers::CONTROL => Event::Quit,
-                    KeyCode::Char('p') if key.modifiers == KeyModifiers::CONTROL => Event::Print,
+                    KeyCode::Char('p') if key.modifiers == KeyModifiers::CONTROL => {
+                        Event::Print(Print::Pdf)
+                    }
+                    KeyCode::Char('m') if key.modifiers == KeyModifiers::CONTROL => {
+                        Event::Print(Print::Md)
+                    }
                     KeyCode::Char('?') => Event::Help,
                     _ => continue,
                 };

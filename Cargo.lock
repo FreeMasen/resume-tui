@@ -310,7 +310,7 @@ dependencies = [
 
 [[package]]
 name = "browser"
-version = "0.0.5"
+version = "0.0.6"
 dependencies = [
  "ansi_rgb",
  "console_error_panic_hook",
@@ -1961,7 +1961,7 @@ checksum = "d6f6ff9a378485b298a5286656da665ba74413d36db0979633275d2e708145d4"
 
 [[package]]
 name = "resume-tui"
-version = "0.0.5"
+version = "0.0.6"
 dependencies = [
  "color-eyre",
  "crossterm",
@@ -1978,7 +1978,7 @@ dependencies = [
 
 [[package]]
 name = "resume-tui-data"
-version = "0.0.5"
+version = "0.0.6"
 dependencies = [
  "env_logger",
  "log",
@@ -2526,7 +2526,7 @@ checksum = "fd3ca314f692efd6c868f8408f53fe444634a845f96c028b97d35f6a1f79f0ee"
 
 [[package]]
 name = "to_md"
-version = "0.0.5"
+version = "0.0.6"
 dependencies = [
  "pulldown-cmark",
  "pulldown-cmark-to-cmark",
@@ -2535,7 +2535,7 @@ dependencies = [
 
 [[package]]
 name = "to_pdf"
-version = "0.0.5"
+version = "0.0.6"
 dependencies = [
  "owned_ttf_parser",
  "printpdf",

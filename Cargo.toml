@@ -3,7 +3,7 @@ members = [".", "resume-tui-data", "to_pdf", "browser", "to_md"]
 default-members = ["."]
 
 [workspace.package]
-version = "0.0.5"
+version = "0.0.6"
 edition = "2021"
 authors = ["Robert Masen <r.f.masen@gmail.com>"]
 description = "My resume as a TUI application"

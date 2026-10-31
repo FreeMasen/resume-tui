@@ -101,36 +101,47 @@ fn database_sub_header<'a>(db: &Database) -> impl Iterator<Item = Event<'a>> {
         generate_link(username, "linkedin.com/in/")
     }
 
-    let head = wrap_in_tags(Tag::TableCell, text("Email"), TagEnd::TableCell)
-        .chain(wrap_in_tags(
-            Tag::TableCell,
-            text("Github"),
-            TagEnd::TableCell,
-        ))
-        .chain(wrap_in_tags(
-            Tag::TableCell,
-            text("LinkedIn"),
-            TagEnd::TableCell,
-        ));
-    let head = wrap_in_tags(Tag::TableHead, head, TagEnd::TableHead);
-    let email_cell = wrap_in_tags(
-        Tag::TableCell,
-        db.email.into_iter().flat_map(generate_email),
-        TagEnd::TableCell,
-    );
-    let gh_cell = wrap_in_tags(
-        Tag::TableCell,
-        db.github.into_iter().flat_map(generate_github),
-        TagEnd::TableCell,
-    );
-    let li_cell = wrap_in_tags(
-        Tag::TableCell,
-        db.linkedin.into_iter().flat_map(generate_linkedin),
-        TagEnd::TableCell,
-    );
+    let head = db
+        .email
+        .into_iter()
+        .flat_map(|_| wrap_in_tags(Tag::TableCell, text("Email"), TagEnd::TableCell))
+        .chain(
+            db.github
+                .into_iter()
+                .flat_map(|_| wrap_in_tags(Tag::TableCell, text("Github"), TagEnd::TableCell)),
+        )
+        .chain(
+            db.linkedin
+                .into_iter()
+                .flat_map(|_| wrap_in_tags(Tag::TableCell, text("LinkedIn"), TagEnd::TableCell)),
+        );
 
+    let head = wrap_in_tags(Tag::TableHead, head, TagEnd::TableHead);
+    let email_cell = db.email.into_iter().flat_map(|e|wrap_in_tags(
+        Tag::TableCell,
+        generate_email(e),
+        TagEnd::TableCell,
+    ));
+    let gh_cell = db.github.into_iter().flat_map(|g|wrap_in_tags(
+        Tag::TableCell,
+        generate_github(g),
+        TagEnd::TableCell,
+    ));
+    let li_cell = db.linkedin.into_iter().flat_map(|l|wrap_in_tags(
+        Tag::TableCell,
+        generate_linkedin(l),
+        TagEnd::TableCell,
+    ));
+    let aligns = match u8::from(db.email.is_some())
+        + u8::from(db.github.is_some())
+        + u8::from(db.linkedin.is_some())
+    {
+        1 => vec![Alignment::Left],
+        2 => vec![Alignment::Left, Alignment::Right],
+        _ => vec![Alignment::Left, Alignment::Center, Alignment::Right],
+    };
     wrap_in_tags(
-        Tag::Table(vec![Alignment::Left, Alignment::Center, Alignment::Right]),
+        Tag::Table(aligns),
         head.chain(wrap_in_tags(
             Tag::TableRow,
             email_cell.chain(gh_cell).chain(li_cell),

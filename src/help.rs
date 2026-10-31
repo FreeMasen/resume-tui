@@ -20,10 +20,7 @@ impl Widget for Help {
             Text::raw("→|l       navigate right/forward"),
             Text::raw("↓|j       navigate down"),
             Text::raw("ꜛ|k       navigate up"),
-            Text::raw("ꜛ|k       navigate up"),
-            #[cfg(feature = "pdf")]
             Text::raw("ctrl+p    save .pdf of this resume"),
-            #[cfg(feature = "md")]
             Text::raw("ctrl+m    save .md of this resume"),
             Text::raw("?         open this menu"),
         ])

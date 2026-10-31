@@ -1,4 +1,4 @@
-#[cfg(feature = "pdf")]
+#[cfg(any(feature = "pdf", feature = "md"))]
 use std::path::PathBuf;
 
 use list_state::ListStateWrapper as ListState;
@@ -259,14 +259,16 @@ impl<'a> App<'a> {
         }
     }
 
-    fn handle_print(&self, print: Print) -> Result<(), Error> {
-        if cfg!(feature = "pdf") && matches!(print, Print::Pdf) {
+    fn handle_print(&self, _print: Print) -> Result<(), Error> {
+        #[cfg(feature = "pdf")]
+        if matches!(_print, Print::Pdf) {
             return Ok(
                 to_pdf::generate_pdf(PathBuf::from(DATABASE.name).with_extension("pdf"))
                     .map_err(std::io::Error::other)?,
             );
         }
-        if cfg!(feature = "md") && matches!(print, Print::Md) {
+        #[cfg(feature = "md")]
+        if  matches!(_print, Print::Md) {
             return Ok(
                 to_md::generate_md(PathBuf::from(DATABASE.name).with_extension("md"))
                     .map_err(std::io::Error::other)?,

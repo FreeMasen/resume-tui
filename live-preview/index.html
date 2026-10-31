@@ -107,6 +107,7 @@
             import init, {init_app, get_resume_file_name} from "./browser.js";
             let app;
             let resume_file_name;
+            let md_file_name;
             Promise.sleep = (ms) => {
                 return new Promise(r => setTimeout(r, ms || 100));
             }
@@ -235,6 +236,22 @@
                             }
                         });
                         return;
+                    case "m":
+                        fetch(`./${encodeURIComponent(md_file_name)}`).then(resp => {
+                            if (resp.ok) {
+                                resp.blob().then(file => {
+                                    let file_url = URL.createObjectURL(file);
+                                    const tmp1 = document.createElement("a");
+                                    tmp1.href = file_url;
+                                    tmp1.download = encodeURIComponent(md_file_name);
+                                    document.body.appendChild(tmp1);
+                                    tmp1.click();
+                                    URL.revokeObjectURL(file_url);
+                                    tmp1.remove();
+                                });
+                            }
+                        });
+                        return;
                     default:
                         console.warn("Unknown key:", ev.code);
                         return;
@@ -249,9 +266,9 @@
                     console.log("fn: ", fn);
                     if (!!fn) {
                         resume_file_name = fn;
+                        md_file_name = fn.replace(/.pdf$/, ".md");
                     }
                     app = init_app();
-                    resume_file_name = get_resume_file_name();
                     app.tick(1);
             }).catch(console.error);
             
